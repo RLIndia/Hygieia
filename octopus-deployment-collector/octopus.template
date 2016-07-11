@@ -1,0 +1,18 @@
+#database Name
+database=dashboard
+
+#Database HostName - default is localhost
+
+#Database Port - default is 27017
+dbport=27017
+
+#Database Username - default is blank
+spring.data.mongodb.username=
+
+#Database Password - default is blank
+spring.data.mongodb.password=
+
+#Collector schedule (required)
+octopus.cron=0 * * * * *
+
+

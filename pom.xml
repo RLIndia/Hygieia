@@ -179,7 +179,9 @@
 				<module>jenkins-cucumber-test-collector</module>
 				<module>chat-ops-collector</module>
 				<module>aws-cloud-collector</module>
+				<module>octopus-deployment-collector</module>
 				<module>UI</module>
+	
 			</modules>
 			<build>
 				<pluginManagement>
@@ -213,6 +215,7 @@
 				<module>jenkins-cucumber-test-collector</module>
 				<module>chat-ops-collector</module>
 				<module>aws-cloud-collector</module>
+				 <module>octopus-deployment-collector</module>
 			</modules>
 			<build>
 				<plugins>
