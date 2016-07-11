@@ -3,7 +3,7 @@
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
 
-                <a ng-href="#/" class="dashboard-logo"></a>
+                <!-- <a ng-href="#/" class="dashboard-logo"></a> -->
 
                 {{::ctrl.dashboard.title}}
 
@@ -24,7 +24,7 @@
 
     <div class="dashboard-widgets container-fluid" widget-container dashboard="ctrl.dashboard" ng-if="template.widgetView == 'Widget'">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="row">
                     <div class="col-xs-12">
                         <widget name="feature" widget-title="Feature"></widget>
@@ -34,7 +34,7 @@
                 <!--</div>-->
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <widget name="build"></widget>
                 <widget name="codeanalysis"></widget>
             </div>
