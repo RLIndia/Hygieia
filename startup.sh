@@ -26,3 +26,8 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
 
+
+cd ../../UI
+cp -r dist/* /usr/share/nginx/html/
+cat ../nginx.default > /etc/nginx/sites-enabled/default
+service nginx reload
