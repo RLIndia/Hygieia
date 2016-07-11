@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -115,7 +116,7 @@
 				<plugin>
 					<groupId>com.spotify</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
-					<version>0.4.10</version>
+					<version>0.4.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -179,6 +180,7 @@
 				<module>jenkins-cucumber-test-collector</module>
 				<module>chat-ops-collector</module>
 				<module>aws-cloud-collector</module>
+				<module>chef-collector</module>
 				<module>UI</module>
 			</modules>
 			<build>
@@ -212,6 +214,7 @@
 				<module>jira-feature-collector</module>
 				<module>jenkins-cucumber-test-collector</module>
 				<module>chat-ops-collector</module>
+				<module>chef-collector</module>
 				<module>aws-cloud-collector</module>
 			</modules>
 			<build>
@@ -274,4 +277,8 @@
 		</profile>
 	</profiles>
 
+  <modules>
+    <module>chef-collector</module>
+    <module>octopus-deployment-collector</module>
+  </modules>
 </project>
