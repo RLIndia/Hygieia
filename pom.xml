@@ -180,7 +180,6 @@
 				<module>jenkins-cucumber-test-collector</module>
 				<module>chat-ops-collector</module>
 				<module>aws-cloud-collector</module>
-				<module>chef-collector</module>
 				<module>UI</module>
 			</modules>
 			<build>
@@ -214,7 +213,6 @@
 				<module>jira-feature-collector</module>
 				<module>jenkins-cucumber-test-collector</module>
 				<module>chat-ops-collector</module>
-				<module>chef-collector</module>
 				<module>aws-cloud-collector</module>
 			</modules>
 			<build>
@@ -278,7 +276,6 @@
 	</profiles>
 
   <modules>
-    <module>chef-collector</module>
     <module>octopus-deployment-collector</module>
   </modules>
 </project>
