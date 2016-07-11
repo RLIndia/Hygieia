@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#mvn clean install -DskipTests
+mvn clean install -DskipTests
 cd api
 echo $1
 echo $2
