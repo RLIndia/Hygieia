@@ -1,6 +1,19 @@
 <div class="deploy-view">
+    <div class="col-xs-9.5 text-standard-sm dash-overflow">
+        <select class="form-control deploy-select-env" ng-model="query">
+            <option ng-repeat="environment in deployView.environments">
+                {{environment.name}}
+            </option>
+        </select>
+    </div>
+
     <table class="table">
-        <tr class="dash-row clickable" ng-repeat="environment in deployView.environments" ng-click="deployView.showDetail(environment)">
+        <tr class="dash-row">
+            <td>
+                
+            </td>
+        </tr>
+        <tr class="dash-row clickable" ng-repeat="environment in deployView.environments | filter:query" ng-click="deployView.showDetail(environment)">
             <td>
                 <span
                         dash-status="{{environment.failedComponents > 0 ? deployView.statuses.FAIL : deployView.statuses.PASS}}"
