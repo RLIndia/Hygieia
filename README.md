@@ -1,22 +1,6 @@
-[![Build Status](https://travis-ci.org/capitalone/Hygieia.svg?branch=master)](https://travis-ci.org/capitalone/Hygieia)
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/de1a2a557f8e458e9a959be8c2e7fcba)](https://www.codacy.com/app/amit-mawkin/Hygieia)
-[![Maven Central](https://img.shields.io/maven-central/v/com.capitalone.dashboard/Hygieia.svg)](http://search.maven.org/#search%7Cga%7C1%7Ccapitalone)
-[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Join the chat at https://gitter.im/capitalone/Hygieia](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/capitalone/Hygieia?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-<img width="600" src="/UI/src/assets/img/hygieia_b.png">
---------------------
-
 <a href="https://info.blackducksoftware.com/OpenSourceRookies2015.html" ><img src="/media/images/Rookies_Award_Badge.png" width="150" alt="Hygieia℠ is now BlackDuck 2015 OpenSource Rookie of the year"></a>
 
-### What is Hygieia℠
 
-#####Pronunciation:      hi-gee-ya (origin Greek)
-Hygieia℠ is a single, configurable, easy to use dashboard to visualize near real-time status of the entire delivery pipeline.
-
-Please view a video below to see Hygieia℠ in action
-
- [![Hygieia℠ Is AWESOME](/media/images/video-shot.png)](https://www.youtube.com/watch?v=SoNTA78j0tc "Hygieia Is AWESOME")
 
 We use tools for everything today and each tool has its own unique dashboard to present information. What is lacking is a near real time consolidated view of the end-to-end delivery pipeline.  This view and a continuous feedback loop are critical to the success of
 any DevOps organization.
