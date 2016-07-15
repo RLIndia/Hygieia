@@ -1,7 +1,3 @@
-<a href="https://info.blackducksoftware.com/OpenSourceRookies2015.html" ><img src="/media/images/Rookies_Award_Badge.png" width="150" alt="Hygieia℠ is now BlackDuck 2015 OpenSource Rookie of the year"></a>
-
-
-
 We use tools for everything today and each tool has its own unique dashboard to present information. What is lacking is a near real time consolidated view of the end-to-end delivery pipeline.  This view and a continuous feedback loop are critical to the success of
 any DevOps organization.
 
