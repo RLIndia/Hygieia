@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mvn clean install -DskipTests
+#mvn clean install -DskipTests
 cd api
 echo $1
 echo $2
@@ -41,6 +41,14 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
 
+echo "Configuring Sonar collector"
+cd ../../sonar-codequality-collector/
+cp -f sonar.template target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+
+ 
 echo "Starting UI"
 cd ../../UI
 cp -r dist/* /usr/share/nginx/html/
