@@ -1,0 +1,14 @@
+
+module mynginx 1.0;
+
+require {
+	type httpd_t;
+	type http_cache_port_t;
+	class tcp_socket name_connect;
+}
+
+#============= httpd_t ==============
+
+#!!!! This avc can be allowed using one of the these booleans:
+#     httpd_can_network_relay, httpd_can_network_connect
+allow httpd_t http_cache_port_t:tcp_socket name_connect;

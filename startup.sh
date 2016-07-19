@@ -5,9 +5,12 @@ cd api
 echo $1
 echo $2
 echo "Installing Nginx"
-apt-get install nginx -y
+#apt-get install nginx -y
+yum install epel-release -y
+yum install nginx -y
+service nginx start
 echo "Stopping all java services"
-killall java
+kill `ps -eaf | grep java | awk {'print $2'}`
 echo "Configuring API"
 cp -f dashboard.template target/dashboard.properties
 echo "dbhost="$2 >> target/dashboard.properties
@@ -44,6 +47,13 @@ java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
 echo "Starting UI"
 cd ../../UI
 cp -r dist/* /usr/share/nginx/html/
-cat ../nginx.default > /etc/nginx/sites-enabled/default
+#cat ../nginx.default > /etc/nginx/sites-enabled/default
+cat ../nginx.default > /etc/nginx/conf.d/api.conf
 service nginx reload
+
+sudo cat /var/log/audit/audit.log | grep nginx | grep denied | audit2allow -M mynginx
+sudo semodule -i mynginx.pp
+
+nginx -s reload
+
 echo "Done..."

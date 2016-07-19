@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "Stopping all running processes"
-killall java
+#killall java
+kill `ps -eaf | grep java | awk {'print $2'}`
 sleep 5 
 cd api/target
 echo "Starting API service"
