@@ -2,7 +2,6 @@
 database=dashboard
 
 #Database HostName - default is localhost
-dbhost=10.30.0.10
 
 #Database Port - default is 27017
 dbport=27017

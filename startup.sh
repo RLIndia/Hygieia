@@ -35,6 +35,14 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
 
+cd bitbucket-scm-collector/target/
+echo "Configuring Bitbucket collector"
+cat ../../bitbucket-scm-collector/src/main/resources/application.properties >  ../../bitbucket-scm-collector/target/application.properties
+echo "dbhost="$2 >> ../../bitbucket-scm-collector/target/application.properties
+cd ../../bitbucket-scm-collector/target
+java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+
+
 echo "Configuring Jenkins collector"
 cd ../../jenkins-build-collector/
 cp -f jenkins.template target/application.properties
@@ -44,6 +52,14 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
 
+echo "Configuring Sonar collector"
+cd ../../sonar-codequality-collector/
+cp -f sonar.template target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+
+ 
 echo "Starting UI"
 cd ../../UI
 cp -r dist/* /usr/share/nginx/html/
