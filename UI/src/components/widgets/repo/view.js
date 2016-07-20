@@ -7,6 +7,7 @@
 
     RepoViewController.$inject = ['$q', '$scope','codeRepoData', '$modal'];
     function RepoViewController($q, $scope, codeRepoData, $modal) {
+    	console.log('codeRepoData',codeRepoData);
         var ctrl = this;
 
         ctrl.commitChartOptions = {
@@ -51,6 +52,7 @@
                 numberOfDays: 14
             };
             codeRepoData.details(params).then(function(data) {
+            	console.log(data);
                 processResponse(data.result, params.numberOfDays);
                 deferred.resolve(data.lastUpdated);
             });
