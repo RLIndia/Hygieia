@@ -15,6 +15,9 @@ public class GitSettings {
     private int firstRunHistoryDays;
     private String api;
     private int pageSize;
+    
+    private String username;
+    private String password;
 
 	public String getHost() {
 		return host;
@@ -62,5 +65,21 @@ public class GitSettings {
 	
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }

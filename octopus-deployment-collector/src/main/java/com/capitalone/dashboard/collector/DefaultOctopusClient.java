@@ -45,34 +45,56 @@ public class DefaultOctopusClient implements OctopusClient{
 	@Override
 	public List<OctopusApplication> getApplications() {
 		List<OctopusApplication> applications = new ArrayList<>();
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/projects",octopusSettings.getApiKey()));
+		boolean hasNext = true;
+		String urlPath = "/api/projects";
+		while(hasNext) {
 
-		JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),urlPath,octopusSettings.getApiKey()));
 
-		for (Object item :jsonArray) {
-			JSONObject jsonObject = (JSONObject) item;
-			OctopusApplication application = new OctopusApplication();
-			application.setInstanceUrl(octopusSettings.getUrl());
-			application.setApplicationName(str(jsonObject, "Name"));
-			application.setApplicationId(str(jsonObject, "Id"));
-			applications.add(application);
+			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
+
+			for (Object item :jsonArray) {
+				JSONObject jsonObject = (JSONObject) item;
+				OctopusApplication application = new OctopusApplication();
+				application.setInstanceUrl(octopusSettings.getUrl());
+				application.setApplicationName(str(jsonObject, "Name"));
+				application.setApplicationId(str(jsonObject, "Id"));
+				applications.add(application);
+			}
+			JSONObject links = (JSONObject)resJsonObject.get("Links");
+			urlPath = (String)links.get("Page.Next");
+
+			if(urlPath == null || urlPath.isEmpty()) {
+				hasNext = false;
+			}
 		}
+
 		return applications;
 	}
 
 	@Override
 	public List<Environment> getEnvironments() {
 		List<Environment> environments = new ArrayList<>();
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/environments",octopusSettings.getApiKey()));
-		JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
-		for (Object item : jsonArray) {
-			JSONObject jsonObject = (JSONObject) item;
-			environments.add(new Environment(str(jsonObject, "Id"), str(
-					jsonObject, "Name")));
-		}
+		boolean hasNext = true;
+		String urlPath = "/api/environments";
+		while(hasNext) {
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
+					urlPath,octopusSettings.getApiKey()));
+			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
+			for (Object item : jsonArray) {
+				JSONObject jsonObject = (JSONObject) item;
+				environments.add(new Environment(str(jsonObject, "Id"), str(
+						jsonObject, "Name")));
+			}
 
+			JSONObject links = (JSONObject)resJsonObject.get("Links");
+			urlPath = (String)links.get("Page.Next");
+
+			if(urlPath == null || urlPath.isEmpty()) {
+				hasNext = false;
+			}
+
+		}
 		return environments;
 	}
 
@@ -80,20 +102,22 @@ public class DefaultOctopusClient implements OctopusClient{
 	public List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application) {
 		List<ApplicationDeploymentHistoryItem> applicationDeployments = new ArrayList<>();
 
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/deployments",octopusSettings.getApiKey()));
+		boolean hasNext = true;
+		String urlPath = "/api/deployments?projects="+application.getApplicationId();
+		while(hasNext) {
 
-		JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
+					urlPath,octopusSettings.getApiKey()));
 
-		LOGGER.info("applicationID ==>"+application.getApplicationId());
+			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
 
-		LOGGER.info("Deployment History size ==>"+jsonArray.size());
+			LOGGER.info("applicationID ==>"+application.getApplicationId());
+			LOGGER.info("Deployment History size ==>"+jsonArray.size());
 
-		for (Object item :jsonArray) {
-			JSONObject jsonObject = (JSONObject) item;
-			LOGGER.info("Project Id ==>"+str(jsonObject, "ProjectId"));
+			for (Object item :jsonArray) {
+				JSONObject jsonObject = (JSONObject) item;
+				//LOGGER.info("Project Id ==>"+str(jsonObject, "ProjectId"));
 
-			if(application.getApplicationId().equals(str(jsonObject, "ProjectId"))) {
 				ApplicationDeploymentHistoryItem historyItem = new ApplicationDeploymentHistoryItem();
 				historyItem.setApplicationId(application.getApplicationId());
 				historyItem.setApplicationName(application.getApplicationName());
@@ -114,11 +138,11 @@ public class DefaultOctopusClient implements OctopusClient{
 
 
 				//historyItem.setAsOfDate(System.currentTimeMillis());// for testing
-				
+
 				String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 				DateTimeFormatter dtf = DateTimeFormat.forPattern(pattern);
 				DateTime dateTime = dtf.parseDateTime(str(jsonObject, "Created"));
-				
+
 				historyItem.setAsOfDate(dateTime.getMillis());
 
 				Task task = getTaskById(str(jsonObject, "TaskId"));
@@ -133,19 +157,27 @@ public class DefaultOctopusClient implements OctopusClient{
 				} else {
 					historyItem.setMachines(new ArrayList<Machine>());
 				}
-				
-				
 
 				applicationDeployments.add(historyItem);
+
+
+			}
+
+			JSONObject links = (JSONObject)resJsonObject.get("Links");
+			urlPath = (String)links.get("Page.Next");
+
+			if(urlPath == null || urlPath.isEmpty()) {
+				hasNext = false;
 			}
 
 		}
+
 		return applicationDeployments;
 	}
 
 	private Task getTaskById(String taskId) {
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/tasks/"+taskId,octopusSettings.getApiKey()));
+				"/api/tasks/"+taskId,octopusSettings.getApiKey()));
 		Task task = new Task();
 
 		task.setTaskId(taskId);
@@ -162,24 +194,38 @@ public class DefaultOctopusClient implements OctopusClient{
 	}
 
 	private List<Machine> getMachinesByEnvId(String envId) {
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/environments/"+envId+"/machines",octopusSettings.getApiKey()));
+
 		List<Machine> machines= new ArrayList<Machine>();
 
-		JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
-		for (Object item :jsonArray) {
-			JSONObject jsonObject = (JSONObject) item;
-			Machine machine = new Machine();
-			machine.setEnviromentId(envId);
-			machine.setMachineName((String)jsonObject.get("Name"));
-			machine.setMachineId((String)jsonObject.get("Id"));
-			String status = (String)jsonObject.get("Status");
-			if(status.equals("Online")) {
-				machine.setStatus(true);
-			} else {
-				machine.setStatus(false);	
+		boolean hasNext = true;
+		String urlPath = "/api/environments/"+envId+"/machines";
+		while(hasNext) {
+
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
+					urlPath,octopusSettings.getApiKey()));
+
+			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
+			for (Object item :jsonArray) {
+				JSONObject jsonObject = (JSONObject) item;
+				Machine machine = new Machine();
+				machine.setEnviromentId(envId);
+				machine.setMachineName((String)jsonObject.get("Name"));
+				machine.setMachineId((String)jsonObject.get("Id"));
+				String status = (String)jsonObject.get("Status");
+				if(status.equals("Online")) {
+					machine.setStatus(true);
+				} else {
+					machine.setStatus(false);	
+				}
+				machines.add(machine);
 			}
-			machines.add(machine);
+
+			JSONObject links = (JSONObject)resJsonObject.get("Links");
+			urlPath = (String)links.get("Page.Next");
+
+			if(urlPath == null || urlPath.isEmpty()) {
+				hasNext = false;
+			}
 		}
 
 		return machines;
@@ -187,7 +233,7 @@ public class DefaultOctopusClient implements OctopusClient{
 
 	private Release getReleaseById(String id) {
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/releases/"+id,octopusSettings.getApiKey()));
+				"/api/releases/"+id,octopusSettings.getApiKey()));
 		Release rel = new Release();
 
 		rel.setApplicationId((String)resJsonObject.get("ProjectId"));
@@ -200,7 +246,7 @@ public class DefaultOctopusClient implements OctopusClient{
 	private Environment getEnvironmentById(String envId){
 
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/environments/"+envId,octopusSettings.getApiKey()));
+				"/api/environments/"+envId,octopusSettings.getApiKey()));
 		Environment env = new Environment(envId, (String)resJsonObject.get("Name"));
 
 		return env;
