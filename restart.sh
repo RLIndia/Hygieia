@@ -14,7 +14,14 @@ echo "Starting Octopus collector"
 cd ../../octopus-deployment-collector/target
 java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
 
+echo "Starting Bitbucket  collector"
+cd ../../bitbucket-scm-collector/target
+java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar  > /dev/null 2>&1 &
+
 echo "Starting Jenkins collector"
 cd ../../jenkins-build-collector/target
 java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
 
+echo "Starting Sonar collector"
+cd ../../sonar-codequality-collector/target
+java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
