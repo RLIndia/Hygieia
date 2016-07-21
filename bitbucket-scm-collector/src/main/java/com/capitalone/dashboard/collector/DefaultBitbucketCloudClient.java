@@ -2,8 +2,8 @@ package com.capitalone.dashboard.collector;
 
 import com.capitalone.dashboard.model.Commit;
 import com.capitalone.dashboard.model.GitRepo;
-import com.capitalone.dashboard.util.Encryption;
-import com.capitalone.dashboard.util.EncryptionException;
+//import com.capitalone.dashboard.util.Encryption;
+//import com.capitalone.dashboard.util.EncryptionException;
 import com.capitalone.dashboard.util.Supplier;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -115,28 +115,28 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		String thisMoment = String.format("%tFT%<tRZ", cal);
 
 		String queryUrl = apiUrl.concat("/commits?sha=" + repo.getBranch()
-				+ "&since=" + thisMoment);
+		+ "&since=" + thisMoment);
 		/*
 		 * Calendar cal = Calendar.getInstance(); cal.setTime(dateInstance);
 		 * cal.add(Calendar.DATE, -30); Date dateBefore30Days = cal.getTime();
 		 */
 
 		// decrypt password
-		String decryptedPassword = "";
-		if (repo.getPassword() != null && !repo.getPassword().isEmpty()) {
-			try {
-				decryptedPassword = Encryption.decryptString(
-						repo.getPassword(), settings.getKey());
-			} catch (EncryptionException e) {
-				LOG.error(e.getMessage());
-			}
-		}
+		//		String decryptedPassword = "";
+		//		if (repo.getPassword() != null && !repo.getPassword().isEmpty()) {
+		//			try {
+		//				decryptedPassword = Encryption.decryptString(
+		//						repo.getPassword(), settings.getKey());
+		//			} catch (EncryptionException e) {
+		//				LOG.error(e.getMessage());
+		//			}
+		//		}
 		boolean lastPage = false;
 		int pageNumber = 1;
 		String queryUrlPage = queryUrl;
 		while (!lastPage) {
 			try {
-				ResponseEntity<String> response = makeRestCall(queryUrlPage, repo.getUserId(), decryptedPassword);
+				ResponseEntity<String> response = makeRestCall(queryUrlPage, settings.getUsername(), settings.getPassword());
 				JSONObject jsonParentObject = paresAsObject(response);
 				JSONArray jsonArray = (JSONArray) jsonParentObject.get("values");
 
@@ -147,7 +147,7 @@ public class DefaultBitbucketCloudClient implements GitClient {
 					String message = str(jsonObject, "message");
 					String author = str(authorObject, "raw");
 					long timestamp = new DateTime(str(jsonObject, "date")).getMillis();
-					
+
 					Commit commit = new Commit();
 					commit.setTimestamp(System.currentTimeMillis());
 					commit.setScmUrl(repo.getRepoUrl());
@@ -202,6 +202,9 @@ public class DefaultBitbucketCloudClient implements GitClient {
 	private ResponseEntity<String> makeRestCall(String url, String userId,
 			String password) {
 		// Basic Auth only.
+//		LOG.info("username ==> "+userId);
+//		LOG.info("password ==> "+password);
+
 		if (!"".equals(userId) && !"".equals(password)) {
 			return restOperations.exchange(url, HttpMethod.GET,
 					new HttpEntity<>(createHeaders(userId, password)),
@@ -217,13 +220,16 @@ public class DefaultBitbucketCloudClient implements GitClient {
 	private HttpHeaders createHeaders(final String userId, final String password) {
 		String auth = userId + ":" + password;
 		byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.US_ASCII));
-		String authHeader = "Basic " + new String(encodedAuth);
+
+		//	String authHeader = "Basic " + new String(encodedAuth);
+		String authHeader = new String(encodedAuth);
+
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", authHeader);
 		return headers;
 	}
-	
+
 	private JSONObject paresAsObject(ResponseEntity<String> response) {
 		try {
 			return (JSONObject) new JSONParser().parse(response.getBody());
