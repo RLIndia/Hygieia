@@ -15,10 +15,10 @@ spring.data.mongodb.password=
 git.cron=0 * * * * *
 
 #mandatory
-git.host=bitbucket.org/
+git.host=api.bitbucket.org
 
 #mandatory
-git.api=/!api/2.0/repositories/
+git.api=/2.0/repositories/
 
 #Maximum number of days to go back in time when fetching commits
 git.commitThresholdDays=15
