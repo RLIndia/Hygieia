@@ -42,4 +42,3 @@ logs
 .pmd
 .classpath
 application.properties
-nohup.out
