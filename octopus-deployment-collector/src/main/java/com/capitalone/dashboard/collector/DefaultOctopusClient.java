@@ -46,7 +46,7 @@ public class DefaultOctopusClient implements OctopusClient{
 	public List<OctopusApplication> getApplications() {
 		List<OctopusApplication> applications = new ArrayList<>();
 		boolean hasNext = true;
-		String urlPath = "api/projects";
+		String urlPath = "/api/projects";
 		while(hasNext) {
 
 			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),urlPath,octopusSettings.getApiKey()));
@@ -76,7 +76,7 @@ public class DefaultOctopusClient implements OctopusClient{
 	public List<Environment> getEnvironments() {
 		List<Environment> environments = new ArrayList<>();
 		boolean hasNext = true;
-		String urlPath = "api/environments";
+		String urlPath = "/api/environments";
 		while(hasNext) {
 			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
 					urlPath,octopusSettings.getApiKey()));
@@ -103,7 +103,7 @@ public class DefaultOctopusClient implements OctopusClient{
 		List<ApplicationDeploymentHistoryItem> applicationDeployments = new ArrayList<>();
 
 		boolean hasNext = true;
-		String urlPath = "api/deployments";
+		String urlPath = "/api/deployments";
 		while(hasNext) {
 
 			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
@@ -178,7 +178,7 @@ public class DefaultOctopusClient implements OctopusClient{
 
 	private Task getTaskById(String taskId) {
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/tasks/"+taskId,octopusSettings.getApiKey()));
+				"/api/tasks/"+taskId,octopusSettings.getApiKey()));
 		Task task = new Task();
 
 		task.setTaskId(taskId);
@@ -199,7 +199,7 @@ public class DefaultOctopusClient implements OctopusClient{
 		List<Machine> machines= new ArrayList<Machine>();
 
 		boolean hasNext = true;
-		String urlPath = "api/environments/"+envId+"/machines";
+		String urlPath = "/api/environments/"+envId+"/machines";
 		while(hasNext) {
 
 			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
@@ -234,7 +234,7 @@ public class DefaultOctopusClient implements OctopusClient{
 
 	private Release getReleaseById(String id) {
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/releases/"+id,octopusSettings.getApiKey()));
+				"/api/releases/"+id,octopusSettings.getApiKey()));
 		Release rel = new Release();
 
 		rel.setApplicationId((String)resJsonObject.get("ProjectId"));
@@ -247,7 +247,7 @@ public class DefaultOctopusClient implements OctopusClient{
 	private Environment getEnvironmentById(String envId){
 
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/environments/"+envId,octopusSettings.getApiKey()));
+				"/api/environments/"+envId,octopusSettings.getApiKey()));
 		Environment env = new Environment(envId, (String)resJsonObject.get("Name"));
 
 		return env;
