@@ -86,14 +86,14 @@ public class DefaultOctopusClient implements OctopusClient{
 				environments.add(new Environment(str(jsonObject, "Id"), str(
 						jsonObject, "Name")));
 			}
-			
+
 			JSONObject links = (JSONObject)resJsonObject.get("Links");
 			urlPath = (String)links.get("Page.Next");
 
 			if(urlPath == null || urlPath.isEmpty()) {
 				hasNext = false;
 			}
-			
+
 		}
 		return environments;
 	}
@@ -102,66 +102,77 @@ public class DefaultOctopusClient implements OctopusClient{
 	public List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application) {
 		List<ApplicationDeploymentHistoryItem> applicationDeployments = new ArrayList<>();
 
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/deployments",octopusSettings.getApiKey()));
+		boolean hasNext = true;
+		String urlPath = "api/deployments";
+		while(hasNext) {
 
-		JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
+					urlPath,octopusSettings.getApiKey()));
 
-		LOGGER.info("applicationID ==>"+application.getApplicationId());
+			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
 
-		LOGGER.info("Deployment History size ==>"+jsonArray.size());
+			//LOGGER.info("applicationID ==>"+application.getApplicationId());
+			//LOGGER.info("Deployment History size ==>"+jsonArray.size());
 
-		for (Object item :jsonArray) {
-			JSONObject jsonObject = (JSONObject) item;
-			LOGGER.info("Project Id ==>"+str(jsonObject, "ProjectId"));
+			for (Object item :jsonArray) {
+				JSONObject jsonObject = (JSONObject) item;
+				//LOGGER.info("Project Id ==>"+str(jsonObject, "ProjectId"));
 
-			if(application.getApplicationId().equals(str(jsonObject, "ProjectId"))) {
-				ApplicationDeploymentHistoryItem historyItem = new ApplicationDeploymentHistoryItem();
-				historyItem.setApplicationId(application.getApplicationId());
-				historyItem.setApplicationName(application.getApplicationName());
-				historyItem.setEnvironmentId(str(jsonObject, "EnvironmentId"));
-				historyItem.setDeploymentId(str(jsonObject, "Id"));
+				if(application.getApplicationId().equals(str(jsonObject, "ProjectId"))) {
+					ApplicationDeploymentHistoryItem historyItem = new ApplicationDeploymentHistoryItem();
+					historyItem.setApplicationId(application.getApplicationId());
+					historyItem.setApplicationName(application.getApplicationName());
+					historyItem.setEnvironmentId(str(jsonObject, "EnvironmentId"));
+					historyItem.setDeploymentId(str(jsonObject, "Id"));
 
-				historyItem.setCollectorItemId(application.getId());
+					historyItem.setCollectorItemId(application.getId());
 
-				Environment env = getEnvironmentById(historyItem.getEnvironmentId());
-				historyItem.setEnvironmentName(env.getName());
-
-
-				Release rel = getReleaseById(str(jsonObject, "ReleaseId"));
-
-				historyItem.setVersion(rel.getVersion());
+					Environment env = getEnvironmentById(historyItem.getEnvironmentId());
+					historyItem.setEnvironmentName(env.getName());
 
 
+					Release rel = getReleaseById(str(jsonObject, "ReleaseId"));
+
+					historyItem.setVersion(rel.getVersion());
 
 
-				//historyItem.setAsOfDate(System.currentTimeMillis());// for testing
-
-				String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-				DateTimeFormatter dtf = DateTimeFormat.forPattern(pattern);
-				DateTime dateTime = dtf.parseDateTime(str(jsonObject, "Created"));
-
-				historyItem.setAsOfDate(dateTime.getMillis());
-
-				Task task = getTaskById(str(jsonObject, "TaskId"));
-				historyItem.setDeployed(task.isState());
 
 
-				// getting list of machines
-				JSONArray specificMachineIds = (JSONArray) jsonObject.get("SpecificMachineIds");
-				if(specificMachineIds.size() == 0) {
-					List<Machine> machines = getMachinesByEnvId(historyItem.getEnvironmentId());
-					historyItem.setMachines(machines);
-				} else {
-					historyItem.setMachines(new ArrayList<Machine>());
+					//historyItem.setAsOfDate(System.currentTimeMillis());// for testing
+
+					String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+					DateTimeFormatter dtf = DateTimeFormat.forPattern(pattern);
+					DateTime dateTime = dtf.parseDateTime(str(jsonObject, "Created"));
+
+					historyItem.setAsOfDate(dateTime.getMillis());
+
+					Task task = getTaskById(str(jsonObject, "TaskId"));
+					historyItem.setDeployed(task.isState());
+
+
+					// getting list of machines
+					JSONArray specificMachineIds = (JSONArray) jsonObject.get("SpecificMachineIds");
+					if(specificMachineIds.size() == 0) {
+						List<Machine> machines = getMachinesByEnvId(historyItem.getEnvironmentId());
+						historyItem.setMachines(machines);
+					} else {
+						historyItem.setMachines(new ArrayList<Machine>());
+					}
+
+					applicationDeployments.add(historyItem);
 				}
 
+			}
 
+			JSONObject links = (JSONObject)resJsonObject.get("Links");
+			urlPath = (String)links.get("Page.Next");
 
-				applicationDeployments.add(historyItem);
+			if(urlPath == null || urlPath.isEmpty()) {
+				hasNext = false;
 			}
 
 		}
+
 		return applicationDeployments;
 	}
 
@@ -184,24 +195,38 @@ public class DefaultOctopusClient implements OctopusClient{
 	}
 
 	private List<Machine> getMachinesByEnvId(String envId) {
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"api/environments/"+envId+"/machines",octopusSettings.getApiKey()));
+
 		List<Machine> machines= new ArrayList<Machine>();
 
-		JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
-		for (Object item :jsonArray) {
-			JSONObject jsonObject = (JSONObject) item;
-			Machine machine = new Machine();
-			machine.setEnviromentId(envId);
-			machine.setMachineName((String)jsonObject.get("Name"));
-			machine.setMachineId((String)jsonObject.get("Id"));
-			String status = (String)jsonObject.get("Status");
-			if(status.equals("Online")) {
-				machine.setStatus(true);
-			} else {
-				machine.setStatus(false);	
+		boolean hasNext = true;
+		String urlPath = "api/environments/"+envId+"/machines";
+		while(hasNext) {
+
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
+					urlPath,octopusSettings.getApiKey()));
+
+			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
+			for (Object item :jsonArray) {
+				JSONObject jsonObject = (JSONObject) item;
+				Machine machine = new Machine();
+				machine.setEnviromentId(envId);
+				machine.setMachineName((String)jsonObject.get("Name"));
+				machine.setMachineId((String)jsonObject.get("Id"));
+				String status = (String)jsonObject.get("Status");
+				if(status.equals("Online")) {
+					machine.setStatus(true);
+				} else {
+					machine.setStatus(false);	
+				}
+				machines.add(machine);
 			}
-			machines.add(machine);
+			
+			JSONObject links = (JSONObject)resJsonObject.get("Links");
+			urlPath = (String)links.get("Page.Next");
+
+			if(urlPath == null || urlPath.isEmpty()) {
+				hasNext = false;
+			}
 		}
 
 		return machines;
