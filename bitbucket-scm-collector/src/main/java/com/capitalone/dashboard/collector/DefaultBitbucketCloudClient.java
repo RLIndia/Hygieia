@@ -202,8 +202,8 @@ public class DefaultBitbucketCloudClient implements GitClient {
 	private ResponseEntity<String> makeRestCall(String url, String userId,
 			String password) {
 		// Basic Auth only.
-//		LOG.info("username ==> "+userId);
-//		LOG.info("password ==> "+password);
+		LOG.info("username ==> "+userId);
+		LOG.info("password ==> "+password);
 
 		if (!"".equals(userId) && !"".equals(password)) {
 			return restOperations.exchange(url, HttpMethod.GET,
