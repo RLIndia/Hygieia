@@ -32,7 +32,6 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
 
-cd bitbucket-scm-collector/target/
 echo "Configuring Bitbucket collector"
 cat ../../bitbucket-scm-collector/src/main/resources/application.properties >  ../../bitbucket-scm-collector/target/application.properties
 echo $'\ndbhost='$2 >> ../../bitbucket-scm-collector/target/application.properties
