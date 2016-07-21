@@ -93,10 +93,15 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		String apiUrl = "";
 		if (hostName.startsWith(settings.getHost())) {
 			apiUrl = protocol + "://" + settings.getHost() + repoName;
+			//LOG.info("API URL IS IF :"+apiUrl);
+
 		} else {
-			apiUrl = protocol + "://" + hostName + settings.getApi() + repoName;
-			LOG.debug("API URL IS:"+apiUrl);
+			//apiUrl = protocol + "://" + hostName + settings.getApi() + repoName;
+			apiUrl = protocol + "://" + settings.getHost() + settings.getApi() + repoName;
+			//LOG.info("API URL IS ELSE :"+apiUrl);
 		}
+		
+		//LOG.info("API URL IS Outside :"+apiUrl);
 		Date dt;
 		if (firstRun) {
 			int firstRunDaysHistory = settings.getFirstRunHistoryDays();
@@ -202,8 +207,8 @@ public class DefaultBitbucketCloudClient implements GitClient {
 	private ResponseEntity<String> makeRestCall(String url, String userId,
 			String password) {
 		// Basic Auth only.
-		LOG.info("username ==> "+userId);
-		LOG.info("password ==> "+password);
+		//LOG.info("username ==> "+userId);
+		//LOG.info("password ==> "+password);
 
 		if (!"".equals(userId) && !"".equals(password)) {
 			return restOperations.exchange(url, HttpMethod.GET,
@@ -221,8 +226,8 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		String auth = userId + ":" + password;
 		byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.US_ASCII));
 
-		//	String authHeader = "Basic " + new String(encodedAuth);
-		String authHeader = new String(encodedAuth);
+		String authHeader = "Basic " + new String(encodedAuth);
+		//String authHeader = new String(encodedAuth);
 
 
 		HttpHeaders headers = new HttpHeaders();
