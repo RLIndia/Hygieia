@@ -127,7 +127,8 @@ gulp.task('serve', ['build'], function() {
     }
 
     browserSync.init({
-        server: {
+    	ghostMode: false,
+    	server: {
             baseDir: hygieia.dist,
             startPath: '/',
             middleware: [proxyMiddleware]
