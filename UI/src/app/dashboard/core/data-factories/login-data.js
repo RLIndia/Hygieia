@@ -39,8 +39,14 @@
           }
           else
           {
+            //return (true);
         return $http.post(LoginDetailRoute,postData).then(function (response) {
-            return response.data;
+
+            console.log('****************');
+            console.log(response.data);
+            console.log('**************');          
+          //  return response.data;
+            return true;
         });
       }
     }
