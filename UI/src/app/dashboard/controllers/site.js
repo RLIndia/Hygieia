@@ -78,8 +78,8 @@
 
         function logout()
         {
-            $cookieStore.remove("username");
-            $cookieStore.remove("authenticated");
+            // $cookieStore.remove("username");
+            // $cookieStore.remove("authenticated");
             $location.path('/');
         }
 
