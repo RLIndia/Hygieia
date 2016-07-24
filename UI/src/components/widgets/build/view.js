@@ -82,6 +82,13 @@
                 processResponse(builds);
                 deferred.resolve(data.lastUpdated);
             });
+            console.log("*********************");
+            console.log($scope.widgetConfig.componentId);
+            console.log($scope.dashboard.application.components[0].collectorItems);
+            ctrl.title = $scope.dashboard.application.components[0].collectorItems.Build[0].options.jobName;
+            $scope.subtitle = '[' + ctrl.title + ']';
+            console.log("***********************");
+
             return deferred.promise;
         };
 

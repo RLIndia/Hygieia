@@ -16,9 +16,16 @@
 
         ctrl.load = load;
         ctrl.showDetail = showDetail;
+        ctrl.title = "";
 
         function load() {
             var deferred = $q.defer();
+            console.log("*********************");
+            console.log($scope.widgetConfig.componentId);
+            console.log($scope.dashboard.application.components[0].collectorItems.Deployment[0].options.applicationName);
+            ctrl.title = $scope.dashboard.application.components[0].collectorItems.Deployment[0].options.applicationName;
+            $scope.subtitle = '[' + ctrl.title + ']';
+            console.log("***********************");
             deployData.details($scope.widgetConfig.componentId).then(function(data) {
                 processResponse(data.result);
                 deferred.resolve(data.lastUpdated);
