@@ -5,6 +5,7 @@ public class Release {
 	private String releaseId;
 	private String applicationId;
 	private String version;
+	private String deploymentProcessSnapShotId;
 	
 	public String getReleaseId() {
 		return releaseId;
@@ -24,6 +25,12 @@ public class Release {
 	}
 	public void setVersion(String version) {
 		this.version = version;
+	}
+	public String getDeploymentProcessSnapShotId() {
+		return deploymentProcessSnapShotId;
+	}
+	public void setDeploymentProcessSnapShotId(String deploymentProcessSnapShotId) {
+		this.deploymentProcessSnapShotId = deploymentProcessSnapShotId;
 	}
 
 }
