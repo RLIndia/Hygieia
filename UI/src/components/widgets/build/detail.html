@@ -6,15 +6,20 @@
 					<span class="dash-status-lg" dash-status="{{detail.buildPassed()}}"></span>
 					<span class="build-number">Build {{::detail.build.number}}</span>
 				</div>
-				<div class="col-md-3 build-time">
+				<div class="col-md-2 build-time">
 					<span>{{::detail.build.endTime | date:'MMM d, HH:mm:ss'}}</span>
 				</div>
-				<div class="col-md-3 build-duration">
+				<div class="col-md-2 build-duration">
 					<span>Duration: {{::detail.build.duration | duration}}</span>
 				</div>
 				<div class="col-md-3 view-in-tool">
 					<a ng-href="{{::detail.build.buildUrl}}" target="_blank">
 						View in {{::detail.collectorName}} <span class="fa fa-angle-right"></span>
+					</a>
+				</div>
+				<div class="col-md-2 view-in-tool">
+					<a ng-href="{{::detail.build.buildTestResult.resultUrl}}" target="_blank">
+						Test Results <span class="fa fa-angle-right"></span>
 					</a>
 				</div>
 			</div>

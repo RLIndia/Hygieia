@@ -33,6 +33,7 @@ public class Build extends BaseModel {
     private String startedBy;
     private String log;
     private List<SCM> sourceChangeSet = new ArrayList<>();
+    private BuildTestResult buildTestResult;
 
     public ObjectId getCollectorItemId() {
         return collectorItemId;
@@ -125,4 +126,12 @@ public class Build extends BaseModel {
     public void addSourceChangeSet(SCM scm) {
         getSourceChangeSet().add(scm);
     }
+
+	public BuildTestResult getBuildTestResult() {
+		return buildTestResult;
+	}
+
+	public void setBuildTestResult(BuildTestResult buildTestResult) {
+		this.buildTestResult = buildTestResult;
+	}
 }

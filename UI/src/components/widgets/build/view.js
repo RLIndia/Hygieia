@@ -10,9 +10,13 @@
 
     BuildWidgetViewController.$inject = ['$scope', 'buildData', 'DisplayState', '$q', '$modal'];
     function BuildWidgetViewController($scope, buildData, DisplayState, $q, $modal) {
-        var ctrl = this;
+    	
+    	console.log("buildData =>",buildData);
+    	var ctrl = this;
         var builds = [];
 
+        
+       
         //region Chart Configuration
         // line chart config
 
@@ -78,9 +82,18 @@
                 numberOfDays: 15
             };
             buildData.details(params).then(function(data) {
+            	console.log("data ===>",data);
                 builds = data.result;
                 processResponse(builds);
                 deferred.resolve(data.lastUpdated);
+                if(data.result && data.result.length) {
+                	var latestBuild = data.result[0];
+                	if(latestBuild.buildTestResult) {
+                		ctrl.latestBuildTestResult = latestBuild.buildTestResult;
+                	}
+                	
+                }
+                
             });
             console.log("*********************");
             console.log($scope.widgetConfig.componentId);
