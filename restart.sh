@@ -4,19 +4,19 @@ pkill java
 sleep 5 
 cd api/target
 echo "Starting API service"
-java -jar api.jar --spring.config.location=./dashboard.properties > /dev/null 2>&1 &
+nohup java -jar api.jar --spring.config.location=./dashboard.properties &
 
 echo "Starting Octopus collector"
 cd ../../octopus-deployment-collector/target
-java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Starting Bitbucket  collector"
 cd ../../bitbucket-scm-collector/target
-java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar  > /dev/null 2>&1 &
+nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Starting Jenkins collector"
 cd ../../jenkins-build-collector/target
-java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 
 <<'COMMENT'
 
