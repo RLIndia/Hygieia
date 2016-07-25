@@ -15,6 +15,8 @@
         // public variables
         ctrl.search = '';
         ctrl.myadmin = '';
+        $cookies.username = "admin"; //new line: included to allow users to directly land on the dashboard
+        $cookies.authenticated = true;//new line: included to allow users to directly land on the dashboard
         ctrl.username = $cookies.username;
         ctrl.showAuthentication = $cookies.authenticated;
         ctrl.templateUrl = 'app/dashboard/views/navheader.html';
@@ -76,8 +78,8 @@
 
         function logout()
         {
-            $cookieStore.remove("username");
-            $cookieStore.remove("authenticated");
+            // $cookieStore.remove("username");
+            // $cookieStore.remove("authenticated");
             $location.path('/');
         }
 
