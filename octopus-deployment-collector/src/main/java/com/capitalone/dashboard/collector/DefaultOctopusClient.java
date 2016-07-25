@@ -155,7 +155,13 @@ public class DefaultOctopusClient implements OctopusClient{
 					List<Machine> machines = getMachinesByEnvId(historyItem.getEnvironmentId());
 					historyItem.setMachines(machines);
 				} else {
-					historyItem.setMachines(new ArrayList<Machine>());
+					List<Machine> machines = new ArrayList<Machine>();
+					for (Object obj :specificMachineIds) {
+						String machineId = (String)obj;
+						Machine m = getMachineById(machineId, historyItem.getEnvironmentId());
+					   machines.add(m);
+					}
+					historyItem.setMachines(machines);
 				}
 
 				applicationDeployments.add(historyItem);
@@ -191,6 +197,24 @@ public class DefaultOctopusClient implements OctopusClient{
 
 
 		return task;
+	}
+	
+	private Machine getMachineById(String machineId,String envId) {
+		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
+				"/api/machines/"+machineId,octopusSettings.getApiKey()));
+		Machine machine = new Machine();
+		machine.setEnviromentId(envId);
+		machine.setMachineName((String)resJsonObject.get("Name"));
+		machine.setMachineId((String)resJsonObject.get("Id"));
+		String status = (String)resJsonObject.get("Status");
+		if(status.equals("Online")) {
+			machine.setStatus(true);
+		} else {
+			machine.setStatus(false);	
+		}
+		
+		return machine;
+		
 	}
 
 	private List<Machine> getMachinesByEnvId(String envId) {
