@@ -3,6 +3,7 @@ package com.capitalone.dashboard.collector;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -36,12 +37,14 @@ public class DefaultOctopusClient implements OctopusClient{
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultOctopusClient.class);
 	private final OctopusSettings octopusSettings;
 	private final RestOperations restOperations;
+	private final Locale locale;
 
 	@Autowired
 	public DefaultOctopusClient(OctopusSettings octopusSettings,
 			Supplier<RestOperations> restOperationsSupplier) {
 		this.octopusSettings = octopusSettings;
 		this.restOperations = restOperationsSupplier.get();
+		this.locale = new Locale("en", "US");
 	}
 
 	@Override
@@ -208,7 +211,9 @@ public class DefaultOctopusClient implements OctopusClient{
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
 				"/api/deploymentprocesses/"+deploymentProcessId, octopusSettings.getApiKey()));
 		JSONArray steps = (JSONArray)resJsonObject.get("Steps");
-
+        
+		//LOGGER.info("steps size ==>"+steps.size());
+		
 		Set<String> roleSet = new HashSet<>();
 
 		for(Object object : steps) {
@@ -216,12 +221,14 @@ public class DefaultOctopusClient implements OctopusClient{
 			JSONObject propertiesObj = (JSONObject)obj.get("Properties");
 			if(propertiesObj != null) {
 				String roles = (String)propertiesObj.get("Octopus.Action.TargetRoles");
+				//LOGGER.info("deployment step role ==>"+roles);
 				if(roles != null && !roles.isEmpty()) {
 					String[] rolesArray = roles.split(",");
 					for(int i=0;i<rolesArray.length;i++) {
-						roleSet.add(rolesArray[i]);
+						roleSet.add(rolesArray[i].toLowerCase(locale));
 					}
 				}
+				
 			}
 		}
 		return roleSet;
@@ -273,11 +280,13 @@ public class DefaultOctopusClient implements OctopusClient{
 				if(roleSet.isEmpty()) {
 					machines.add(machine);
 				} else {
+					//LOGGER.info("roleset ==> "+roleSet.toString());
 					JSONArray roles = (JSONArray)jsonObject.get("Roles");
+					//LOGGER.info("machine roles ==>"+roles.toJSONString());
 					for(Object obj : roles) {
 						String role = (String)obj;
-						if(roleSet.contains(role)) {
-							LOGGER.info("adding machine by role "+role);
+						if(roleSet.contains(role.toLowerCase(locale))) {
+							//LOGGER.info("adding machine by role "+role);
 							machines.add(machine);
 							break;
 						}
@@ -362,9 +371,5 @@ public class DefaultOctopusClient implements OctopusClient{
 		Object value = json.get(key);
 		return value == null ? null : value.toString();
 	}
-
-
-
-
 
 }
