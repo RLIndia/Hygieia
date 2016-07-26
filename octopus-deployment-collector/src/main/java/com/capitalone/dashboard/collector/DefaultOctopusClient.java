@@ -155,6 +155,10 @@ public class DefaultOctopusClient implements OctopusClient{
 				JSONArray specificMachineIds = (JSONArray) jsonObject.get("SpecificMachineIds");
 				if(specificMachineIds.size() == 0) {
 					String deploymentProcessId =  (String)jsonObject.get("DeploymentProcessId");
+					if(deploymentProcessId == null || deploymentProcessId.isEmpty()) {
+						// version 2 of octopus.. trying to get id from release
+						deploymentProcessId = rel.getDeploymentProcessSnapShotId();
+					}
 					Set<String> roleSet = getRolesFromDeploymentProcess(deploymentProcessId);
 					List<Machine> machines = getMachinesByEnvId(historyItem.getEnvironmentId(),roleSet);
 					historyItem.setMachines(machines);
@@ -298,6 +302,7 @@ public class DefaultOctopusClient implements OctopusClient{
 		rel.setApplicationId((String)resJsonObject.get("ProjectId"));
 		rel.setReleaseId((String)resJsonObject.get("Id"));
 		rel.setVersion((String)resJsonObject.get("Version"));
+		rel.setDeploymentProcessSnapShotId((String)resJsonObject.get("ProjectDeploymentProcessSnapshotId"));
 
 		return rel;
 	}
