@@ -247,10 +247,8 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
         		machineIds = tempStorage.get(data.getApplicationId());
         	}
             
-        	
-        	
         	for(Machine machine:data.getMachines()) {
-        		
+        	
         		if(!machineIds.contains(machine.getMachineId())) {
         			EnvironmentStatus status = new EnvironmentStatus();
                     status.setCollectorItemId(data.getCollectorItemId());
@@ -262,9 +260,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
                     returnList.add(status);
                     machineIds.add(machine.getMachineId());
         		}
-            	
-        	
-        	}
+           }
         }
         return returnList;
     }

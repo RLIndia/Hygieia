@@ -1,7 +1,9 @@
 package com.capitalone.dashboard.collector;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -152,21 +154,20 @@ public class DefaultOctopusClient implements OctopusClient{
 				// getting list of machines
 				JSONArray specificMachineIds = (JSONArray) jsonObject.get("SpecificMachineIds");
 				if(specificMachineIds.size() == 0) {
-					List<Machine> machines = getMachinesByEnvId(historyItem.getEnvironmentId());
+					String deploymentProcessId =  (String)jsonObject.get("DeploymentProcessId");
+					Set<String> roleSet = getRolesFromDeploymentProcess(deploymentProcessId);
+					List<Machine> machines = getMachinesByEnvId(historyItem.getEnvironmentId(),roleSet);
 					historyItem.setMachines(machines);
 				} else {
 					List<Machine> machines = new ArrayList<Machine>();
 					for (Object obj :specificMachineIds) {
 						String machineId = (String)obj;
 						Machine m = getMachineById(machineId, historyItem.getEnvironmentId());
-					   machines.add(m);
+						machines.add(m);
 					}
 					historyItem.setMachines(machines);
 				}
-
 				applicationDeployments.add(historyItem);
-
-
 			}
 
 			JSONObject links = (JSONObject)resJsonObject.get("Links");
@@ -198,7 +199,30 @@ public class DefaultOctopusClient implements OctopusClient{
 
 		return task;
 	}
-	
+
+	private Set<String> getRolesFromDeploymentProcess(String deploymentProcessId) {
+		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
+				"/api/deploymentprocesses/"+deploymentProcessId, octopusSettings.getApiKey()));
+		JSONArray steps = (JSONArray)resJsonObject.get("Steps");
+
+		Set<String> roleSet = new HashSet<>();
+
+		for(Object object : steps) {
+			JSONObject obj = (JSONObject)object;
+			JSONObject propertiesObj = (JSONObject)obj.get("Properties");
+			if(propertiesObj != null) {
+				String roles = (String)propertiesObj.get("Octopus.Action.TargetRoles");
+				if(roles != null && !roles.isEmpty()) {
+					String[] rolesArray = roles.split(",");
+					for(int i=0;i<rolesArray.length;i++) {
+						roleSet.add(rolesArray[i]);
+					}
+				}
+			}
+		}
+		return roleSet;
+	}
+
 	private Machine getMachineById(String machineId,String envId) {
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
 				"/api/machines/"+machineId,octopusSettings.getApiKey()));
@@ -212,12 +236,12 @@ public class DefaultOctopusClient implements OctopusClient{
 		} else {
 			machine.setStatus(false);	
 		}
-		
+
 		return machine;
-		
+
 	}
 
-	private List<Machine> getMachinesByEnvId(String envId) {
+	private List<Machine> getMachinesByEnvId(String envId,Set<String> roleSet) {
 
 		List<Machine> machines= new ArrayList<Machine>();
 
@@ -241,7 +265,18 @@ public class DefaultOctopusClient implements OctopusClient{
 				} else {
 					machine.setStatus(false);	
 				}
-				machines.add(machine);
+				
+				if(roleSet.isEmpty()) {
+					machines.add(machine);
+				} else {
+					JSONArray roles = (JSONArray)jsonObject.get("Roles");
+					for(Object obj : roles) {
+						String role = (String)obj;
+						if(roleSet.contains(role)) {
+							machines.add(machine);
+						}
+					}
+				}
 			}
 
 			JSONObject links = (JSONObject)resJsonObject.get("Links");

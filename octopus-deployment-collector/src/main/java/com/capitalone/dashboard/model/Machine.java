@@ -4,8 +4,10 @@ public class Machine {
 	private String machineId;
 	private String machineName;
 	private boolean status;
-	
-	
+	private String[] roles;
+	private String enviromentId;
+
+
 	public String getMachineId() {
 		return machineId;
 	}
@@ -30,7 +32,10 @@ public class Machine {
 	public void setEnviromentId(String enviromentId) {
 		this.enviromentId = enviromentId;
 	}
-	private String enviromentId;
-	
-
+	public String[] getRoles() {
+		return roles;
+	}
+	public void setRoles(String[] roles) {
+		this.roles = roles;
+	}
 }
