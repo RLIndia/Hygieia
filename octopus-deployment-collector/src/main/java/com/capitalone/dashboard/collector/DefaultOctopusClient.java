@@ -277,7 +277,9 @@ public class DefaultOctopusClient implements OctopusClient{
 					for(Object obj : roles) {
 						String role = (String)obj;
 						if(roleSet.contains(role)) {
+							LOGGER.info("adding machine by role "+role);
 							machines.add(machine);
+							break;
 						}
 					}
 				}
