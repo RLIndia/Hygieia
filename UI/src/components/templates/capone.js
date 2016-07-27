@@ -15,8 +15,7 @@
 
         ctrl.tabs = [
             { name: "Widget"},
-            { name: "Pipeline"},
-            { name: "Cloud"}
+            { name: "Pipeline"}
            ];
 
         ctrl.widgetView = ctrl.tabs[0].name;
