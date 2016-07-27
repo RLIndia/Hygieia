@@ -11,7 +11,6 @@
     BuildWidgetViewController.$inject = ['$scope', 'buildData', 'DisplayState', '$q', '$modal'];
     function BuildWidgetViewController($scope, buildData, DisplayState, $q, $modal) {
     	
-    	console.log("buildData =>",buildData);
     	var ctrl = this;
         var builds = [];
 

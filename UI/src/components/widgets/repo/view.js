@@ -58,7 +58,17 @@
             console.log("*********************");
             console.log($scope.widgetConfig.componentId);
             console.log($scope.dashboard.application.components[0].collectorItems);
-            ctrl.title = $scope.dashboard.application.components[0].collectorItems.SCM[0].options.branch;
+            var url = $scope.dashboard.application.components[0].collectorItems.SCM[0].options.url;
+            var urlParts = url.split("/");
+            if(urlParts.length>2) {
+            	var projectName = urlParts[urlParts.length-1];
+            	projectName = projectName.trim();
+            	if(!projectName) {
+            		projectName = urlParts[urlParts.length-2];
+                	projectName = projectName.trim();
+            	}
+            }
+            ctrl.title = projectName +" : "+$scope.dashboard.application.components[0].collectorItems.SCM[0].options.branch;
             $scope.subtitle = '[' + ctrl.title + ']';
             console.log("***********************");
             return deferred.promise;
