@@ -7,6 +7,7 @@
     var directives = [
         'buildsPerDay',
         'averageBuildDuration',
+        'latestBuildTestResult',
         'latestBuilds',
         'totalBuilds'
     ];
