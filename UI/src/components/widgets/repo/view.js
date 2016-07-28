@@ -68,7 +68,7 @@
                 	projectName = projectName.trim();
             	}
             }
-            ctrl.title = projectName +" : "+$scope.dashboard.application.components[0].collectorItems.SCM[0].options.branch;
+            ctrl.title = projectName +"/"+$scope.dashboard.application.components[0].collectorItems.SCM[0].options.branch;
             $scope.subtitle = '[' + ctrl.title + ']';
             console.log("***********************");
             return deferred.promise;
