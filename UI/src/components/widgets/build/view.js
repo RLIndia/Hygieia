@@ -86,7 +86,15 @@
                 processResponse(builds);
                 deferred.resolve(data.lastUpdated);
                 if(data.result && data.result.length) {
-                	var latestBuild = data.result[0];
+                	var latestBuild;
+                	var build1 = data.result[0];
+                	var build2 = data.result[data.result.length -1];
+                	if(parseInt(build1.number) > parseInt(build2.number)) {
+                		latestBuild = build1;
+                	} else {
+                		latestBuild = build2;
+                	}
+                	
                 	if(latestBuild.buildTestResult) {
                 		ctrl.latestBuildTestResult = latestBuild.buildTestResult;
                 	}
