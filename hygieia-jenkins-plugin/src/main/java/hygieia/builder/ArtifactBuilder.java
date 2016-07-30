@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.io.File;
 
 public class ArtifactBuilder {
 
@@ -37,8 +38,12 @@ public class ArtifactBuilder {
         String filePattern = publisher.getHygieiaArtifact().getArtifactName().trim();
         String group = publisher.getHygieiaArtifact().getArtifactGroup().trim();
         String version = publisher.getHygieiaArtifact().getArtifactVersion().trim();
-
-        FilePath rootDirectory = build.getWorkspace().withSuffix(directory);
+    
+        //FilePath rootDirectory = build.getWorkspace().withSuffix(directory);
+        
+        FilePath rootDirectory = new FilePath(new File(directory));
+        
+        
         listener.getLogger().println("Hygieia Build Artifact Publisher - Looking for file pattern '" + filePattern + "' in directory " + rootDirectory);
         try {
             List<FilePath> artifactFiles = HygieiaUtils.getArtifactFiles(rootDirectory, filePattern, new ArrayList<FilePath>());
