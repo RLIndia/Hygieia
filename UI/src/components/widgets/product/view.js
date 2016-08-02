@@ -135,10 +135,13 @@
             else if(isReload === false) {
                 isReload = true;
             }
-
+            
             collectTeamStageData(widgetOptions.teams, [].concat(ctrl.stages));
 
             var requestedData = getTeamDashboardDetails(widgetOptions.teams);
+            console.log('*************** in load product requested data view ****************');
+            console.log(teamDashboardDetails);
+            console.log('*************** end in load product requested data view ****************');
             if(!requestedData) {
                 for(var collectorItemId in teamDashboardDetails) {
                     getTeamComponentData(collectorItemId);
@@ -243,8 +246,11 @@
         function viewTeamStageDetails(team, stage) {
             // only show details if we have commits
             if(!teamStageHasCommits(team, stage)) {
+                console.log('not teamStageHasCommits **********');
                 return false;
             }
+
+            console.log('in teamStageHasCommits **********');
 
             $modal.open({
                 templateUrl: 'components/widgets/product/environment-commits/environment-commits.html',
@@ -401,6 +407,10 @@
                 $timeout: $timeout,
                 $q: $q
             };
+
+            console.log('*************** in processDependencyObject ****************');
+            console.log(processDependencyObject);
+            console.log('*************** end processDependencyObject ****************');
 
             // request and process our data
             productBuildData.process(angular.extend(processDependencyObject, { buildData: buildData }));

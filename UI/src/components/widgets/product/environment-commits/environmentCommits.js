@@ -9,7 +9,9 @@
     function productEnvironmentCommitController(modalData, $modalInstance, $timeout) {
         /*jshint validthis:true */
         var ctrl = this;
-
+        console.log('*********** Entering productEnvironmentCommitController ********');
+        console.log(modalData);
+        console.log('*********** End Entering productEnvironmentCommitController ********');
         var stageData = modalData.team.stages[modalData.stage];
         if(!stageData) {
             swal({

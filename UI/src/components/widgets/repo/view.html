@@ -1,23 +1,8 @@
 <div class="repo-view">
     <div class="widget">
-        <div class="widget-heading">
-            Commits per day
-        </div>
-        <div class="widget-body">
-            <chartist class="ct-chart ct-octave dash-chart-alt"
-                      chartist-chart-type="Line"
-                      chartist-data="repoView.commitChartData"
-                      chartist-chart-options="repoView.commitChartOptions"
-                      chartist-events="repoView.commitChartEvents"
-                    >
-            </chartist>
-        </div>
-    </div>
-
-    <div class="widget">
-        <div class="widget-heading">
+       <!--  <div class="widget-heading">
             Summary
-        </div>
+        </div> -->
         <div class="widget-body">
             <table class="table repo-summary-table">
                 <tr>
@@ -41,4 +26,21 @@
             </table>
         </div>
     </div>
+
+    <div class="widget">
+        <div class="widget-heading">
+            Commits per day
+        </div>
+        <div class="widget-body">
+            <chartist class="ct-chart ct-octave dash-chart-alt"
+                      chartist-chart-type="Line"
+                      chartist-data="repoView.commitChartData"
+                      chartist-chart-options="repoView.commitChartOptions"
+                      chartist-events="repoView.commitChartEvents"
+                    >
+            </chartist>
+        </div>
+    </div>
+
+    
 </div>

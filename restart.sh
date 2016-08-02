@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Stopping all running processes"
-pkill java
+#pkill java
 sleep 5 
 cd api/target
 echo "Starting API service"
