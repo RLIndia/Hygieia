@@ -25,13 +25,16 @@
             <td class="text-standard-date">
                 {{environment.lastUpdated | fromNow}}
             </td>
-            <td class="server-count" ng-class="{'servers-up' : environment.serverUpCount > 0}">
+           <!--  <td class="server-count" ng-class="{'servers-up' : environment.serverUpCount > 0}">
                 {{environment.serverUpCount}}
                 <span class="fa fa-arrow-up"></span>
             </td>
             <td class="server-count" ng-class="{'servers-down' : environment.serverDownCount > 0}">
                 {{environment.serverDownCount}}
                 <span class="fa fa-arrow-down"></span>
+            </td> -->
+            <td class="text-standard-date">
+            {{environment.deployedVersion}}
             </td>
         </tr>
     </table>

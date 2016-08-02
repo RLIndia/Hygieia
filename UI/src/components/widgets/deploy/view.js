@@ -79,8 +79,16 @@
                         serverUpCount: getServerOnlineCount(item.units, true),
                         serverDownCount: getServerOnlineCount(item.units, false),
                         failedComponents: getFailedComponentCount(item.units),
-                        lastUpdated: getLatestUpdate(item.units)
+                        lastUpdated: getLatestUpdate(item.units),
+                        deployedVersion:getDeployedVersion(item.units)
                     };
+                    
+                    function getDeployedVersion(units){
+                    	if(units.length) {
+                    		return units[0].version;
+                    	}
+                    	
+                    }
 
                     function getFailedComponentCount(units) {
                         return _(units).where({'deployed':false}).value().length;
