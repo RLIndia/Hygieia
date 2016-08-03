@@ -7,12 +7,14 @@ import com.capitalone.dashboard.request.DeployDataCreateRequest;
 import com.capitalone.dashboard.service.DeployService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 import javax.validation.Valid;
 import java.util.List;
@@ -40,6 +42,18 @@ public class DeployController {
     @RequestMapping(value = "/deploy/status/application/{applicationName}", method = GET, produces = APPLICATION_JSON_VALUE)
     public DataResponse<List<Environment>> deployStatus(@PathVariable String applicationName) {
         return deployService.getDeployStatus(applicationName);
+    }
+    
+    @RequestMapping(value = "/deploy/rdp/{hostName}", method = GET)
+    public ResponseEntity<String> hostRdp(@PathVariable String hostName) {
+    	
+    	HttpHeaders responseHeaders = new HttpHeaders();
+    	responseHeaders.add("Content-disposition", "attachment; filename=" + hostName + ".rdp");
+    	responseHeaders.add("Content-Type", "application/rdp");
+    		
+    	String rdptext = "full address:s:" + hostName + ":" + "3389" + "\n\r";
+        rdptext += "prompt for credentials:i:1";
+        return new ResponseEntity<String>(rdptext, responseHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/deploy", method = POST,

@@ -11,6 +11,7 @@
         var ctrl = this;
 
         ctrl.statuses = DashStatus;
+        console.log('statuses ==>',DashStatus,environment,collectorName)
         ctrl.environment = environment;
         ctrl.collectorName = collectorName;
 

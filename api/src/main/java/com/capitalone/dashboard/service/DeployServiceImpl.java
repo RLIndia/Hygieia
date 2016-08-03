@@ -151,7 +151,7 @@ public class DeployServiceImpl implements DeployService {
     private class ToServer implements Function<EnvironmentStatus, Server> {
         @Override
         public Server apply(EnvironmentStatus status) {
-            return new Server(status.getResourceName(), status.isOnline());
+            return new Server(status.getResourceName(), status.isOnline(),status.getHostname());
         }
     }
 

@@ -3,6 +3,7 @@ package com.capitalone.dashboard.model;
 public class Machine {
 	private String machineId;
 	private String machineName;
+	private String hostName;
 	private boolean status;
 	private String[] roles;
 	private String enviromentId;
@@ -37,5 +38,11 @@ public class Machine {
 	}
 	public void setRoles(String[] roles) {
 		this.roles = roles;
+	}
+	public String getHostName() {
+		return hostName;
+	}
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
 	}
 }

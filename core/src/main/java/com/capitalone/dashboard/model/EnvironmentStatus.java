@@ -14,6 +14,7 @@ public class EnvironmentStatus extends BaseModel {
     private String componentName;
     private String resourceName;
     private String parentAgentName;
+    private String hostname;
     private boolean online;
 
     public ObjectId getCollectorItemId() {
@@ -71,5 +72,13 @@ public class EnvironmentStatus extends BaseModel {
     public void setOnline(boolean online) {
         this.online = online;
     }
+
+	public String getHostname() {
+		return hostname;
+	}
+
+	public void setHostname(String hostname) {
+		this.hostname = hostname;
+	}
 }
 

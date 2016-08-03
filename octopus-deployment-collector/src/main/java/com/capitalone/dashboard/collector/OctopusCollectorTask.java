@@ -257,6 +257,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
                     status.setEnvironmentName(data.getEnvironmentName());
                     status.setOnline(machine.isStatus()); // for testing
                     status.setResourceName(machine.getMachineName()); // for testing
+                    status.setHostname(machine.getHostName());
                     returnList.add(status);
                     machineIds.add(machine.getMachineId());
         		}

@@ -1,5 +1,7 @@
 package com.capitalone.dashboard.collector;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -163,13 +165,26 @@ public class DefaultOctopusClient implements OctopusClient{
 						deploymentProcessId = rel.getDeploymentProcessSnapShotId();
 					}
 					Set<String> roleSet = getRolesFromDeploymentProcess(deploymentProcessId);
-					List<Machine> machines = getMachinesByEnvId(historyItem.getEnvironmentId(),roleSet);
+					List<Machine> machines;
+					try {
+						machines = getMachinesByEnvId(historyItem.getEnvironmentId(),roleSet);
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						LOGGER.error(e.getMessage());
+						machines = new ArrayList<>();
+					}
 					historyItem.setMachines(machines);
 				} else {
 					List<Machine> machines = new ArrayList<Machine>();
 					for (Object obj :specificMachineIds) {
 						String machineId = (String)obj;
-						Machine m = getMachineById(machineId, historyItem.getEnvironmentId());
+						Machine m =null;
+						try {
+							m = getMachineById(machineId, historyItem.getEnvironmentId());
+						} catch (MalformedURLException e) {
+							// TODO Auto-generated catch block
+							LOGGER.error(e.getMessage());
+						}
 						machines.add(m);
 					}
 					historyItem.setMachines(machines);
@@ -234,7 +249,7 @@ public class DefaultOctopusClient implements OctopusClient{
 		return roleSet;
 	}
 
-	private Machine getMachineById(String machineId,String envId) {
+	private Machine getMachineById(String machineId,String envId) throws MalformedURLException {
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
 				"/api/machines/"+machineId,octopusSettings.getApiKey()));
 		Machine machine = new Machine();
@@ -247,12 +262,21 @@ public class DefaultOctopusClient implements OctopusClient{
 		} else {
 			machine.setStatus(false);	
 		}
+		
+		String url = (String)resJsonObject.get("Uri");
+		//LOGGER.info("url ==>"+url);
+		
+		if(url != null && !url.isEmpty()) {
+			String hostname = new URL(url).getHost();
+			//LOGGER.info("Host name ==>"+hostname);
+			machine.setHostName(hostname);
+		}
 
 		return machine;
 
 	}
 
-	private List<Machine> getMachinesByEnvId(String envId,Set<String> roleSet) {
+	private List<Machine> getMachinesByEnvId(String envId,Set<String> roleSet) throws MalformedURLException {
 
 		List<Machine> machines= new ArrayList<Machine>();
 
@@ -276,6 +300,17 @@ public class DefaultOctopusClient implements OctopusClient{
 				} else {
 					machine.setStatus(false);	
 				}
+				
+				String url = (String)jsonObject.get("Uri");
+				//LOGGER.info("url ==>"+url);
+				
+				if(url != null && !url.isEmpty()) {
+					String hostname = new URL(url).getHost();
+					//LOGGER.info("Host name ==>"+hostname);
+					machine.setHostName(hostname);
+				}
+				
+				
 				
 				if(roleSet.isEmpty()) {
 					machines.add(machine);
