@@ -48,7 +48,7 @@ public class DeployController {
     public ResponseEntity<String> hostRdp(@PathVariable String hostName) {
     	
     	HttpHeaders responseHeaders = new HttpHeaders();
-    	responseHeaders.add("Content-disposition", "attachment; filename=" + hostName + ".rdp");
+    	//responseHeaders.add("Content-disposition", "attachment; filename=" + hostName + ".rdp");
     	responseHeaders.add("Content-Type", "application/rdp");
     		
     	String rdptext = "full address:s:" + hostName + ":" + "3389" + "\n\r";
