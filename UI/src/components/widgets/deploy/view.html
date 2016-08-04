@@ -9,11 +9,22 @@
     </div> -->
     <table class="table">
         <tr class="dash-row">
-            <td>
+            <td colspan="2">
                 
+                <a ng-click="sortType = 'name'; sortReverse = !sortReverse" style="cursor:pointer">
+                    Environment&nbsp;
+                    <span ng-show="sortType == 'name' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span ng-show="sortType == 'name' && sortReverse" class="fa fa-caret-up"></span>
+                  </a>
+            </td>
+            <td>
+                Deployed
+            </td>
+            <td align="right">
+                Version
             </td>
         </tr>
-        <tr class="dash-row clickable" ng-repeat="environment in deployView.environments | filter:query" ng-click="deployView.showDetail(environment)">
+        <tr class="dash-row clickable" ng-repeat="environment in deployView.environments | orderBy:sortType:sortReverse | filter:query" ng-click="deployView.showDetail(environment)">
             <td>
                 <span
                         dash-status="{{environment.failedComponents > 0 ? deployView.statuses.FAIL : deployView.statuses.PASS}}"

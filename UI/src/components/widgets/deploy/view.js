@@ -17,7 +17,7 @@
         ctrl.load = load;
         ctrl.showDetail = showDetail;
         ctrl.title = "";
-
+       
         function load() {
             var deferred = $q.defer();
             console.log("*********************");
@@ -25,6 +25,8 @@
             console.log($scope.dashboard.application.components[0].collectorItems.Deployment[0].options.applicationName);
             ctrl.title = $scope.dashboard.application.components[0].collectorItems.Deployment[0].options.applicationName;
             $scope.subtitle = '[' + ctrl.title + ']';
+            $scope.sortType = 'name';
+            $scope.sortReverse = false;
             console.log("***********************");
             deployData.details($scope.widgetConfig.componentId).then(function(data) {
                 processResponse(data.result);
@@ -80,7 +82,7 @@
                         serverDownCount: getServerOnlineCount(item.units, false),
                         failedComponents: getFailedComponentCount(item.units),
                         lastUpdated: getLatestUpdate(item.units),
-                        deployedVersion:getDeployedVersion(item.units)
+                        deployedVersion:getDeployedVersion(item.units),
                     };
                     
                     function getDeployedVersion(units){
