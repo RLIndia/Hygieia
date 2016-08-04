@@ -125,6 +125,41 @@ gulp.task('serve', ['build'], function() {
             next();
         }
     }
+    
+    /*
+     * The proxy middleware is an Express middleware added to BrowserSync to
+     * handle download of rdp file.
+     */
+    function proxyRDPMiddleware(req, res, next) {
+        /*
+         * Proxy the REST API.
+         */
+        if (/^\/rdp\/.*/.test(req.url)) {
+        	var urlParams = {};
+        	var url = req.url;
+
+        	var indexOfQues = url.lastIndexOf("?");
+        	if (indexOfQues != -1) {
+        		var sub = url.substring(indexOfQues + 1);
+        		var params = sub.split('&')
+        		for (var i = 0; i < params.length; i++) {
+        			var paramParts = params[i].split('=');
+        			urlParams[paramParts[0]] = paramParts[1];
+        		}
+        	}
+
+            
+        	
+        	res.setHeader('Content-disposition', 'attachment; filename=' +  urlParams['hostname'] + '.rdp');
+            res.setHeader('Content-type', 'application/rdp');
+            var rdptext = "full address:s:" + urlParams['hostname'] + ":" + 3389 + "\n\r";
+            rdptext += "prompt for credentials:i:1"
+            res.write(rdptext);
+            res.end();
+        } else {
+            next();
+        }
+    }
 
     browserSync.init({
     	ghostMode: false,
@@ -132,7 +167,7 @@ gulp.task('serve', ['build'], function() {
     	server: {
             baseDir: hygieia.dist,
             startPath: '/',
-            middleware: [proxyMiddleware]
+            middleware: [proxyMiddleware,proxyRDPMiddleware]
         }
     });
 

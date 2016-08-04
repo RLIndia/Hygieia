@@ -7,7 +7,7 @@ import com.capitalone.dashboard.request.DeployDataCreateRequest;
 import com.capitalone.dashboard.service.DeployService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+//import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -44,16 +44,26 @@ public class DeployController {
         return deployService.getDeployStatus(applicationName);
     }
     
-    @RequestMapping(value = "/deploy/rdp/{hostName}", method = GET)
-    public ResponseEntity<String> hostRdp(@PathVariable String hostName) {
+    /*@RequestMapping(value = "/deploy/rdp/{hostName}", method = GET)
+    public ResponseEntity<String> hostRdp(@PathVariable String hostName,HttpServletResponse response) {
     	
     	HttpHeaders responseHeaders = new HttpHeaders();
-    	//responseHeaders.add("Content-disposition", "attachment; filename=" + hostName + ".rdp");
+    	responseHeaders.add("Content-disposition", "attachment; filename=" + "test" + ".rdp");
     	responseHeaders.add("Content-Type", "application/rdp");
     		
-    	String rdptext = "full address:s:" + hostName + ":" + "3389" + "\n\r";
-        rdptext += "prompt for credentials:i:1";
-        return new ResponseEntity<String>(rdptext, responseHeaders, HttpStatus.CREATED);
+    	String rdptext = "full address:s:" + hostName + ":" + "3389" + "\n\rprompt for credentials:i:1";
+        //rdptext += "prompt for credentials:i:1";
+        return new ResponseEntity<String>(rdptext, responseHeaders, HttpStatus.OK);
+    }*/
+    
+    @RequestMapping(value = "/deploy/rdp/{hostName}", method = GET)
+    public String hostRdp(@PathVariable String hostName,HttpServletResponse response) {
+    	
+    	response.setHeader("Content-disposition", "attachment; filename=" + "test" + ".rdp");
+    	response.setHeader("Content-Type", "application/rdp");
+    		
+    	String rdptext = "full address:s:" + hostName + ":" + "3389" + "\n\rprompt for credentials:i:1";
+        return rdptext;
     }
 
     @RequestMapping(value = "/deploy", method = POST,

@@ -46,7 +46,7 @@
                         <td>{{::unit.name}}</td>
                         <td>{{::unit.lastUpdated | date:'MMM d, HH:mm:ss'}}</td>
                         <td>{{::unit.version}}</td>
-                        <td><a ng-href="/api/deploy/rdp/{{::server.hostname}}">{{::server.name}}</a></td>
+                        <td><a target="_blank" ng-href="/rdp/?hostname={{::server.hostname}}">{{::server.name}}</a></td>
                         <td ng-show="server.online" class="servers-up"><span class="fa fa-arrow-up"></span></td>
                         <td ng-hide="server.online" class="servers-down"><span class="fa fa-arrow-down"></span></td>
                     </tr>
