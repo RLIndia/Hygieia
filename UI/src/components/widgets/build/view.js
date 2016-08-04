@@ -30,13 +30,17 @@
             lineSmooth: false,
             fullWidth: true,
             chartPadding: 7,
+            height: '165px',
             axisX: {
-                showLabel: false
+                showLabel: true,
+
             },
             axisY: {
                 labelInterpolationFnc: function(value) {
                     return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
-                }
+                },
+                showLabel: true
+
             }
         };
 
@@ -61,6 +65,7 @@
             ],
             stackBars: true,
             centerLabels: true,
+            height: '165px',
             axisY: {
                 offset: 30,
                 labelInterpolationFnc: function(value) {
@@ -365,8 +370,16 @@
                 //$scope.$apply(function () {
 
                 var labels = [];
+                //var date = moment(new Date()).subtract(x, 'days').format('L');
+                var dayCount = -1;
                 _(data.passed).forEach(function() {
-                    labels.push(1);
+                    dayCount = dayCount + 1;
+                });
+
+                _(data.passed).forEach(function() {
+                    var dateC = moment(new Date()).subtract(dayCount, 'days').format('D');
+                    labels.push(dateC);
+                    dayCount = dayCount - 1;
                 });
 
                 ctrl.lineData = {
