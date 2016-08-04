@@ -7,15 +7,12 @@
             </option>
         </select>
     </div> -->
-    <table class="table">
+    <table class="table" style="margin-top:-10px">
         <tr class="dash-row">
-            <td colspan="2">
-                
-                <a ng-click="sortType = 'name'; sortReverse = !sortReverse" style="cursor:pointer">
+            <td colspan="2" style="cursor:pointer" ng-click="sortType = 'name'; sortReverse = !sortReverse">
                     Environment&nbsp;
                     <span ng-show="sortType == 'name' && !sortReverse" class="fa fa-caret-down"></span>
                     <span ng-show="sortType == 'name' && sortReverse" class="fa fa-caret-up"></span>
-                  </a>
             </td>
             <td>
                 Deployed
