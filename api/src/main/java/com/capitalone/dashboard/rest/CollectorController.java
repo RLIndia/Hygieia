@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -66,19 +65,10 @@ public class CollectorController {
     @RequestMapping(value = "/collector/item/bitbucket", method = POST,
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CollectorItem>> createCollectorItemBitBucket(@Valid @RequestBody CollectorItemRequest request) {
-    	Map<String, Object> options = request.getOptions();
-    	if(options.containsKey("scm")) {
-    		String scmType = (String)options.get("scm");
-    		if(scmType.equals("Bitbucket")) {
-    			return ResponseEntity
-    	                .status(HttpStatus.CREATED)
-    	                .body(collectorService.createCollectorItemBitBucket(request.toCollectorItem()));
-    		}
-    		
-    	}
+    	return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(collectorService.createCollectorItemBitBucket(request.toCollectorItem()));
     	
-    	return null;
-        
     }
 
     @RequestMapping(value = "/collector/item/{id}", method = GET, produces = APPLICATION_JSON_VALUE)

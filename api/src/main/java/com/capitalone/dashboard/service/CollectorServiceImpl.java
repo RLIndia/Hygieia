@@ -17,6 +17,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -34,103 +35,104 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class CollectorServiceImpl implements CollectorService {
 	private static final Log LOG = LogFactory.getLog(CollectorServiceImpl.class);
-    private final CollectorRepository collectorRepository;
-    private final CollectorItemRepository collectorItemRepository;
-    private final DashboardRepository dashboardRepository;
-    private final GitSettings gitSettings;
-    private final RestOperations restOperations;
+	private final CollectorRepository collectorRepository;
+	private final CollectorItemRepository collectorItemRepository;
+	private final DashboardRepository dashboardRepository;
+	private final GitSettings gitSettings;
+	private final RestOperations restOperations;
 
 
-    @Autowired
-    public CollectorServiceImpl(CollectorRepository collectorRepository,
-                                CollectorItemRepository collectorItemRepository,
-                                DashboardRepository dashboardRepository,GitSettings gitSettings,RestOperations restOperations) {
-        this.collectorRepository = collectorRepository;
-        this.collectorItemRepository = collectorItemRepository;
-        this.dashboardRepository = dashboardRepository;
-        this.gitSettings = gitSettings;
-        this.restOperations = restOperations;
-    }
+	@Autowired
+	public CollectorServiceImpl(CollectorRepository collectorRepository,
+			CollectorItemRepository collectorItemRepository,
+			DashboardRepository dashboardRepository,GitSettings gitSettings,RestOperations restOperations) {
+		this.collectorRepository = collectorRepository;
+		this.collectorItemRepository = collectorItemRepository;
+		this.dashboardRepository = dashboardRepository;
+		this.gitSettings = gitSettings;
+		this.restOperations = restOperations;
+	}
 
-    @Override
-    public List<Collector> collectorsByType(CollectorType collectorType) {
-        return collectorRepository.findByCollectorType(collectorType);
-    }
+	@Override
+	public List<Collector> collectorsByType(CollectorType collectorType) {
+		return collectorRepository.findByCollectorType(collectorType);
+	}
 
-    @Override
-    public List<CollectorItem> collectorItemsByType(CollectorType collectorType) {
-        List<Collector> collectors = collectorRepository.findByCollectorType(collectorType);
+	@Override
+	public List<CollectorItem> collectorItemsByType(CollectorType collectorType) {
+		List<Collector> collectors = collectorRepository.findByCollectorType(collectorType);
 
-        List<ObjectId> collectorIds = Lists.newArrayList(Iterables.transform(collectors, new ToCollectorId()));
+		List<ObjectId> collectorIds = Lists.newArrayList(Iterables.transform(collectors, new ToCollectorId()));
 
-        List<CollectorItem> collectorItems = collectorItemRepository.findByCollectorIdIn(collectorIds);
+		List<CollectorItem> collectorItems = collectorItemRepository.findByCollectorIdIn(collectorIds);
 
-        for (CollectorItem options : collectorItems) {
-            options.setCollector(collectorById(options.getCollectorId(), collectors));
-        }
+		for (CollectorItem options : collectorItems) {
+			options.setCollector(collectorById(options.getCollectorId(), collectors));
+		}
 
-        return collectorItems;
-    }
+		return collectorItems;
+	}
 
-    /**
-     * We want to initialize the Quasi-product collector when the API starts up
-     * so that any existing Team dashboards will be added as CollectorItems.
-     *
-     * TODO - Is this the best home for this method??
-     */
-    @PostConstruct
-    public void initProductCollectorOnStartup() {
-        Collector productCollector = collectorRepository.findByName("Product");
-        if (productCollector == null) {
-            productCollector = new Collector();
-            productCollector.setName("Product");
-            productCollector.setCollectorType(CollectorType.Product);
-            productCollector.setEnabled(true);
-            productCollector.setOnline(true);
-            collectorRepository.save(productCollector);
+	/**
+	 * We want to initialize the Quasi-product collector when the API starts up
+	 * so that any existing Team dashboards will be added as CollectorItems.
+	 *
+	 * TODO - Is this the best home for this method??
+	 */
+	@PostConstruct
+	public void initProductCollectorOnStartup() {
+		Collector productCollector = collectorRepository.findByName("Product");
+		if (productCollector == null) {
+			productCollector = new Collector();
+			productCollector.setName("Product");
+			productCollector.setCollectorType(CollectorType.Product);
+			productCollector.setEnabled(true);
+			productCollector.setOnline(true);
+			collectorRepository.save(productCollector);
 
-            // Create collector items for existing team dashboards
-            for (Dashboard dashboard : dashboardRepository.findTeamDashboards()) {
-                CollectorItem item = new CollectorItem();
-                item.setCollectorId(productCollector.getId());
-                item.getOptions().put("dashboardId", dashboard.getId().toString());
-                item.setDescription(dashboard.getTitle());
-                collectorItemRepository.save(item);
-            }
-        }
-    }
+			// Create collector items for existing team dashboards
+			for (Dashboard dashboard : dashboardRepository.findTeamDashboards()) {
+				CollectorItem item = new CollectorItem();
+				item.setCollectorId(productCollector.getId());
+				item.getOptions().put("dashboardId", dashboard.getId().toString());
+				item.setDescription(dashboard.getTitle());
+				collectorItemRepository.save(item);
+			}
+		}
+	}
 
-    @Override
-    public CollectorItem getCollectorItem(ObjectId id) {
-        CollectorItem item = collectorItemRepository.findOne(id);
-        item.setCollector(collectorRepository.findOne(item.getCollectorId()));
-        return item;
-    }
+	@Override
+	public CollectorItem getCollectorItem(ObjectId id) {
+		CollectorItem item = collectorItemRepository.findOne(id);
+		item.setCollector(collectorRepository.findOne(item.getCollectorId()));
+		return item;
+	}
 
-    @Override
-    public CollectorItem createCollectorItem(CollectorItem item) {
-        
-        CollectorItem existing = collectorItemRepository.findByCollectorAndOptions(
-                item.getCollectorId(), item.getOptions());
-        if (existing != null) {
-            item.setId(existing.getId());
-        }
-        return collectorItemRepository.save(item);
-    }
-    
-    @Override
-    public List<CollectorItem> createCollectorItemBitBucket(CollectorItem item) {
-    	
-    	// trying to find all the branches
-    	Map<String,Object> options = item.getOptions();
-    	
-    	String repoUrl = (String) options.get("url");
+	@Override
+	public CollectorItem createCollectorItem(CollectorItem item) {
+
+		CollectorItem existing = collectorItemRepository.findByCollectorAndOptions(
+				item.getCollectorId(), item.getOptions());
+		if (existing != null) {
+			item.setId(existing.getId());
+		}
+		return collectorItemRepository.save(item);
+	}
+
+	@Override
+	public List<CollectorItem> createCollectorItemBitBucket(CollectorItem item) {
+
+		// trying to find all the branches
+		Map<String,Object> options = item.getOptions();
+
+		String repoUrl = (String) options.get("url");
 		if (repoUrl.endsWith(".git")) {
 			repoUrl = repoUrl.substring(0, repoUrl.lastIndexOf(".git"));
 		}
@@ -157,21 +159,59 @@ public class CollectorServiceImpl implements CollectorService {
 			apiUrl = protocol + "://" + gitSettings.getHost() + gitSettings.getApi() + repoName;
 			//LOG.info("API URL IS ELSE :"+apiUrl);
 		}
-		
+
 		String queryUrl = apiUrl + "refs/branches";
-		
+
 		ResponseEntity<String> response = makeRestCall(queryUrl, gitSettings.getUsername(), gitSettings.getPassword());
-		//JSONObject jsonParentObject = paresAsObject(response);
-		
-		paresAsObject(response);
-		
-    	
-    	//return collectorItemRepository.save(item);
-		return new ArrayList<>();
-    }
-    
-    
-    private ResponseEntity<String> makeRestCall(String url, String userId,
+		JSONObject jsonParentObject = paresAsObject(response);
+
+		JSONArray valuesArray = (JSONArray)jsonParentObject.get("values");
+		List<CollectorItem> items = new ArrayList<>();
+		for(Object o : valuesArray) {
+
+			JSONObject obj = (JSONObject)o;
+
+			String type = (String)obj.get("type");
+			if(type!=null && type.equals("branch")) {
+
+				String branchName =  (String)obj.get("name");
+				CollectorItem cloneItem = new CollectorItem();
+				cloneItem.setCollector(item.getCollector());
+				cloneItem.setCollectorId(item.getCollectorId());
+				cloneItem.setDescription(item.getDescription());
+				cloneItem.setEnabled(item.isEnabled());
+				cloneItem.setLastUpdated(item.getLastUpdated());
+				cloneItem.setNiceName(item.getNiceName());
+				cloneItem.setPushed(item.isPushed());
+
+				Map<String,Object> newOptions = new HashMap<>();
+				for(String key:options.keySet()) {
+					newOptions.put(key,options.get(key));
+				}
+
+				newOptions.put("branch", branchName);
+				
+				cloneItem.setOptions(newOptions);
+
+
+				CollectorItem existing = collectorItemRepository.findByCollectorAndOptions(
+						cloneItem.getCollectorId(), cloneItem.getOptions());
+				if (existing != null) {
+					cloneItem.setId(existing.getId());
+				}
+				
+				collectorItemRepository.save(cloneItem);
+				items.add(cloneItem);
+			}
+
+
+		}
+
+		return items;
+	}
+
+
+	private ResponseEntity<String> makeRestCall(String url, String userId,
 			String password) {
 		// Basic Auth only.
 		//LOG.info("username ==> "+userId);
@@ -201,7 +241,7 @@ public class CollectorServiceImpl implements CollectorService {
 		headers.set("Authorization", authHeader);
 		return headers;
 	}
-	
+
 	private JSONObject paresAsObject(ResponseEntity<String> response) {
 		try {
 			return (JSONObject) new JSONParser().parse(response.getBody());
@@ -210,60 +250,60 @@ public class CollectorServiceImpl implements CollectorService {
 		}
 		return new JSONObject();
 	}
-    
 
-    @Override
-    public CollectorItem createCollectorItemByNiceNameAndProjectId(CollectorItem item, String projectId) throws HygieiaException {
-        //Try to find a matching by collector ID and niceName.
-        CollectorItem existing = collectorItemRepository.findByCollectorIdNiceNameAndProjectId(item.getCollectorId(), item.getNiceName(), projectId);
 
-        //if not found, call the method to look up by collector ID and options. NiceName would be saved too
-        if (existing == null) return createCollectorItem(item);
+	@Override
+	public CollectorItem createCollectorItemByNiceNameAndProjectId(CollectorItem item, String projectId) throws HygieiaException {
+		//Try to find a matching by collector ID and niceName.
+		CollectorItem existing = collectorItemRepository.findByCollectorIdNiceNameAndProjectId(item.getCollectorId(), item.getNiceName(), projectId);
 
-        //Flow is here because there is only one collector item with the same collector id and niceName. So, update with
-        // the new info - keep the same collector item id. Save = Update or Insert.
-        item.setId(existing.getId());
+		//if not found, call the method to look up by collector ID and options. NiceName would be saved too
+		if (existing == null) return createCollectorItem(item);
 
-        return collectorItemRepository.save(item);
-    }
+		//Flow is here because there is only one collector item with the same collector id and niceName. So, update with
+		// the new info - keep the same collector item id. Save = Update or Insert.
+		item.setId(existing.getId());
 
-    @Override
-    public CollectorItem createCollectorItemByNiceNameAndJobName(CollectorItem item, String jobName) throws HygieiaException {
-        //Try to find a matching by collector ID and niceName.
-        CollectorItem existing = collectorItemRepository.findByCollectorIdNiceNameAndJobName(item.getCollectorId(), item.getNiceName(), jobName);
+		return collectorItemRepository.save(item);
+	}
 
-        //if not found, call the method to look up by collector ID and options. NiceName would be saved too
-        if (existing == null) return createCollectorItem(item);
+	@Override
+	public CollectorItem createCollectorItemByNiceNameAndJobName(CollectorItem item, String jobName) throws HygieiaException {
+		//Try to find a matching by collector ID and niceName.
+		CollectorItem existing = collectorItemRepository.findByCollectorIdNiceNameAndJobName(item.getCollectorId(), item.getNiceName(), jobName);
 
-        //Flow is here because there is only one collector item with the same collector id and niceName. So, update with
-        // the new info - keep the same collector item id. Save = Update or Insert.
-        item.setId(existing.getId());
+		//if not found, call the method to look up by collector ID and options. NiceName would be saved too
+		if (existing == null) return createCollectorItem(item);
 
-        return collectorItemRepository.save(item);
-    }
+		//Flow is here because there is only one collector item with the same collector id and niceName. So, update with
+		// the new info - keep the same collector item id. Save = Update or Insert.
+		item.setId(existing.getId());
 
-    @Override
-    public Collector createCollector(Collector collector) {
-        Collector existing = collectorRepository.findByName(collector.getName());
-        if (existing != null) {
-            collector.setId(existing.getId());
-        }
-        return collectorRepository.save(collector);
-    }
+		return collectorItemRepository.save(item);
+	}
 
-    private Collector collectorById(ObjectId collectorId, List<Collector> collectors) {
-        for (Collector collector : collectors) {
-            if (collector.getId().equals(collectorId)) {
-                return collector;
-            }
-        }
-        return null;
-    }
+	@Override
+	public Collector createCollector(Collector collector) {
+		Collector existing = collectorRepository.findByName(collector.getName());
+		if (existing != null) {
+			collector.setId(existing.getId());
+		}
+		return collectorRepository.save(collector);
+	}
 
-    private static class ToCollectorId implements Function<Collector, ObjectId> {
-        @Override
-        public ObjectId apply(Collector input) {
-            return input.getId();
-        }
-    }
+	private Collector collectorById(ObjectId collectorId, List<Collector> collectors) {
+		for (Collector collector : collectors) {
+			if (collector.getId().equals(collectorId)) {
+				return collector;
+			}
+		}
+		return null;
+	}
+
+	private static class ToCollectorId implements Function<Collector, ObjectId> {
+		@Override
+		public ObjectId apply(Collector input) {
+			return input.getId();
+		}
+	}
 }

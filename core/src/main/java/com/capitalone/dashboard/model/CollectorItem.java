@@ -69,6 +69,10 @@ public class CollectorItem extends BaseModel {
     public Map<String, Object> getOptions() {
         return options;
     }
+    
+    public void setOptions(Map<String, Object> options) {
+        this.options = options;
+    }
 
     public boolean isPushed() {
         return pushed;
