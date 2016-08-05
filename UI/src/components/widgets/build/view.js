@@ -73,6 +73,8 @@
             showArea: true,
             lineSmooth: false,
             fullWidth: true,
+            chartPadding: 7,
+            height: '165px',
             axisY: {
                 offset: 30,
                 showGrid: true,
