@@ -131,7 +131,8 @@
 					}
 				};
 			}
-			return collectorData.createCollectorItem(item);
+			//return collectorData.createCollectorItem(item);
+			return collectorData.createCollectorItemBitBucket(item);
 		}
 
 		function processCollectorItemResponse(response) {

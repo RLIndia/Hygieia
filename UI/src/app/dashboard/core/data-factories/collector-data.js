@@ -10,12 +10,15 @@
 
     function collectorData($http, $q) {
         var itemRoute = '/api/collector/item';
+        var itemRouteBitBucket = '/api/collector/item/bitbucket';
+    	
         var itemsByTypeRoute = '/api/collector/item/type/';
         var collectorsByTypeRoute = '/api/collector/type/';
 
         return {
             itemsByType: itemsByType,
             createCollectorItem: createCollectorItem,
+            createCollectorItemBitBucket:createCollectorItemBitBucket,
             collectorsByType: collectorsByType
         };
 
@@ -27,6 +30,10 @@
 
         function createCollectorItem(collectorItem) {
             return $http.post(itemRoute, collectorItem);
+        }
+        
+        function createCollectorItemBitBucket(collectorItem) {
+            return $http.post(itemRouteBitBucket, collectorItem);
         }
 
         function collectorsByType(type) {

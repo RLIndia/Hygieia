@@ -43,6 +43,9 @@ public interface CollectorService {
      * @return created CollectorItem
      */
     CollectorItem createCollectorItem(CollectorItem item);
+    
+    List<CollectorItem> createCollectorItemBitBucket(CollectorItem item);
+     
 
     /**
      * Creates a new CollectorItem. If a CollectorItem already exists with the
