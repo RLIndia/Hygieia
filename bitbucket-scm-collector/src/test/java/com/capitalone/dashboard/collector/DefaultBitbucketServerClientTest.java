@@ -76,7 +76,7 @@ public class DefaultBitbucketServerClientTest {
 	    when(rest.exchange(eq(uri2), eq(HttpMethod.GET), Matchers.any(HttpEntity.class), eq(String.class)))
 			.thenReturn(new ResponseEntity<>(jsonResponse2, HttpStatus.OK));
     	
-        List<Commit> commits = client.getCommits(repo, true);
+        List<Commit> commits = client.getCommits(repo,"", true);
         
         assertEquals(2, commits.size());
         
@@ -117,7 +117,7 @@ public class DefaultBitbucketServerClientTest {
         when(rest.exchange(eq(uri1), eq(HttpMethod.GET), Matchers.any(HttpEntity.class), eq(String.class)))
     		.thenReturn(new ResponseEntity<>(jsonResponse1, HttpStatus.OK));
     	
-        client.getCommits(repo, true);
+        client.getCommits(repo,"", true);
         
         Mockito.verify(rest).exchange(eq(uri1), eq(HttpMethod.GET), httpEntityCaptor.capture(), eq(String.class));
         

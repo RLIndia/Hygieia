@@ -44,7 +44,7 @@ public interface CollectorService {
      */
     CollectorItem createCollectorItem(CollectorItem item);
     
-    List<CollectorItem> createCollectorItemBitBucket(CollectorItem item);
+    CollectorItem createCollectorItemBitBucket(CollectorItem item);
      
 
     /**
