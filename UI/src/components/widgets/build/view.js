@@ -48,8 +48,87 @@
         //     }
         // };
 
-         ctrl.lineOptions = {
-            plugins: [
+        // ctrl.lineOptions = {
+        //     plugins: [
+        //         Chartist.plugins.gridBoundaries(),
+        //         Chartist.plugins.lineAboveArea(),
+        //         Chartist.plugins.tooltip(),
+        //         Chartist.plugins.pointHalo(),
+        //         Chartist.plugins.ctPointClick({
+        //             onClick: pointDetail
+        //         }),
+        //         Chartist.plugins.ctPointLabels({
+        //             textAnchor: 'middle'
+        //         }),
+        //         Chartist.plugins.axisLabels({
+        //             stretchFactor: 1.4,
+        //             axisX: {
+        //                 labels: [
+        //                     moment().subtract(14, 'days').format('MMM DD'),
+        //                     moment().subtract(7, 'days').format('MMM DD'),
+        //                     moment().format('MMM DD')
+        //                 ]
+        //             }
+        //         }),
+        //     ],
+        //     showArea: true,
+        //     lineSmooth: false,
+        //     fullWidth: true,
+        //     chartPadding: 7,
+        //     height: '165px',
+        //     axisX: {
+        //         showLabel: true,
+        //     },
+        //     axisY: {
+        //         labelInterpolationFnc: function(value) {
+        //             return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
+        //         },
+        //         showLabel: true
+        //     }
+        // };
+
+        //  ctrl.lineOptions = {
+        //     plugins: [
+        //         Chartist.plugins.gridBoundaries(),
+        //         Chartist.plugins.lineAboveArea(),
+        //         Chartist.plugins.pointHalo(),
+        //         Chartist.plugins.ctPointClick({
+        //             onClick: pointDetail
+        //         }),
+        //         Chartist.plugins.axisLabels({
+        //             stretchFactor: 1.4,
+        //             axisX: {
+        //                 labels: [
+        //                     moment().subtract(14, 'days').format('MMM DD'),
+        //                     moment().subtract(7, 'days').format('MMM DD'),
+        //                     moment().format('MMM DD')
+        //                 ]
+        //             }
+        //         }),
+        //         Chartist.plugins.ctPointLabels({
+        //             textAnchor: 'middle'
+        //         })
+        //     ],
+        //     showArea: true,
+        //     lineSmooth: false,
+        //     fullWidth: true,
+        //     axisX: {
+        //         showLabel: true,
+        //     },
+        //     axisY: {
+        //         offset: 30,
+        //         showGrid: true,
+        //         labelInterpolationFnc: function(value) {
+        //             return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
+        //         },
+        //         showLabel: true
+        //     }
+        // };
+
+        // bar chart config
+
+        ctrl.lineOptions = {
+                plugins: [
                 Chartist.plugins.gridBoundaries(),
                 Chartist.plugins.lineAboveArea(),
                 Chartist.plugins.pointHalo(),
@@ -73,17 +152,15 @@
             showArea: true,
             lineSmooth: false,
             fullWidth: true,
+            height:'165px',
             axisY: {
                 offset: 30,
                 showGrid: true,
-                labelInterpolationFnc: function(value) {
-                    return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
-                },
-                showLabel: false
+                showLabel: true,
+                labelInterpolationFnc: function(value) { return Math.round(value * 100) / 100; }
             }
-        };
+        }
 
-        // bar chart config
         ctrl.buildDurationOptions = {
             plugins: [
                 Chartist.plugins.threshold({
