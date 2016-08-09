@@ -1,9 +1,9 @@
 <div class="repo-view" ng-repeat="branchName in repoView.branchNames">
-    <div class="widget" ng-show="::{{repoView.$scope.selectedDropDownValue == branchName}}">{{repoView}}
+    <div ng-show="repoView.branches[branchName].show" class="commit-chart" ng-class="repoView.branches[branchName].cssClass">
+    <div class="widget">
        <!--  <div class="widget-heading">
             Summary
         </div> -->
-        {{repoView.$scope.selectedDropDownValue}}
         <div class="widget-body">
             <table class="table repo-summary-table">
                 <tr>
@@ -42,6 +42,6 @@
             </chartist>
         </div>
     </div>
-
+</div>
     
 </div>

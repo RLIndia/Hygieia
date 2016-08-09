@@ -45,13 +45,28 @@
         ctrl.commits = [];
         ctrl.branches = {};
         ctrl.branchNames = [];
-        $scope.selectedDropDownValue='';
+        //$scope.selectedDropDownValue='';
         $scope.dropdownList  = [];
         ctrl.$scope =  $scope;
+        
+        var selectedBranch; 
+        
+        $scope.test = function(selectedDropDownValue) {
+        	var brancheNames = Object.keys(ctrl.branches);
+    	    for(var i=0;i<brancheNames.length;i++) {
+    	    	ctrl.branches[brancheNames[i]].show = true;
+    	    	ctrl.branches[brancheNames[i]].cssClass='';
+    	    }
+        	ctrl.branches[selectedDropDownValue].show = true;
+        	ctrl.branches[selectedDropDownValue].cssClass='commit-chart-visible';
+        	selectedBranch = selectedDropDownValue;
+        }
         console.log('ctrl ==>',ctrl)
+        
        
         //ctrl.showDetail = showDetail;
         ctrl.load = function() {
+            $scope.dropdownList  = [];
             var deferred = $q.defer();
             var params = {
                 componentId: $scope.widgetConfig.componentId,
@@ -71,7 +86,9 @@
             	    			 commits : [],
             	    			 commitChartOptions:commitChartOptions,
             	    			 showDetail:showDetail,
-            	    			 groupedCommitData:[]
+            	    			 groupedCommitData:[],
+            	    			 show:true,
+            	    			 cssClass:''
             	    	 };
             	    	 processResponseWithBranch(brancheNames[i],data.result[brancheNames[i]], params.numberOfDays);
             	    }
@@ -116,7 +133,7 @@
                 size: 'lg',
                 resolve: {
                     commits: function() {
-                        return groupedCommitData[pointIndex];
+                    	return ctrl.branches[selectedBranch].groupedCommitData[pointIndex];
                     }
                 }
             });
