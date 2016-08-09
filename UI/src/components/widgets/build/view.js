@@ -19,32 +19,148 @@
         //region Chart Configuration
         // line chart config
 
+        // ctrl.lineOptions = {
+        //     plugins: [
+        //         Chartist.plugins.gridBoundaries(),
+        //         Chartist.plugins.lineAboveArea(),
+        //         Chartist.plugins.tooltip(),
+        //         Chartist.plugins.pointHalo(),
+        //         Chartist.plugins.ctPointClick({
+        //             onClick: pointDetail
+        //         }),
+        //         Chartist.plugins.ctPointLabels({
+        //             textAnchor: 'middle'
+        //         })
+        //     ],
+        //     showArea: true,
+        //     lineSmooth: false,
+        //     fullWidth: true,
+        //     chartPadding: 7,
+        //     height: '165px',
+        //     axisX: {
+        //         showLabel: true,
+        //     },
+        //     axisY: {
+        //         labelInterpolationFnc: function(value) {
+        //             return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
+        //         },
+        //         showLabel: true
+        //     }
+        // };
+
+        // ctrl.lineOptions = {
+        //     plugins: [
+        //         Chartist.plugins.gridBoundaries(),
+        //         Chartist.plugins.lineAboveArea(),
+        //         Chartist.plugins.tooltip(),
+        //         Chartist.plugins.pointHalo(),
+        //         Chartist.plugins.ctPointClick({
+        //             onClick: pointDetail
+        //         }),
+        //         Chartist.plugins.ctPointLabels({
+        //             textAnchor: 'middle'
+        //         }),
+        //         Chartist.plugins.axisLabels({
+        //             stretchFactor: 1.4,
+        //             axisX: {
+        //                 labels: [
+        //                     moment().subtract(14, 'days').format('MMM DD'),
+        //                     moment().subtract(7, 'days').format('MMM DD'),
+        //                     moment().format('MMM DD')
+        //                 ]
+        //             }
+        //         }),
+        //     ],
+        //     showArea: true,
+        //     lineSmooth: false,
+        //     fullWidth: true,
+        //     chartPadding: 7,
+        //     height: '165px',
+        //     axisX: {
+        //         showLabel: true,
+        //     },
+        //     axisY: {
+        //         labelInterpolationFnc: function(value) {
+        //             return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
+        //         },
+        //         showLabel: true
+        //     }
+        // };
+
+        //  ctrl.lineOptions = {
+        //     plugins: [
+        //         Chartist.plugins.gridBoundaries(),
+        //         Chartist.plugins.lineAboveArea(),
+        //         Chartist.plugins.pointHalo(),
+        //         Chartist.plugins.ctPointClick({
+        //             onClick: pointDetail
+        //         }),
+        //         Chartist.plugins.axisLabels({
+        //             stretchFactor: 1.4,
+        //             axisX: {
+        //                 labels: [
+        //                     moment().subtract(14, 'days').format('MMM DD'),
+        //                     moment().subtract(7, 'days').format('MMM DD'),
+        //                     moment().format('MMM DD')
+        //                 ]
+        //             }
+        //         }),
+        //         Chartist.plugins.ctPointLabels({
+        //             textAnchor: 'middle'
+        //         })
+        //     ],
+        //     showArea: true,
+        //     lineSmooth: false,
+        //     fullWidth: true,
+        //     axisX: {
+        //         showLabel: true,
+        //     },
+        //     axisY: {
+        //         offset: 30,
+        //         showGrid: true,
+        //         labelInterpolationFnc: function(value) {
+        //             return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
+        //         },
+        //         showLabel: true
+        //     }
+        // };
+
+        // bar chart config
+
         ctrl.lineOptions = {
-            plugins: [
+                plugins: [
                 Chartist.plugins.gridBoundaries(),
                 Chartist.plugins.lineAboveArea(),
-                Chartist.plugins.tooltip(),
-                Chartist.plugins.pointHalo()
+                Chartist.plugins.pointHalo(),
+                Chartist.plugins.ctPointClick({
+                    onClick: pointDetail
+                }),
+                Chartist.plugins.axisLabels({
+                    stretchFactor: 1.4,
+                    axisX: {
+                        labels: [
+                            moment().subtract(14, 'days').format('MMM DD'),
+                            moment().subtract(7, 'days').format('MMM DD'),
+                            moment().format('MMM DD')
+                        ]
+                    }
+                }),
+                Chartist.plugins.ctPointLabels({
+                    textAnchor: 'middle'
+                })
             ],
             showArea: true,
             lineSmooth: false,
             fullWidth: true,
-            chartPadding: 7,
-            height: '165px',
-            axisX: {
-                showLabel: true,
-
-            },
+            height:'165px',
             axisY: {
-                labelInterpolationFnc: function(value) {
-                    return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
-                },
-                showLabel: true
-
+                offset: 30,
+                showGrid: true,
+                showLabel: true,
+                labelInterpolationFnc: function(value) { return Math.round(value * 100) / 100; }
             }
-        };
+        }
 
-        // bar chart config
         ctrl.buildDurationOptions = {
             plugins: [
                 Chartist.plugins.threshold({
@@ -121,7 +237,22 @@
             window.open(url);
         };
 
+        function pointDetail(evt){
+            console.log('************** in pointDetail ******************');
+            var target = evt.target,
+            pointIndex = target.getAttribute('ct:point-index');
+            console.log(target);
+            console.log(pointIndex);
+
+            var build = {
+                number:pointIndex
+            };
+            ctrl.detail(build);
+            console.log('************** end in pointDetail ******************');
+        }
+
         ctrl.detail = function(build) {
+
             $modal.open({
                 templateUrl: 'components/widgets/build/detail.html',
                 controller: 'BuildWidgetDetailController',
@@ -371,15 +502,19 @@
 
                 var labels = [];
                 //var date = moment(new Date()).subtract(x, 'days').format('L');
-                var dayCount = -1;
-                _(data.passed).forEach(function() {
-                    dayCount = dayCount + 1;
-                });
+                // var dayCount = -1;
+                // _(data.passed).forEach(function() {
+                //     dayCount = dayCount + 1;
+                // });
+
+                // _(data.passed).forEach(function() {
+                //     var dateC = moment(new Date()).subtract(dayCount, 'days').format('D');
+                //     labels.push(dateC);
+                //     dayCount = dayCount - 1;
+                // });
 
                 _(data.passed).forEach(function() {
-                    var dateC = moment(new Date()).subtract(dayCount, 'days').format('D');
-                    labels.push(dateC);
-                    dayCount = dayCount - 1;
+                    labels.push("");
                 });
 
                 ctrl.lineData = {
