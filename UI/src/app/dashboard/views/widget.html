@@ -15,7 +15,10 @@
         <span class="subtitle">
             {{subtitle}}
         </span>
-        
+        <select ng-if="dropdownList" ng-model="selectedDropDownValue" ng-options="item for item in dropdownList" style="color:initial">
+        <option value="" selected="selected">Choose Branch</option>
+        </select>
+            
     </div>
     <div class="widget-body">
         <div class="widget-body-main">

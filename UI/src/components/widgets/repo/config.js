@@ -131,8 +131,14 @@
 					}
 				};
 			}
-			//return collectorData.createCollectorItem(item);
-			return collectorData.createCollectorItemBitBucket(item);
+			
+			if(repoTypeName.indexOf("Bitbucket")!= -1) {
+				return collectorData.createCollectorItemBitBucket(item);
+			} else {
+				return collectorData.createCollectorItem(item);
+			}
+			
+			
 		}
 
 		function processCollectorItemResponse(response) {

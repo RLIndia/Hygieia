@@ -2,6 +2,7 @@ package com.capitalone.dashboard.rest;
 
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.Commit;
+import com.capitalone.dashboard.model.CommitDataResponse;
 import com.capitalone.dashboard.model.DataResponse;
 import com.capitalone.dashboard.request.CommitRequest;
 import com.capitalone.dashboard.service.CommitService;
@@ -35,6 +36,11 @@ public class ZCommitController {
     @RequestMapping(value = "/commit", method = GET, produces = APPLICATION_JSON_VALUE)
     public DataResponse<Iterable<Commit>> search(@Valid CommitRequest request) {
         return commitService.search(request);
+    }
+    
+    @RequestMapping(value = "/commit/bitbucket", method = GET, produces = APPLICATION_JSON_VALUE)
+    public CommitDataResponse searchBitBucket(@Valid CommitRequest request) {
+        return commitService.searchBitBucket(request);
     }
 
 
