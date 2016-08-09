@@ -18,11 +18,12 @@ echo "Starting Jenkins collector"
 cd ../../jenkins-build-collector/target
 nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 
-<<'COMMENT'
 
 echo "Starting Jira collector"
 cd ../../jira-feature-collector/target
-java -jar jira-feature-collector.jar  > /dev/null 2>&1 &
+nohup java -jar jira-feature-collector.jar &
+
+<<'COMMENT'
 
 echo "Starting Sonar collector"
 cd ../../sonar-codequality-collector/target
