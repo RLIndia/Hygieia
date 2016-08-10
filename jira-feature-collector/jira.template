@@ -53,12 +53,7 @@ feature.deltaCollectorItemStartDate=2016-01-01T00:00:00.000000
 
 #Jira Connection Details
 #feature.jiraBaseUrl=http://jira-instance.com/
-feature.jiraBaseUrl=https://relevancelab.atlassian.net/
 #64-bit encoded credentials with the pattern username:password
-#feature.jiraCredentials=Y2F0YWx5c3RhZG1pbjpDYXRBZG1pbjIwMTU=
-#feature.jiraCredentials=Y2F0YWx5c3RhZG1pbjpDYXRBZG1
-feature.jiraBaseUrl=
-feature.jiraCredentials=
 #OAuth2.0 token credentials (currently not supported in this version)
 feature.jiraOauthAuthtoken=
 feature.jiraOauthRefreshtoken=
