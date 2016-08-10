@@ -16,10 +16,15 @@
             {{subtitle}}
         </span>
         
-        <select ng-if="dropdownList" ng-model="selectedDropDownValue" ng-change="test(selectedDropDownValue)" ng-options="item for item in dropdownList" style="color:initial">
-        	<option value="" selected="selected">Choose Branch</option>
+        <!-- <select ng-if="dropdownList" ng-model="selectedDropDownValue" ng-change="test(selectedDropDownValue)" ng-options="item for item in dropdownList " style="color:initial;font-size:10px">
+            <option value="" selected="selected">Choose Branch</option>
+        </select> -->
+        <br/><span class="subtitle">Branch:</span>
+        <select ng-if="dropdownList" ng-init="test(selectedDropDownValue.name)" ng-model="selectedDropDownValue" ng-change="test(selectedDropDownValue.name)" ng-options="opt as opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect">
+        	<option value="0">Choose Branch</option>
         </select>
-            
+
+         
     </div>
     <div class="widget-body">
         <div class="widget-body-main">

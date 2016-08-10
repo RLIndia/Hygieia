@@ -34,6 +34,7 @@
             showArea: true,
             lineSmooth: false,
             fullWidth: true,
+            height:'165px',
             axisY: {
                 offset: 30,
                 showGrid: true,
@@ -93,7 +94,17 @@
             	    	 processResponseWithBranch(brancheNames[i],data.result[brancheNames[i]], params.numberOfDays);
             	    }
             	    ctrl.branchNames = brancheNames;
-            	    $scope.dropdownList = brancheNames;
+                    //Adding id
+                    var bn = [];
+                    for(var j =0; j < brancheNames.length;j++){
+                        var _br = {
+                            id:j,
+                            name:brancheNames[j]
+                        }
+                        bn.push(_br);
+                    }
+            	    $scope.dropdownList = bn;
+                    console.log(bn);
             	    console.log(ctrl.branches);
             	} else {
             	  processResponse(data.result, params.numberOfDays);
@@ -328,4 +339,17 @@
 
         
     }
+
+
+    setInterval(function(){ 
+        var scope = angular.element(document.getElementById('buildBranchSelect')).scope();
+        if(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value]){
+          scope.test(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value ].text);
+        }else{
+          document.getElementById('buildBranchSelect').value = 0;
+          scope.test(document.getElementById('buildBranchSelect').options[1].text);
+        }
+        scope.$apply();
+  
+   }, 3000);
 })();
