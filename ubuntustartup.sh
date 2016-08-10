@@ -7,7 +7,7 @@ echo $2
 echo "Installing Nginx"
 apt-get install nginx -y
 echo "Stopping all java services"
-#killall java
+killall java
 echo "Configuring API"
 cp -f dashboard.template target/dashboard.properties
 echo "dbhost="$2 >> target/dashboard.properties
