@@ -57,9 +57,18 @@ public class CollectorController {
     @RequestMapping(value = "/collector/item", method = POST,
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<CollectorItem> createCollectorItem(@Valid @RequestBody CollectorItemRequest request) {
-        return ResponseEntity
+    	return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(collectorService.createCollectorItem(request.toCollectorItem()));
+    }
+    
+    @RequestMapping(value = "/collector/item/bitbucket", method = POST,
+            consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<CollectorItem> createCollectorItemBitBucket(@Valid @RequestBody CollectorItemRequest request) {
+    	return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(collectorService.createCollectorItemBitBucket(request.toCollectorItem()));
+    	
     }
 
     @RequestMapping(value = "/collector/item/{id}", method = GET, produces = APPLICATION_JSON_VALUE)

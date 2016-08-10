@@ -1,4 +1,5 @@
-<div class="repo-view">
+<div class="repo-view" ng-repeat="branchName in repoView.branchNames">
+    <div ng-show="repoView.branches[branchName].show" class="commit-chart" ng-class="repoView.branches[branchName].cssClass">
     <div class="widget">
        <!--  <div class="widget-heading">
             Summary
@@ -7,15 +8,15 @@
             <table class="table repo-summary-table">
                 <tr>
                     <td>Total Commits</td>
-                    <td>{{repoView.lastDayCommitCount}}</td>
-                    <td>{{repoView.lastSevenDaysCommitCount}}</td>
-                    <td>{{repoView.lastFourteenDaysCommitCount}}</td>
+                    <td>{{repoView.branches[branchName].lastDayCommitCount}}</td>
+                    <td>{{repoView.branches[branchName].lastSevenDaysCommitCount}}</td>
+                    <td>{{repoView.branches[branchName].lastFourteenDaysCommitCount}}</td>
                 </tr>
                 <tr>
                     <td>Contributors</td>
-                    <td>{{repoView.lastDayContributorCount}}</td>
-                    <td>{{repoView.lastSevenDaysContributorCount}}</td>
-                    <td>{{repoView.lastFourteenDaysContributorCount}}</td>
+                    <td>{{repoView.branches[branchName].lastDayContributorCount}}</td>
+                    <td>{{repoView.branches[branchName].lastSevenDaysContributorCount}}</td>
+                    <td>{{repoView.branches[branchName].lastFourteenDaysContributorCount}}</td>
                 </tr>
                 <tr class="totals">
                     <td></td>
@@ -34,13 +35,13 @@
         <div class="widget-body">
             <chartist class="ct-chart ct-octave dash-chart-alt"
                       chartist-chart-type="Line"
-                      chartist-data="repoView.commitChartData"
-                      chartist-chart-options="repoView.commitChartOptions"
-                      chartist-events="repoView.commitChartEvents"
+                      chartist-data="repoView.branches[branchName].commitChartData"
+                      chartist-chart-options="repoView.branches[branchName].commitChartOptions"
+                      chartist-events="repoView.branches[branchName].commitChartEvents"
                     >
             </chartist>
         </div>
     </div>
-
+</div>
     
 </div>

@@ -67,8 +67,58 @@ public class DefaultBitbucketCloudClient implements GitClient {
 	}
 
 	@Override
+	public List<String> getBranches(GitRepo repo) {
+		// trying to find all the branches
+		// format URL
+		String repoUrl = (String) repo.getOptions().get("url");
+		if (repoUrl.endsWith(".git")) {
+			repoUrl = repoUrl.substring(0, repoUrl.lastIndexOf(".git"));
+		}
+		URL url = null;
+		String hostName = "";
+		String protocol = "";
+		try {
+			url = new URL(repoUrl);
+			hostName = url.getHost();
+			protocol = url.getProtocol();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			LOG.info("error ==>"+e.getMessage());
+		}
+		String hostUrl = protocol + "://" + hostName + "/";
+		String repoName = repoUrl.substring(hostUrl.length(), repoUrl.length());
+		String apiUrl = "";
+		if (hostName.startsWith(settings.getHost())) {
+			apiUrl = protocol + "://" + settings.getHost() + repoName;
+		} else {
+			apiUrl = protocol + "://" + settings.getHost() + settings.getApi() + repoName;
+		}
+
+		String queryUrl = apiUrl + "refs/branches";
+
+		ResponseEntity<String> response = makeRestCall(queryUrl, settings.getUsername(), settings.getPassword());
+		JSONObject jsonParentObject = paresAsObject(response);
+
+		JSONArray valuesArray = (JSONArray)jsonParentObject.get("values");
+		List<String> branchNames = new ArrayList<>();
+		for(Object o : valuesArray) {
+
+			JSONObject obj = (JSONObject)o;
+
+			String type = (String)obj.get("type");
+			if(type!=null && type.equals("branch")) {
+
+				String branchName =  (String)obj.get("name");
+				branchNames.add(branchName);
+			}
+		}
+		return branchNames;
+	};
+
+
+	@Override
 	@SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity"}) // agreed, fixme
-	public List<Commit> getCommits(GitRepo repo, boolean firstRun) {
+	public List<Commit> getCommits(GitRepo repo,String branchName, boolean firstRun) {
 
 		List<Commit> commits = new ArrayList<>();
 
@@ -100,7 +150,7 @@ public class DefaultBitbucketCloudClient implements GitClient {
 			apiUrl = protocol + "://" + settings.getHost() + settings.getApi() + repoName;
 			//LOG.info("API URL IS ELSE :"+apiUrl);
 		}
-		
+
 		//LOG.info("API URL IS Outside :"+apiUrl);
 		Date dt;
 		if (firstRun) {
@@ -119,8 +169,10 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		cal.setTime(dt);
 		String thisMoment = String.format("%tFT%<tRZ", cal);
 
-		String queryUrl = apiUrl.concat("/commits?sha=" + repo.getBranch()
-		+ "&since=" + thisMoment);
+		String queryUrl = apiUrl.concat("/commits/" + branchName
+				+ "?since=" + thisMoment);
+		LOG.info("Commit url ===>"+queryUrl);
+		
 		/*
 		 * Calendar cal = Calendar.getInstance(); cal.setTime(dateInstance);
 		 * cal.add(Calendar.DATE, -30); Date dateBefore30Days = cal.getTime();
@@ -161,6 +213,7 @@ public class DefaultBitbucketCloudClient implements GitClient {
 					commit.setScmCommitLog(message);
 					commit.setScmCommitTimestamp(timestamp);
 					commit.setNumberOfChanges(1);
+					commit.setScmBranch(branchName);
 					commits.add(commit);
 				}
 				if (jsonArray == null || jsonArray.isEmpty()) {
@@ -206,9 +259,11 @@ public class DefaultBitbucketCloudClient implements GitClient {
 
 	private ResponseEntity<String> makeRestCall(String url, String userId,
 			String password) {
+		
 		// Basic Auth only.
-		//LOG.info("username ==> "+userId);
-		//LOG.info("password ==> "+password);
+		LOG.info("url ==> "+url);
+		LOG.info("username ==> "+userId);
+		LOG.info("password ==> "+password);
 
 		if (!"".equals(userId) && !"".equals(password)) {
 			return restOperations.exchange(url, HttpMethod.GET,
@@ -221,6 +276,9 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		}
 
 	}
+
+
+
 
 	private HttpHeaders createHeaders(final String userId, final String password) {
 		String auth = userId + ":" + password;

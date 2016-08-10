@@ -18,6 +18,8 @@ public interface GitClient {
      * @return all commits in repo
      */
 
-	List<Commit> getCommits(GitRepo repo, boolean firstRun);
+	List<Commit> getCommits(GitRepo repo,String branchName, boolean firstRun);
+	
+	List<String> getBranches(GitRepo repo);
 
 }

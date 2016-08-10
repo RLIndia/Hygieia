@@ -59,15 +59,21 @@ public class DefaultBitbucketServerClient implements GitClient {
 		this.settings = settings;
 		this.restOperations = restOperationsSupplier.get();
 	}
+	
+	@Override
+	public List<String> getBranches(GitRepo repo) {
+		return null;
+	};
+
 
 	@Override
-	public List<Commit> getCommits(GitRepo repo, boolean firstRun) {
+	public List<Commit> getCommits(GitRepo repo,String branchName, boolean firstRun) {
 		List<Commit> commits = new ArrayList<>();
 		URI queryUriPage = null;
 		
 		try {
 	
-			URI queryUri = buildUri((String) repo.getOptions().get("url"), repo.getBranch(), repo.getLastUpdateCommit());
+			URI queryUri = buildUri((String) repo.getOptions().get("url"), branchName, repo.getLastUpdateCommit());
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Rest Url: " + queryUri);
 			}
@@ -105,6 +111,7 @@ public class DefaultBitbucketServerClient implements GitClient {
 					commit.setScmCommitLog(message);
 					commit.setScmCommitTimestamp(timestamp);
 					commit.setNumberOfChanges(1);
+					commit.setScmBranch(branchName);
 					commits.add(commit);
 				}
 				if (jsonArray == null || jsonArray.isEmpty()) {

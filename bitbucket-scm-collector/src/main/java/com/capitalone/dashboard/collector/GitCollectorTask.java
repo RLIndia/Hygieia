@@ -129,26 +129,42 @@ public class GitCollectorTask extends CollectorTask<Collector> {
             if (repo.getLastUpdateTime() == null) firstRun = true;
             LOG.debug(repo.getOptions().toString() + "::" + repo.getBranch());
             
-            List<Commit> commits = gitClient.getCommits(repo, firstRun);
-            List<Commit> newCommits = new ArrayList<>();
-            for (Commit commit : commits) {
-            	if (LOG.isDebugEnabled()) {
-            		LOG.debug(commit.getTimestamp() + ":::" + commit.getScmCommitLog());
-            	}
+            List<String> branches = gitClient.getBranches(repo);
+            LOG.info("branch count ==>"+branches.size());
+            
+            //boolean gotCommits = false;
+            
+            for(String branchName:branches) {
+            	List<Commit> commits = gitClient.getCommits(repo, branchName,firstRun);
+            	LOG.info("commit count ==>"+commits.size() + " , branch name ==>"+branchName);
+//            	if(!commits.isEmpty()) {
+//            		gotCommits = true;
+//            	}
             	
-                if (isNewCommit(repo, commit)) {
-                    commit.setCollectorItemId(repo.getId());
-                    newCommits.add(commit);
+            	List<Commit> newCommits = new ArrayList<>();
+                for (Commit commit : commits) {
+                	if (LOG.isDebugEnabled()) {
+                		LOG.debug(commit.getTimestamp() + ":::" + commit.getScmCommitLog());
+                	}
+                	
+                	boolean isNew  = isNewCommit(repo, commit);
+                	LOG.info("is new ==>"+isNew);
+                    if (isNew) {
+                        commit.setCollectorItemId(repo.getId());
+                        newCommits.add(commit);
+                    }
                 }
+                commitRepository.save(newCommits);
+                commitCount += newCommits.size();
             }
-            commitRepository.save(newCommits);
-            commitCount += newCommits.size();
+            
             
             repo.setLastUpdateTime(Calendar.getInstance().getTime());
-            if (!commits.isEmpty()) {
-            	// It appears that the first commit in the list is the HEAD of the branch
-            	repo.setLastUpdateCommit(commits.get(0).getScmRevisionNumber());
-            }
+//            if (!commits.isEmpty()) {
+//            	// It appears that the first commit in the list is the HEAD of the branch
+//            	repo.setLastUpdateCommit(commits.get(0).getScmRevisionNumber());
+//            }
+            
             
             gitRepoRepository.save(repo);
 
@@ -170,7 +186,13 @@ public class GitCollectorTask extends CollectorTask<Collector> {
     }
 
     private boolean isNewCommit(GitRepo repo, Commit commit) {
-        return commitRepository.findByCollectorItemIdAndScmRevisionNumber(
-                repo.getId(), commit.getScmRevisionNumber()) == null;
+    	LOG.info("repoId ==>"+repo.getId());
+    	LOG.info("revisionNUmber "+commit.getScmRevisionNumber());
+    	
+    	Commit newCommit = commitRepository.findByCollectorItemIdAndScmRevisionNumber(
+                repo.getId(), commit.getScmRevisionNumber());
+    	
+    	LOG.info("commit ==>"+newCommit);
+        return newCommit == null;
     }
 }

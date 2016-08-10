@@ -2,6 +2,7 @@ package com.capitalone.dashboard.service;
 
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.Commit;
+import com.capitalone.dashboard.model.CommitDataResponse;
 import com.capitalone.dashboard.model.DataResponse;
 import com.capitalone.dashboard.request.CommitRequest;
 import org.json.simple.JSONObject;
@@ -16,6 +17,8 @@ public interface CommitService {
      * @return commits matching criteria
      */
     DataResponse<Iterable<Commit>> search(CommitRequest request);
+    
+    CommitDataResponse searchBitBucket(CommitRequest request);
 
     String createFromGitHubv3(JSONObject request) throws ParseException, HygieiaException;
 }

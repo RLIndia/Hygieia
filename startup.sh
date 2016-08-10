@@ -42,18 +42,18 @@ cd target
 nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar &
 
 
-<<'COMMENT'
+
 
 echo "Configuring Jira collector"
 cd ../../jira-feature-collector/
 cp -f jira.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
-cat target/temp.properties >> target/application.properties
+#wget $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
+#cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-java -jar jira-feature-collector.jar  > /dev/null 2>&1 &
+#nohup java -jar jira-feature-collector.jar &
 
-
+<<'COMMENT'
 
 echo "Configuring Sonar collector"
 cd ../../sonar-codequality-collector/
@@ -71,3 +71,5 @@ cd ../../UI
 #service nginx reload
 nohup node/node node_modules/gulp/bin/gulp.js serve &
 echo "Done..."
+
+echo "Update jira properties and start the collector nohup java -jar jira-feature-collector.jar &"
