@@ -1,6 +1,24 @@
 <div id="site" class="main-content">
     <ng-include src="ctrl.templateUrl"></ng-include>
-
+    <div class="col-md-8 col-md-push-2 ">
+       <table>
+            <tr>
+                <td>
+                    Dev
+                </td>
+                <td>
+                    QA
+                </td>
+            </tr>
+            <tr ng-repeat="myitem in mydashboards = (ctrl.mydash | filter:ctrl.filterDashboards | orderBy: 'name')">
+                <td>
+                    {{ myitem.name }}
+                </td>
+                <td>
+                </td>
+            </tr>
+       </table>
+    </div>
     <div class="col-md-8 col-md-push-2">
         <div class="widget-modal r">
             <div class="widget-modal-heading">
