@@ -19,7 +19,7 @@
 
         // get 15 days worth of commit data for the component
         function details(params) {
-        	if(params.scmType ==='Bitbucket') {
+        	if(params.scmType ==='Bitbucket' || params.scmType ==='GitHub' ) {
         		var url = caDetailRouteBitbucket;
         	} else {
         		var url = HygieiaConfig.local ? testDetailRoute : caDetailRoute
