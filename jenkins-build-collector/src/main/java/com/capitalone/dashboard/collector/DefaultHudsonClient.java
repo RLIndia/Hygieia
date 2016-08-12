@@ -182,8 +182,12 @@ public class DefaultHudsonClient implements HudsonClient {
 					addChangeSets(build, buildJson);
 
 					// getting the link to trx file 
-					
-					BuildTestResult testResult =  getBuildTestResult(buildUrl);
+					BuildTestResult testResult;
+					try {
+						testResult =  getBuildTestResult(buildUrl);
+					} catch (Exception e) {
+						testResult = null;
+					}
 					if(testResult!=null) {
 						build.setBuildTestResult(testResult);
 					}
@@ -212,8 +216,8 @@ public class DefaultHudsonClient implements HudsonClient {
 	private BuildTestResult getBuildTestResult(String buildUrl) throws MalformedURLException {
 		
 		String artifactHTMLUrl = buildUrl+"deployedArtifacts/";
-
 		ResponseEntity<String> htmlResp = makeRestCall(artifactHTMLUrl);
+		
 		String htmlString = htmlResp.getBody();
 
 		Document doc = Jsoup.parse(htmlString);
