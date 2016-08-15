@@ -262,8 +262,8 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		
 		// Basic Auth only.
 		LOG.info("url ==> "+url);
-		LOG.info("username ==> "+userId);
-		LOG.info("password ==> "+password);
+		//LOG.info("username ==> "+userId);
+		//LOG.info("password ==> "+password);
 
 		if (!"".equals(userId) && !"".equals(password)) {
 			return restOperations.exchange(url, HttpMethod.GET,
