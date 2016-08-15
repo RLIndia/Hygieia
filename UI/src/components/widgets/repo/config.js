@@ -42,8 +42,11 @@
 			ctrl.repoOption=ctrl.repoOptions[myindex];
 		}
 
-
-		ctrl.gitBranch = widgetConfig.options.branch;
+		console.log('Branch--->' + widgetConfig.options.branch + '----');
+		if(!widgetConfig.options.branch)
+			ctrl.gitBranch = "master";
+		else
+			ctrl.gitBranch = widgetConfig.options.branch;
 		ctrl.username = "";
 		ctrl.password = "";
 
