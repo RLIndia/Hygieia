@@ -25,22 +25,48 @@
         function landingDirective($controller, $http, $templateCache, $compile, widgetManager, $modal, WidgetState, DisplayState, $interval, dashboardData,$cookies) {
             return {
                 templateUrl: 'app/dashboard/views/landing.html',
+                require: '^widgetContainer',
                 restrict: 'E',
                 controller: controller,
-                scope: {
-                    widget: '=',
-                    title: '@widgetTitle'
-                },
+                scope:true,
                 link: link
             };
 
             function controller($scope, $element) {
                 $scope.landingdashboards = null;
                 $scope.alerts = [];
+                //will be set by link
+                $scope.widgetConfig = null;
+                $scope.widgetDefinition = null;
             }
 
             function link(scope, element, attrs, containerController){
                 console.log('Running link');
+                // make it so name is not case sensitive
+                attrs.name = attrs.name.toLowerCase();
+                scope.widgetEl = element;
+                scope.widgetDefinition = widgetManager.getWidget(attrs.name);
+                 // grab values from the registered configuration
+                var templateUrl = scope.widgetDefinition.view.templateUrl;
+                var controllerName = scope.widgetDefinition.view.controller;
+                var controllerAs = scope.widgetDefinition.view.controllerAs || 'ctrl';
+                
+                console.log(containerController);
+                console.log(controllerAs);
+
+                // create the widget's controller based on config values
+                scope.widgetViewController = $controller(controllerName + ' as ' + controllerAs, {
+                    $scope: scope
+                });
+
+                console.log(scope.widgetViewController);
+                console.log(scope.widgetConfig);
+                console.log(scope.widgetConfig.options.scm.name);
+
+
+                //pull information about each widget.
+
+
             }
         }
 
