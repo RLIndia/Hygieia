@@ -374,10 +374,12 @@
 		}
 		else{
 			//Since none is selected select the first one.
-			document.getElementById('buildBranchSelect').value = 0;
-			scope.test(document.getElementById('buildBranchSelect').options[0].text);
+			if(document.getElementById('buildBranchSelect')){
+				document.getElementById('buildBranchSelect').value = 0;
+				scope.test(document.getElementById('buildBranchSelect').options[0].text);
+			}
 		}
-		console.log('Entered here....>>>>>>>>>>>>>>>>>>>>>>');
+		//console.log('Entered here....>>>>>>>>>>>>>>>>>>>>>>');
 		// if(document.getElementById('buildBranchSelect')){
 		// 	if(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value]){
 		// 		scope.test(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value ].text);

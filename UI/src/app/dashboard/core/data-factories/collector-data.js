@@ -23,9 +23,25 @@
         };
 
         function itemsByType(type) {
-            return $http.get(itemsByTypeRoute + type).then(function (response) {
-                return response.data;
-            });
+            if(type != 'functional')
+                return $http.get(itemsByTypeRoute + type).then(function (response) {
+                    return response.data;
+                });
+            else
+                return $http.get('http://ms01242.starbucks.net/TestDatabaseAPI/teststacks').then(function (response){
+                    var data = [];
+                   for (var k in response.data){
+                        if (typeof response.data[k] !== 'function') {
+                             console.log("Key is " + k + ", value is" + response.data[k]);
+                             data.push({
+                                "id":k,
+                                "stackName":response.data[k]
+                             });
+                        }
+                    }
+                    console.log(data);
+                    return data;
+                });
         }
 
         function createCollectorItem(collectorItem) {
@@ -37,6 +53,7 @@
         }
 
         function collectorsByType(type) {
+            console.log(type);
             return $http.get(collectorsByTypeRoute + type).then(function (response) {
                 return response.data;
             });
