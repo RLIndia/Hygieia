@@ -31,16 +31,16 @@
                         dash-status-fail-text="{{environment.failedComponents}}"></span>
             </td> -->
             <td class="dash-overflow">
-                {{functionalTestDay.date}}
+                {{functionalTestDay.date |   date : shortDate}}
             </td>
-             <td class="dash-overflow">
+             <td class="dash-overflow" style="text-align:center">
                 {{functionalTestDay.status}}
             </td>
-            <td class="text-standard-date">
+            <td class="text-standard-date" style="text-align:center">
                 {{functionalTestDay.totalPassed}}
             </td>
            
-            <td class="text-standard-date">
+            <td class="text-standard-date" style="text-align:center">
             {{functionalTestDay.totalFailed}}
 
             </td>

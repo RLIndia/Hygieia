@@ -58,6 +58,7 @@
 			var days = Object.keys(data);
 			for(var i=0;i<days.length;i++) {
 				var date = new Date();
+				date.setTime(parseInt(days[i]));
 				functionalTestDays.push({
 					timestamp:days[i],
 					date : date,

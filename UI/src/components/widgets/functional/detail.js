@@ -5,11 +5,11 @@
         .module(HygieiaConfig.module)
         .controller('FunctionalDetailController', FunctionalDetailController);
 
-    FunctionalDetailController.$inject = ['$modalInstance', 'environment', 'collectorName', 'DashStatus'];
-    function FunctionalDetailController($modalInstance, environment, collectorName, DashStatus) {
+    FunctionalDetailController.$inject = ['$modalInstance', 'day', 'collectorName', 'DashStatus'];
+    function FunctionalDetailController($modalInstance, day, collectorName, DashStatus) {
         /*jshint validthis:true */
         var ctrl = this;
-
+        
         ctrl.statuses = DashStatus;
         console.log('statuses ==>',DashStatus,environment,collectorName)
         ctrl.environment = environment;

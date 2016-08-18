@@ -1,10 +1,10 @@
 package com.capitalone.dashboard.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
+
 
 import org.bson.types.ObjectId;
 import org.json.simple.JSONArray;
@@ -45,8 +45,10 @@ public class FunctionalTestServiceImpl implements FunctionalTestService {
 		Component component = componentRepository.findOne(componentId);
         CollectorItem item = component.getCollectorItems()
                 .get(CollectorType.Functional).get(0);
-        LocalDate tenDaysAgo = LocalDate.now().minusDays(noOfDays);
-        long epoochTime = tenDaysAgo.toEpochDay();
+        LocalDate daysAgo = LocalDate.now().minusDays(noOfDays);
+        Date date = Date.from(daysAgo.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        long epoochTime = date.getTime();
+        
         List<FunctionalTestResult> functionalTestResults = functionalTestResultRepository.findByCollectorItemIdEnvIdExecutedTime(item.getId(),(String)item.getOptions().get("envId"), epoochTime);
        
         JSONObject responseObj = new JSONObject();
