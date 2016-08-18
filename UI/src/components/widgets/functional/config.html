@@ -3,7 +3,7 @@
         <form-group input="functionalStack" errors="{required:'Please select your stack'}">
             <select name="functionalStack"
                     class="form-control"
-                    ng-model="functionalConfig.functionalStacks"
+                    ng-model="functionalConfig.functionalStack"
                     ng-options="stack.name for stack in functionalConfig.functionalStacks | orderBy: 'name' track by stack.value"
                     ng-disabled="functionalConfig.jobDropdownDisabled"
                     required>

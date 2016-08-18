@@ -17,7 +17,7 @@ public enum CollectorType {
     ChatOps,
     Cloud,
     Product,
-    FunctionTest;
+    Functional;
 
     public static CollectorType fromString(String value) {
         for (CollectorType collectorType : values()) {
