@@ -2,28 +2,28 @@
     <div class="widget-detail deploy-detail">
         <div class="widget-detail-heading">
             <div class="row">
+                <!-- {{detail}} -->
                 <div class="col-md-4">
                     <span class="dash-status-lg"
-                          dash-status="{{detail.environment.failedComponents > 0 ? detail.statuses.FAIL : detail.statuses.PASS}}"
-                          dash-status-fail-text="{{detail.environment.failedComponents}}"></span>
-                    <span class="environment-name">{{::detail.environment.name}}</span>
+                          dash-status="{{detail.tests.totalPassed > 0 ? detail.statuses.FAIL : detail.statuses.PASS}}"></span>
+                    <span class="environment-name">{{detail.environmentName}}</span>
                 </div>
 
-                <div class="col-md-3 last-updated">
-                    <span>{{::detail.environment.lastUpdated | date:'MMM d, HH:mm:ss'}}</span>
+                <div class="col-md-2 last-updated">
+                    <span>{{detail.testResults.timestamp | date:'MMM d, HH:mm:ss'}}</span>
                 </div>
 
-                <div class="col-md-2 server-count">
+                <div class="col-md-3 server-count">
                     <span ng-class="{'servers-up' : detail.environment.serverUpCount > 0}">
-                        {{detail.environment.serverUpCount}}<span class="fa fa-arrow-up"></span>
+                        {{detail.testResults.totalPassed}}<span class="fa fa-arrow-up"></span>
                     </span>
                     <span ng-class="{'servers-down' : detail.environment.serverDownCount > 0}">
-                        {{detail.environment.serverDownCount}}<span class="fa fa-arrow-down"></span>
+                        {{detail.testResults.totalFailed}}<span class="fa fa-arrow-down"></span>
                     </span>
                 </div>
                 <div class="col-md-3 view-in-tool">
-                    <a ng-href="{{::detail.environment.url}}" target="_blank">
-                        View in {{::detail.collectorName }} <span class="fa fa-angle-right"></span>
+                    <a ng-href="http://ms01242.starbucks.net/TestPortal/Home/ReportManagement" target="_blank">
+                        View in portal <span class="fa fa-angle-right"></span>
                     </a>
                 </div>
             </div>
@@ -31,34 +31,25 @@
             <!-- Close button -->
         </div>
         <div class="widget-detail-body">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th colspan="2">Component</th>
-                        <th>Time</th>
-                        <th>Version</th>
-                        <th colspan="2">Resource (RDP)</th>
-                    </tr>
-                </thead>
-                <tbody ng-repeat="unit in detail.environment.units | orderBy:['deployed', 'name'] track by $index">
-                    <tr ng-repeat="server in unit.servers | orderBy:['online', 'name'] track by $index">
-                        <td dash-status="{{unit.deployed}}"></td>
-                        <td>{{::unit.name}}</td>
-                        <td>{{::unit.lastUpdated | date:'MMM d, HH:mm:ss'}}</td>
-                        <td>{{::unit.version}}</td>
-                        <td><a target="_blank" ng-href="/rdp/?hostname={{::server.hostname}}" class="ahover">{{::server.name}}</a></td>
-                        <td ng-show="server.online" class="servers-up"><span class="fa fa-arrow-up"></span></td>
-                        <td ng-hide="server.online" class="servers-down"><span class="fa fa-arrow-down"></span></td>
-                    </tr>
-                    <tr ng-if="!unit.servers || unit.servers.length === 0">
-                        <td dash-status="{{unit.deployed}}"></td>
-                        <td>{{::unit.name}}</td>
-                        <td>{{::unit.lastUpdated | date:'MMM d, HH:mm:ss'}}</td>
-                        <td>{{::unit.version}}</td>
-                        <td colspan="2">N/A</td>
-                    </tr>
-                </tbody>
-            </table>
+           <!--  {{detail}} -->
+            
+            <div class="row" ng-class="(result.result != 'Passed') ? 'red':''" ng-repeat="result in detail.testResults.testCases.results | orderBy:['timeExecuted', 'testCaseName'] track by $index">
+                <div class="col-md-8" style="font-size:12px">
+                    {{result.testCaseName}}
+                </div>
+                <div class="col-md-2" style="font-size:12px">
+                    <span>{{result.timeExecuted | date:'MMM d, HH:mm:ss'}}</span>
+                </div>
+                <!-- <div class="col-md-2">
+                    {{result.result}}
+                </div> -->
+                <div class="col-md-1"  ng-show="(result.result == 'Passed')" class="servers-up"><span class="fa fa-arrow-up green"></span>
+                </div>
+                <div class="col-md-1" ng-hide="(result.result == 'Passed')" class="servers-down"><span class="fa fa-arrow-down red"></span>
+                </div>
+
+            </div>
+
         </div>
     </div>
 </widget-modal>

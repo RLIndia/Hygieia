@@ -41,6 +41,15 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
 
+echo "Configuring Functional Test collector"
+cd ../../sbux-functional-test-collector/
+cp -f application.template target/application.properties
+wget $1/d4dMastersCICD/readmasterjsonnew/29 -O target/temp.properties
+cat target/temp.properties >> target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
+
 
 <<'COMMENT'
 

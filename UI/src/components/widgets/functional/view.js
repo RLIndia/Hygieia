@@ -48,7 +48,10 @@
 					},
 					collectorName: function () {
 						return $scope.dashboard.application.components[0].collectorItems.Functional[0].collector.name;
-					}
+					},
+                    collector: function () {
+                        return $scope.dashboard.application.components[0].collectorItems.Functional[0].collector;
+                    }
 				}
 			});
 		}
