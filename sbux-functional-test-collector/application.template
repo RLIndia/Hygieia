@@ -16,7 +16,7 @@ dbpassword=
 #Collector schedule (required)
 sbux.cron=0 * * * * *
 
-sbux.url=http://ms01242.starbucks.net/TestDatabaseAPI/
+sbux.url=http://ms01242.starbucks.net/TestDatabaseAPI
 
 #Maximum number of days to go back in time when fetching data
 sbux.days=5

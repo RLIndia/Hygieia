@@ -1,5 +1,7 @@
 package com.capitalone.dashboard.collector;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import java.util.Set;
@@ -20,71 +22,88 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
 import com.capitalone.dashboard.model.FunctionalTestResult;
+import com.capitalone.dashboard.model.SBUXFunctionalTestEnvrironment;
 import com.capitalone.dashboard.util.Supplier;
 
 @Component
 public class DefaultSBUXClient implements SBUXClient{
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultSBUXClient.class);
 	private final SBUXSettings sbuxSettings;
 	private final RestOperations restOperations;
-	
+
 	@Autowired
 	public DefaultSBUXClient(SBUXSettings sbuxSettings,
 			Supplier<RestOperations> restOperationsSupplier) {
 		this.sbuxSettings = sbuxSettings;
 		this.restOperations = restOperationsSupplier.get();
 	}
-	
-	
+
+
 	@Override
-	public List<FunctionalTestResult> getFunctionalTestResults() {
-		
-		List<FunctionalTestResult> functionalTestResults = new ArrayList<>();
-		
+	public List<SBUXFunctionalTestEnvrironment> getFunctionalTestEnvironment() {
+		List<SBUXFunctionalTestEnvrironment> sbuxFunctionalTestEnvrironments = new ArrayList<>();
 		JSONObject envResObj = getEnvironments();
 		Set<String> keys = envResObj.keySet();
-		 for(String key : keys ) {
-			 String environmentName = (String)envResObj.get(key);
-			 JSONObject testResultRespObj = getTestResults(key);
-			 JSONArray testTimes = (JSONArray)testResultRespObj.get("TestRunTimes");
-			 JSONObject results = (JSONObject)testResultRespObj.get("Results");
-			 Set<String> testCases = results.keySet();
-			 for(String testCase : testCases) {
-				JSONArray testCaseResults = (JSONArray)results.get(testCase);
-			    
-				int index = -1;
-				for(Object obj : testCaseResults) {
-					index++;
-					String result = (String)obj;
-					FunctionalTestResult fr = new FunctionalTestResult();
-					fr.setEnvId(key);
-					fr.setEnvName(environmentName);
-					fr.setTestCaseName(testCase);
-					fr.setResult(result);
-					fr.setTimeExecuted((String)testTimes.get(index));
-					functionalTestResults.add(fr);
+		for(String key : keys ) {
+			SBUXFunctionalTestEnvrironment sbuxFunctionalTestEnvrironment = new SBUXFunctionalTestEnvrironment();
+			sbuxFunctionalTestEnvrironment.setEnvId(key);
+			sbuxFunctionalTestEnvrironment.setEnvName((String)envResObj.get(key));
+			sbuxFunctionalTestEnvrironment.setInstanceUrl(sbuxSettings.getUrl());
+			sbuxFunctionalTestEnvrironments.add(sbuxFunctionalTestEnvrironment);
+		}
+		return sbuxFunctionalTestEnvrironments;
+	}
+
+	@Override
+	public List<FunctionalTestResult> getFunctionalTestResults(SBUXFunctionalTestEnvrironment env) {
+
+		List<FunctionalTestResult> functionalTestResults = new ArrayList<>();
+
+		JSONObject testResultRespObj = getTestResults(env.getEnvId());
+		JSONArray testTimes = (JSONArray)testResultRespObj.get("TestRunTimes");
+		JSONObject results = (JSONObject)testResultRespObj.get("Results");
+		Set<String> testCases = results.keySet();
+		for(String testCase : testCases) {
+			JSONArray testCaseResults = (JSONArray)results.get(testCase);
+			int index = -1;
+			for(Object obj : testCaseResults) {
+				index++;
+				String result = (String)obj;
+				FunctionalTestResult fr = new FunctionalTestResult();
+				fr.setEnvId(env.getEnvId());
+				fr.setEnvName(env.getEnvName());
+				fr.setTestCaseName(testCase);
+				fr.setResult(result);
+				try {
+					Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse((String)testTimes.get(index));
+					fr.setTimeExecuted(date.getTime());
+				} catch (java.text.ParseException e) {
+					LOG.error("unable to convert time string to date : "+e.getMessage());
 				}
 				
-			 }
-			 
-		 }
-		
+				functionalTestResults.add(fr);
+			}
+
+		}
+
+
+
 		return functionalTestResults;
 	}
-	
+
 	private JSONObject getEnvironments() {
-		ResponseEntity<String> response = makeRestCall(sbuxSettings.getUrl(),"teststacks");
+		ResponseEntity<String> response = makeRestCall(sbuxSettings.getUrl(),"/teststacks");
 		JSONObject resObj = paresResponse(response);
 		return resObj;
 	}
-	
+
 	private JSONObject getTestResults(String envId){
-		ResponseEntity<String> response = makeRestCall(sbuxSettings.getUrl(),"reporttesthistory/bvt/"+envId+"?"+sbuxSettings.getDays());
+		ResponseEntity<String> response = makeRestCall(sbuxSettings.getUrl(),"/reporttesthistory/bvt/"+envId+"?"+sbuxSettings.getDays());
 		JSONObject resObj = paresResponse(response);
 		return resObj;
 	}
-	
+
 	private ResponseEntity<String> makeRestCall(String instanceUrl,
 			String endpoint) {
 		String url = instanceUrl+ endpoint;
@@ -121,5 +140,8 @@ public class DefaultSBUXClient implements SBUXClient{
 		}
 		return new JSONObject();
 	}
+
+
+
 
 }

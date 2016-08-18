@@ -1,14 +1,34 @@
 package com.capitalone.dashboard.model;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection="functional_test_results")
 public class FunctionalTestResult {
+	
+	@Id
+    private ObjectId id;
+    private ObjectId collectorItemId;
 	
 	private String envId;
 	private String envName;
 	private String testCaseName;
-	private String timeExecuted;
+	private long timeExecuted;
 	private String result;
 	
-	
+	public ObjectId getId() {
+		return id;
+	}
+	public void setId(ObjectId id) {
+		this.id = id;
+	}
+	public ObjectId getCollectorItemId() {
+		return collectorItemId;
+	}
+	public void setCollectorItemId(ObjectId collectorItemId) {
+		this.collectorItemId = collectorItemId;
+	}
 	public String getEnvId() {
 		return envId;
 	}
@@ -34,12 +54,11 @@ public class FunctionalTestResult {
 	public void setResult(String result) {
 		this.result = result;
 	}
-	public String getTimeExecuted() {
+	public Long getTimeExecuted() {
 		return timeExecuted;
 	}
-	public void setTimeExecuted(String timeExecuted) {
+	public void setTimeExecuted(long timeExecuted) {
 		this.timeExecuted = timeExecuted;
 	}
-	
 	
 }
