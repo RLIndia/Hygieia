@@ -9,7 +9,7 @@
     </div> -->
     <table class="table" style="margin-top:-10px">
         <tr class="dash-row">
-            <td colspan="2" style="cursor:pointer" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+            <td style="cursor:pointer" ng-click="sortType = 'name'; sortReverse = !sortReverse">
                     Date&nbsp;
                     <span ng-show="sortType == 'name' && !sortReverse" class="fa fa-caret-down"></span>
                     <span ng-show="sortType == 'name' && sortReverse" class="fa fa-caret-up"></span>
@@ -24,33 +24,27 @@
                 Total Failed
             </td>
         </tr>
-        <tr class="dash-row clickable" ng-repeat="environment in deployView.environments | orderBy:sortType:sortReverse | filter:query" ng-click="deployView.showDetail(environment)">
-            <td>
+        <tr class="dash-row clickable" ng-repeat="functionalTestDay in functionalView.functionalTestDays | orderBy:sortType:sortReverse | filter:query" ng-click="functionalView.showDetail(functionalTestDay)">
+            <!-- <td>
                 <span
                         dash-status="{{environment.failedComponents > 0 ? deployView.statuses.FAIL : deployView.statuses.PASS}}"
                         dash-status-fail-text="{{environment.failedComponents}}"></span>
+            </td> -->
+            <td class="dash-overflow">
+                {{functionalTestDay.date}}
             </td>
-            <td class="dash-overflow environment-name">
-                {{environment.name}}
+             <td class="dash-overflow">
+                {{functionalTestDay.status}}
             </td>
             <td class="text-standard-date">
-                {{environment.lastUpdated | fromNow}}
+                {{functionalTestDay.totalPassed}}
             </td>
-           <!--  <td class="server-count" ng-class="{'servers-up' : environment.serverUpCount > 0}">
-                {{environment.serverUpCount}}
-                <span class="fa fa-arrow-up"></span>
-            </td>
-            <td class="server-count" ng-class="{'servers-down' : environment.serverDownCount > 0}">
-                {{environment.serverDownCount}}
-                <span class="fa fa-arrow-down"></span>
-            </td> -->
-            <td class="text-standard-date" style="text-align: right">
-            {{environment.deployedVersion}}
+           
+            <td class="text-standard-date">
+            {{functionalTestDay.totalFailed}}
 
             </td>
-            <td width="10px">
-                <span class="pull-right fa fa-lg fa-angle-right"></span>
-            </td>
+           
         </tr>
     </table>
 </div>

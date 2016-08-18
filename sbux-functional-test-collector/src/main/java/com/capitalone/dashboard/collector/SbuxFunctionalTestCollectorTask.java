@@ -50,7 +50,7 @@ public class SbuxFunctionalTestCollectorTask extends CollectorTask<Collector>{
 	public Collector getCollector() {
 		Collector protoType = new Collector();
 		protoType.setName("SBUXFunctionTest");
-		protoType.setCollectorType(CollectorType.FunctionTest);
+		protoType.setCollectorType(CollectorType.Functional);
 		protoType.setOnline(true);
 		protoType.setEnabled(true);
 		return protoType;

@@ -25,6 +25,7 @@
         collectorData.itemsByType('functional').then(processResponse);
 
         function processResponse(data) {
+        	
             var worker = {
                 getFunctionals: getFunctionals
             };
@@ -38,7 +39,7 @@
                     }
                     return {
                         value: functional.id,
-                        name: functional.stackName
+                        name: functional.options.envName
                     };
                 }).value();
                 console.log(selectedIndex);
@@ -56,10 +57,11 @@
 
         function getFunctionalsCallback(data) {
             //$scope.$apply(function() {
+        	console.log('in callback ',data);
                 ctrl.stackDropdownDisabled = false;
                 ctrl.stackDropdownPlaceholder = 'Select your stack';
                 ctrl.functionalStacks = data.functionals;
-
+                
                 if(data.selectedIndex !== null) {
                     ctrl.functionalStack = data.functionals[data.selectedIndex];
                 }
@@ -72,6 +74,7 @@
 
             if (valid) {
                 var form = document.configForm;
+                
                 var postObj = {
                     name: 'functional',
                     options: {
@@ -80,7 +83,7 @@
                     componentId: modalData.dashboard.application.components[0].id,
                     collectorItemId: form.functionalStack.value
                 };
-
+                
                 $modalInstance.close(postObj);
             }
         }
