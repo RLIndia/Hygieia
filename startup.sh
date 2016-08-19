@@ -82,4 +82,3 @@ cd ../../UI
 nohup node/node node_modules/gulp/bin/gulp.js serve &
 echo "Done..."
 
-echo "Update jira properties and start the collector nohup java -jar jira-feature-collector.jar &"

@@ -25,8 +25,8 @@
 			console.log($scope.dashboard.application.components[0].collectorItems.Functional[0].options.envId);
 			ctrl.title = $scope.dashboard.application.components[0].collectorItems.Functional[0].options.envName;
 			$scope.subtitle = '[' + ctrl.title + ']';
-			$scope.sortType = 'name';
-			$scope.sortReverse = false;
+			$scope.fdsortType = 'date';
+			$scope.sortReverse = true;
 			console.log("***********************");
 			functionalData.details($scope.widgetConfig.componentId).then(function(data) {
 				processResponse(data.result);

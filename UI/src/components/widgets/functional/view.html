@@ -10,10 +10,10 @@
     <table class="table" style="margin-top:-10px">
         <tr class="dash-row">
             
-            <td colspan="2" style="cursor:pointer" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+            <td colspan="2" style="cursor:pointer" ng-click="fdsortType = 'date'; sortReverse = !sortReverse">
                     Date&nbsp;
-                    <span ng-show="sortType == 'name' && !sortReverse" class="fa fa-caret-down"></span>
-                    <span ng-show="sortType == 'name' && sortReverse" class="fa fa-caret-up"></span>
+                    <span ng-show="fdsortType == 'date' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span ng-show="fdsortType == 'date' && sortReverse" class="fa fa-caret-up"></span>
             </td>
             
             <td align="center">
@@ -25,17 +25,17 @@
             <td>
             </td>
         </tr>
-        <tr class="dash-row clickable" ng-repeat="functionalTestDay in functionalView.functionalTestDays | orderBy:sortType:sortReverse | filter:query" ng-click="functionalView.showDetail(functionalTestDay)">
+        <tr class="dash-row clickable" ng-repeat="functionalTestDay in functionalView.functionalTestDays | orderBy:fdsortType:sortReverse | filter:query" ng-click="functionalView.showDetail(functionalTestDay)">
             <!-- <td>
                 <span
                         dash-status="{{environment.failedComponents > 0 ? deployView.statuses.FAIL : deployView.statuses.PASS}}"
                         dash-status-fail-text="{{environment.failedComponents}}"></span>
             </td> -->
             
-             <td class="dash-overflow" style="text-align:center" ng-class="(functionalTestDay.status == 'Passed') ? 'green' : 'red'">
+             <td class="dash-overflow" style="text-align:center" ng-class="(functionalTestDay.totalFailed != '0') ? 'orange' : 'green'">
                <!--  {{functionalTestDay.status}} -->
-                <span ng-if="functionalTestDay.status == 'Passed'" class="dash-status-pass fa fa-check ng-scope"></span>
-                <span ng-if="functionalTestDay.status != 'Passed'" class="dash-status-fail fa fa fa-exclamation-circle ng-scope">1</span>
+                <span ng-if="functionalTestDay.totalFailed != '0'" class="dash-status-pass fa fa-check ng-scope"></span>
+                <span ng-if="functionalTestDay.totalFailed == '0'" class="dash-status-fail fa fa fa-exclamation-circle ng-scope"></span>
             </td>
             <td class="dash-overflow">
                 {{functionalTestDay.date |   date : shortDate}}
