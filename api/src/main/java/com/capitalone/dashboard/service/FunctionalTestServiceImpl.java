@@ -1,8 +1,5 @@
 package com.capitalone.dashboard.service;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 
@@ -25,7 +22,7 @@ import com.capitalone.dashboard.repository.FunctionalTestResultRepository;
 
 @Service
 public class FunctionalTestServiceImpl implements FunctionalTestService {
-    private static int noOfDays = 5;
+    //private static int noOfDays = 5;
 	private final ComponentRepository componentRepository;
 	private final CollectorRepository collectorRepository;
 	private final FunctionalTestResultRepository functionalTestResultRepository;
@@ -45,11 +42,11 @@ public class FunctionalTestServiceImpl implements FunctionalTestService {
 		Component component = componentRepository.findOne(componentId);
         CollectorItem item = component.getCollectorItems()
                 .get(CollectorType.Functional).get(0);
-        LocalDate daysAgo = LocalDate.now().minusDays(noOfDays);
-        Date date = Date.from(daysAgo.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        long epoochTime = date.getTime();
+//        LocalDate daysAgo = LocalDate.now().minusDays(noOfDays);
+//        Date date = Date.from(daysAgo.atStartOfDay(ZoneId.systemDefault()).toInstant());
+//        long epoochTime = date.getTime();
         
-        List<FunctionalTestResult> functionalTestResults = functionalTestResultRepository.findByCollectorItemIdEnvIdExecutedTime(item.getId(),(String)item.getOptions().get("envId"), epoochTime);
+        List<FunctionalTestResult> functionalTestResults = functionalTestResultRepository.findByCollectorItemIdEnvId(item.getId(),(String)item.getOptions().get("envId"));
        
         JSONObject responseObj = new JSONObject();
        

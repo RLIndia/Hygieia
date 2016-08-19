@@ -19,4 +19,7 @@ public interface FunctionalTestResultRepository  extends CrudRepository<Function
 
 	 @Query(value="{ 'collectorItemId': ?0,'envId': ?1,'timeExecuted':{ $gt: ?2 }}")
 	 List<FunctionalTestResult> findByCollectorItemIdEnvIdExecutedTime(ObjectId collectorItemid,String envId,long timeExecuted);
+	 
+	 @Query(value="{ 'collectorItemId': ?0,'envId': ?1}")
+	 List<FunctionalTestResult> findByCollectorItemIdEnvId(ObjectId collectorItemid,String envId);
 }
