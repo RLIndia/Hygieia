@@ -33,7 +33,7 @@
         <div class="widget-detail-body">
            <!--  {{detail}} -->
             
-            <div class="row" ng-class="(result.result != 'Passed') ? 'red':'green'" ng-repeat="result in detail.testResults.testCases.results | orderBy:['timeExecuted', 'testCaseName'] track by $index">
+            <div class="row rowformat" ng-class="(result.result != 'Passed') ? 'red':'green'" ng-repeat="result in detail.testResults.testCases.results | orderBy:['timeExecuted', 'testCaseName'] track by $index">
                 <div class="col-md-8" style="font-size:12px;word-wrap:break-word; display:inline-block;">
                     {{result.testCaseName}}
                 </div>

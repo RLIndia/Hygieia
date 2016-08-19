@@ -37,7 +37,7 @@
                 <span ng-if="functionalTestDay.totalFailed != '0'" class="dash-status-pass fa fa-check ng-scope"></span>
                 <span ng-if="functionalTestDay.totalFailed == '0'" class="dash-status-fail fa fa fa-exclamation-circle ng-scope"></span>
             </td>
-            <td class="dash-overflow">
+            <td class="dash-overflow" title="{{ functionalTestDay.date | date : 'HH:mm ss'}}" >
                 {{functionalTestDay.date |   date : shortDate}}
             </td>
             <td class="text-standard-date" style="text-align:center">
