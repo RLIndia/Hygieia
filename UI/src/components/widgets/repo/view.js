@@ -155,6 +155,17 @@
 				resolve: {
 					commits: function() {
 						return ctrl.branches[selectedBranch].groupedCommitData[pointIndex];
+					},
+					branchURL: function(){
+						if(ctrl.branches[selectedBranch].groupedCommitData[pointIndex][0]){
+							if(ctrl.branches[selectedBranch].groupedCommitData[pointIndex][0].scmBranch){
+								return $scope.dashboard.application.components[0].collectorItems.SCM[0].options.url + 'src/?at=' + ctrl.branches[selectedBranch].groupedCommitData[pointIndex][0].scmBranch;
+							}
+							else
+								return $scope.dashboard.application.components[0].collectorItems.SCM[0].options.url + 'src';
+						}
+						else
+							return $scope.dashboard.application.components[0].collectorItems.SCM[0].options.url + 'src';
 					}
 				}
 			});
