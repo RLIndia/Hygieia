@@ -66,6 +66,7 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		this.restOperations = restOperationsSupplier.get();
 	}
 
+
 	@Override
 	public List<String> getBranches(GitRepo repo) {
 		// trying to find all the branches
@@ -93,29 +94,34 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		} else {
 			apiUrl = protocol + "://" + settings.getHost() + settings.getApi() + repoName;
 		}
-		
+
 		if(apiUrl.charAt(apiUrl.length()-1)!='/'){
 			apiUrl = apiUrl.concat("/");
 		}
 
-		String queryUrl = apiUrl + "refs/branches";
-
-		ResponseEntity<String> response = makeRestCall(queryUrl, settings.getUsername(), settings.getPassword());
-		JSONObject jsonParentObject = paresAsObject(response);
-
-		JSONArray valuesArray = (JSONArray)jsonParentObject.get("values");
 		List<String> branchNames = new ArrayList<>();
-		for(Object o : valuesArray) {
+		String queryUrl = apiUrl + "refs/branches";
+		do {
+			ResponseEntity<String> response = makeRestCall(queryUrl, settings.getUsername(), settings.getPassword());
+			JSONObject jsonParentObject = paresAsObject(response);
 
-			JSONObject obj = (JSONObject)o;
+			JSONArray valuesArray = (JSONArray)jsonParentObject.get("values");
 
-			String type = (String)obj.get("type");
-			if(type!=null && type.equals("branch")) {
+			for(Object o : valuesArray) {
 
-				String branchName =  (String)obj.get("name");
-				branchNames.add(branchName);
+				JSONObject obj = (JSONObject)o;
+
+				String type = (String)obj.get("type");
+				if(type!=null && type.equals("branch")) {
+
+					String branchName =  (String)obj.get("name");
+					branchNames.add(branchName);
+				}
 			}
-		}
+			queryUrl  = (String)jsonParentObject.get("next");
+
+		}while(queryUrl != null);
+
 		return branchNames;
 	};
 
@@ -176,11 +182,11 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		if(apiUrl.charAt(apiUrl.length()-1)!='/'){
 			apiUrl = apiUrl.concat("/");
 		}
-		
+
 		String queryUrl = apiUrl.concat("commits/" + branchName
 				+ "?since=" + thisMoment);
 		LOG.info("Commit url ===>"+queryUrl);
-		
+
 		/*
 		 * Calendar cal = Calendar.getInstance(); cal.setTime(dateInstance);
 		 * cal.add(Calendar.DATE, -30); Date dateBefore30Days = cal.getTime();
@@ -267,7 +273,7 @@ public class DefaultBitbucketCloudClient implements GitClient {
 
 	private ResponseEntity<String> makeRestCall(String url, String userId,
 			String password) {
-		
+
 		// Basic Auth only.
 		LOG.info("url ==> "+url);
 		//LOG.info("username ==> "+userId);
