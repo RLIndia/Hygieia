@@ -93,6 +93,10 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		} else {
 			apiUrl = protocol + "://" + settings.getHost() + settings.getApi() + repoName;
 		}
+		
+		if(apiUrl.charAt(apiUrl.length()-1)!='/'){
+			apiUrl = apiUrl.concat("/");
+		}
 
 		String queryUrl = apiUrl + "refs/branches";
 
@@ -169,7 +173,11 @@ public class DefaultBitbucketCloudClient implements GitClient {
 		cal.setTime(dt);
 		String thisMoment = String.format("%tFT%<tRZ", cal);
 
-		String queryUrl = apiUrl.concat("/commits/" + branchName
+		if(apiUrl.charAt(apiUrl.length()-1)!='/'){
+			apiUrl = apiUrl.concat("/");
+		}
+		
+		String queryUrl = apiUrl.concat("commits/" + branchName
 				+ "?since=" + thisMoment);
 		LOG.info("Commit url ===>"+queryUrl);
 		
