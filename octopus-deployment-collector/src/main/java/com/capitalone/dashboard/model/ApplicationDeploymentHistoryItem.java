@@ -12,13 +12,19 @@ public class ApplicationDeploymentHistoryItem {
 	private String environmentName;
 	private String deploymentId;
 	private String version;
+	private String deployedWebUrl;
 	private List<Machine> machines;
 	
 	
 	private boolean deployed;
 	private long asOfDate;
 	
-	
+	public String getDeployedWebUrl() {
+		return deployedWebUrl;
+	}
+	public void setDeployedWebUrl(String url) {
+		this.deployedWebUrl = url;
+	}
 	public String getApplicationId() {
 		return applicationId;
 	}

@@ -130,7 +130,7 @@ public class DefaultOctopusClient implements OctopusClient{
 				historyItem.setApplicationName(application.getApplicationName());
 				historyItem.setEnvironmentId(str(jsonObject, "EnvironmentId"));
 				historyItem.setDeploymentId(str(jsonObject, "Id"));
-
+				historyItem.setDeployedWebUrl(str(jsonObject,"Links.Web"));
 				historyItem.setCollectorItemId(application.getId());
 
 				Environment env = getEnvironmentById(historyItem.getEnvironmentId());
@@ -153,6 +153,7 @@ public class DefaultOctopusClient implements OctopusClient{
 				historyItem.setAsOfDate(dateTime.getMillis());
 
 				Task task = getTaskById(str(jsonObject, "TaskId"));
+				LOGGER.info("Task ==>"+ jsonObject.toString());
 				historyItem.setDeployed(task.isState());
 
 
