@@ -210,8 +210,8 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
             
             
             //component.setEnvironmentUrl(octopusSettings.getUrl()+"/app#/environments/"+data.getEnvironmentId());
-            component.setEnvironmentUrl(octopusSettings.getUrl()+"/app#/environments/"+data.getDeployedWebUrl());
-            
+            component.setEnvironmentUrl(octopusSettings.getUrl()+data.getDeployedWebUrl());
+			//ex. http://testoctopus2.starbucks.net/app#/deployments/deployments-45583
             component.setComponentVersion(data.getVersion());
             
             
