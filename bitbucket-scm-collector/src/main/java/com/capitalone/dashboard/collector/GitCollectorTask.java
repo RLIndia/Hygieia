@@ -147,7 +147,7 @@ public class GitCollectorTask extends CollectorTask<Collector> {
                 		LOG.debug(commit.getTimestamp() + ":::" + commit.getScmCommitLog());
                 	}
                 	
-                	boolean isNew  = isNewCommit(repo, commit);
+                	boolean isNew  = isNewCommit(repo, commit,branchName);
                 	//LOG.info("is new ==>"+isNew);
                     if (isNew) {
                         commit.setCollectorItemId(repo.getId());
@@ -185,12 +185,12 @@ public class GitCollectorTask extends CollectorTask<Collector> {
         return gitRepoRepository.findEnabledGitRepos(collector.getId());
     }
 
-    private boolean isNewCommit(GitRepo repo, Commit commit) {
+    private boolean isNewCommit(GitRepo repo, Commit commit,String branchName) {
     	//LOG.info("repoId ==>"+repo.getId());
     	//LOG.info("revisionNUmber "+commit.getScmRevisionNumber());
     	
-    	Commit newCommit = commitRepository.findByCollectorItemIdAndScmRevisionNumber(
-                repo.getId(), commit.getScmRevisionNumber());
+    	Commit newCommit = commitRepository.findByCollectorItemIdScmRevisionNumberAndBranch(
+                repo.getId(), commit.getScmRevisionNumber(),branchName);
     	
     	//LOG.info("commit ==>"+newCommit);
         return newCommit == null;
