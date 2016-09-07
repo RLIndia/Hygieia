@@ -1,7 +1,7 @@
 package com.capitalone.dashboard.model;
 
 /**
- * Created by root on 7/9/16.
+ * Created by Vinod on 7/9/16.
  */
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;

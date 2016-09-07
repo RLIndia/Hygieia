@@ -67,7 +67,7 @@ public class DefaultBitbucketServerClient implements GitClient {
 
 
 	@Override
-	public List<Commit> getCommits(GitRepo repo,String branchName, boolean firstRun) {
+		public List<Commit> getCommits(GitRepo repo,String branchName, boolean firstRun) {
 		List<Commit> commits = new ArrayList<>();
 		URI queryUriPage = null;
 		
