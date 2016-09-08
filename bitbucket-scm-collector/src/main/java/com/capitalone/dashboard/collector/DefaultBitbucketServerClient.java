@@ -201,7 +201,7 @@ public class DefaultBitbucketServerClient implements GitClient {
 		if (branch == null || branch.length() == 0) {
 			builder.addParameter("until", "master");
 		} else {
-			builder.addParameter("until", branch.replaceAll(" ", "%20"));
+				builder.addParameter("until", branch.replaceAll(" ", "%20"));
 		}
 		
 		if (lastKnownCommit != null && lastKnownCommit.length() > 0) {
