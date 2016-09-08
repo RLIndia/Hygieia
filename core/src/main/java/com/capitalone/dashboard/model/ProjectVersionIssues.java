@@ -7,21 +7,26 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "projectversion-issues")
 public class ProjectVersionIssues extends BaseModel{
-    public String getProjectID() {
-        return projectID;
+
+
+    @Indexed
+    private String projectName;
+
+    public String getProjectName() {
+        return projectName;
     }
 
-    public ProjectVersionIssues setProjectID(String projectID) {
-        this.projectID = projectID;
+    public ProjectVersionIssues setProjectName(String projectName) {
+        this.projectName = projectName;
         return this;
     }
 
-    public String getVersionID() {
-        return versionID;
+    public String getVersionName() {
+        return versionName;
     }
 
-    public ProjectVersionIssues setVersionID(String versionID) {
-        this.versionID = versionID;
+    public ProjectVersionIssues setVersionName(String versionName) {
+        this.versionName = versionName;
         return this;
     }
 
@@ -31,6 +36,24 @@ public class ProjectVersionIssues extends BaseModel{
 
     public ProjectVersionIssues setIssueStatus(String issueStatus) {
         this.issueStatus = issueStatus;
+        return this;
+    }
+
+    public String getIssueID() {
+        return issueID;
+    }
+
+    public ProjectVersionIssues setIssueID(String issueID) {
+        this.issueID = issueID;
+        return this;
+    }
+
+    public String getIssueDescription() {
+        return issueDescription;
+    }
+
+    public ProjectVersionIssues setIssueDescription(String issueDescription) {
+        this.issueDescription = issueDescription;
         return this;
     }
 
@@ -53,14 +76,14 @@ public class ProjectVersionIssues extends BaseModel{
     }
 
     @Indexed
-    private String projectID;
-
-    @Indexed
-    private String versionID;
+    private String versionName;
     private String issueStatus;
+    private String issueID;
+    private String issueDescription;
     @Indexed
     private String changeDate;
     private String reportedDate;
+
 
 
 }

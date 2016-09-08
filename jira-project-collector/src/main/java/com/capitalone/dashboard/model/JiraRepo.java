@@ -1,11 +1,15 @@
 package com.capitalone.dashboard.model;
 
 /**
- * Created by root on 6/9/16.
+ * Created by Vinod on 6/9/16.
  */
 public class JiraRepo extends CollectorItem{
-        private static final String VERSIONURL = "versionurl";
-
+    private static final String VERSIONURL = "versionurl";
+    private static final String PROJECTNAME = "projectname";
+    private static final String VERSIONNAME = "versionname";
+    private static final String VERSIONDESCRIPTION = "versiondescription";
+    private static final String USERID = "userID";
+    private static final String PASSWORD = "password";
 
     public static String getVERSIONURL() {
         return VERSIONURL;
@@ -15,12 +19,12 @@ public class JiraRepo extends CollectorItem{
         getOptions().put(VERSIONURL,versionurl);
     }
 
-    public static String getPROJECTID() {
-        return PROJECTID;
+    public static String getPROJECTNAME() {
+        return PROJECTNAME;
     }
 
-    public void setPROJECTID(String projectid){
-        getOptions().put(PROJECTID,projectid);
+    public void setPROJECTNAME(String projectname){
+        getOptions().put(PROJECTNAME,projectname);
     }
 
     public static String getVERSIONNAME() {
@@ -55,11 +59,20 @@ public class JiraRepo extends CollectorItem{
         getOptions().put(PASSWORD,password);
     }
 
-    private static final String PROJECTID = "projectid";
-        private static final String VERSIONNAME = "versionname";
-        private static final String VERSIONDESCRIPTION = "versiondescription";
-        private static final String USERID = "userID";
-        private static final String PASSWORD = "password";
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        JiraRepo jirarepo = (JiraRepo) o;
+
+        return getVERSIONURL().equals(jirarepo.getVERSIONURL());
+    }
+
 
 
 }

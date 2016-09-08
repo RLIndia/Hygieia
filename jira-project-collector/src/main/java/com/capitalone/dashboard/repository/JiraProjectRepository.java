@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 /**
- * Created by root on 6/9/16.
+ * Created by Vinod on 6/9/16.
  */
 public interface JiraProjectRepository extends BaseCollectorItemRepository<JiraRepo>{
     @Query(value="{ 'collectorId' : ?0, options.versionurl : ?1, options.projectid : ?2}")
