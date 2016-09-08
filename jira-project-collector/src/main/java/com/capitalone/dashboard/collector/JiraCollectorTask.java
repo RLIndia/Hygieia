@@ -1,7 +1,7 @@
 package com.capitalone.dashboard.collector;
 
 /**
- * Created by root on 8/9/16.
+ * Created by vinod on 8/9/16.
  */
 
 import com.capitalone.dashboard.model.Collector;
@@ -21,8 +21,6 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,19 +35,23 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
     private final BaseCollectorRepository<Collector> collectorRepository;
     private final JiraProjectRepository jiraprojectrepository;
     private final JiraClient jiraclient;
-    private final JiraRepo jirarepo;
+    private final ProjectVersionRepository projectversionrepository;
     private final JiraSettings jirasettings;
     private final ComponentRepository dbComponentRepository;
 
     @Autowired
     public JiraCollectorTask(TaskScheduler taskScheduler,
-                             BaseCollectorRepository<Collector> collectorRepository,JiraProjectRepository jiraprojectrepository,
-                             JiraClient jiraclient, JiraRepo jirarepo, JiraSettings jirasettings,ComponentRepository dbComponentRepository) {
+                             BaseCollectorRepository<Collector> collectorRepository,
+                             JiraProjectRepository jiraprojectrepository,
+                             ProjectVersionRepository projectversionrepository,
+                             JiraClient jiraclient,
+                             JiraSettings jirasettings,
+                             ComponentRepository dbComponentRepository) {
         super(taskScheduler, "Jiraproject");
         this.collectorRepository = collectorRepository;
         this.jiraclient = jiraclient;
         this.jiraprojectrepository = jiraprojectrepository;
-        this.jirarepo = jirarepo;
+        this.projectversionrepository = projectversionrepository;
         this.jirasettings = jirasettings;
         this.dbComponentRepository = dbComponentRepository;
     }
@@ -114,14 +116,20 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int projectCount = 0;
         int issueCount = 0;
         clean(collector);
-        for(JiraRepo repo : enabledRepos(collector)){
-            boolean firstRun = false;
-
-        }
+//        for(JiraRepo repo : enabledRepos(collector)){
+//            boolean firstRun = false;
+//
+//        }
 
     }
 
     private List<JiraRepo> enabledRepos(Collector collector) {
         return jiraprojectrepository.findEnabledJiraRepos(collector.getId());   //gitRepoRepository.findEnabledGitRepos(collector.getId());
+    }
+
+    private boolean isNewProjectVersionIssue(JiraRepo repo, ProjectVersionIssues projectversionissues){
+       // ProjectVersionIssues newprojectversionissues =  projectversionrepository.findByCollectorItemIdAndIssueId(repo.getId(),projectversionissues.getIssueID());
+        //LOG.info("commit ==>"+newCommit);
+        return false;//newprojectversionissues == null;
     }
 }

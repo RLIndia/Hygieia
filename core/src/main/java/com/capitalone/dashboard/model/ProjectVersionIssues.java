@@ -3,6 +3,7 @@ package com.capitalone.dashboard.model;
 /**
  * Created by Vinod on 7/9/16.
  */
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "projectversion-issues")
@@ -83,6 +84,17 @@ public class ProjectVersionIssues extends BaseModel{
     @Indexed
     private String changeDate;
     private String reportedDate;
+
+    public ObjectId getCollectorItemId() {
+        return collectorItemId;
+    }
+
+    public void setCollectorItemId(ObjectId collectorItemId) {
+        this.collectorItemId = collectorItemId;
+
+    }
+
+    private ObjectId collectorItemId;
 
 
 
