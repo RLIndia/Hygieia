@@ -17,7 +17,8 @@ public enum CollectorType {
     ChatOps,
     Cloud,
     Product,
-    Functional;
+    Functional,
+    Jiraproject;
 
     public static CollectorType fromString(String value) {
         for (CollectorType collectorType : values()) {

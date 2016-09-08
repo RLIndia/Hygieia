@@ -51,7 +51,6 @@ cd target
 nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
 
 
-<<'COMMENT'
 
 echo "Configuring Jira collector"
 cd ../../jira-feature-collector/
@@ -62,7 +61,6 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 java -jar jira-feature-collector.jar  > /dev/null 2>&1 &
 
-COMMENT
 
 echo "Configuring Sonar collector"
 cd ../../sonar-codequality-collector/
