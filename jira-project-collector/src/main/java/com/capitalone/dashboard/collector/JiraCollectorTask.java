@@ -116,12 +116,16 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int projectCount = 0;
         int issueCount = 0;
         clean(collector);
+
 //        for(JiraRepo repo : enabledRepos(collector)){
 //            boolean firstRun = false;
 //
 //        }
 
     }
+
+
+
 
     private List<JiraRepo> enabledRepos(Collector collector) {
         return jiraprojectrepository.findEnabledJiraRepos(collector.getId());   //gitRepoRepository.findEnabledGitRepos(collector.getId());
