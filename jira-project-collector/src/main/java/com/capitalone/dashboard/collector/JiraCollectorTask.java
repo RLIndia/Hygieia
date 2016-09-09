@@ -4,6 +4,8 @@ package com.capitalone.dashboard.collector;
  * Created by vinod on 8/9/16.
  */
 
+
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.capitalone.dashboard.model.Collector;
 import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
@@ -13,6 +15,7 @@ import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.JiraProjectRepository;
 import com.capitalone.dashboard.repository.ProjectVersionRepository;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
@@ -38,6 +41,8 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
     private final JiraClient jiraclient;
     private final JiraSettings jirasettings;
     private final ComponentRepository dbComponentRepository;
+
+
 
     @Autowired
     public JiraCollectorTask(TaskScheduler taskScheduler,
@@ -116,6 +121,10 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int projectCount = 0;
         int issueCount = 0;
         clean(collector);
+        List<BasicProject> projects = jiraclient.getProjects();
+        logBanner(projects.toString());
+
+
 
 //        for(JiraRepo repo : enabledRepos(collector)){
 //            boolean firstRun = false;
@@ -123,6 +132,8 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 //        }
 
     }
+
+
 
 
 

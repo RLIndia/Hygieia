@@ -16,7 +16,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
-
 import com.capitalone.dashboard.util.Supplier;
 
 /**
@@ -52,12 +52,14 @@ public class JiraRestClientSupplier implements Supplier<JiraRestClient> {
 
         try {
 
-            jiraUri = new URI(jiraBaseUrl);
+                jiraUri = new URI(jiraBaseUrl);
+
             InetAddress.getByName(jiraUri.getHost());
             client = new AsynchronousJiraRestClientFactory()
                     .createWithBasicHttpAuthentication(jiraUri,
                             decodeCredentials(jiraCredentials).get("username"),
                             decodeCredentials(jiraCredentials).get("password"));
+
 
         } catch (UnknownHostException | URISyntaxException e) {
             LOGGER.error("The Jira host name is invalid. Further jira collection cannot proceed.");
@@ -66,6 +68,11 @@ public class JiraRestClientSupplier implements Supplier<JiraRestClient> {
         }
 
         return client;
+    }
+
+
+    public JSONObject getVersion(URI uri) {
+        return null;
     }
 
     /**
@@ -164,3 +171,4 @@ public class JiraRestClientSupplier implements Supplier<JiraRestClient> {
         }
     }
 }
+

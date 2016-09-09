@@ -5,12 +5,18 @@ package com.capitalone.dashboard.collector;
  */
 
 
+//import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.atlassian.util.concurrent.Promise;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
 import com.capitalone.dashboard.model.JiraRepo;
 //import com.capitalone.dashboard.util.Encryption;
 //import com.capitalone.dashboard.util.EncryptionException;
 import com.capitalone.dashboard.util.Supplier;
 //import org.apache.commons.codec.binary.Base64;
+import com.google.common.collect.Lists;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 //import org.apache.http.client.utils.URIBuilder;
@@ -18,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 //import org.json.simple.JSONObject;
 //import org.json.simple.parser.JSONParser;
 //import org.json.simple.parser.ParseException;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 //import org.springframework.http.HttpEntity;
@@ -27,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
+
+import com.atlassian.jira.rest.client.api.JiraRestClient;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,12 +49,17 @@ public class DefaultJiraClient implements JiraClient {
     private static final Log LOG = LogFactory.getLog(DefaultJiraClient.class);
     private final JiraSettings settings;
 
-    private final RestOperations restOperations;
+    //private final RestOperations restOperations;
+
+    private JiraRestClient client;
+    private JSONObject projectVersions = null;
 
     @Autowired
-    public DefaultJiraClient(JiraSettings settings,Supplier<RestOperations> restOperationsSupplier){
+    public DefaultJiraClient(JiraSettings settings, JiraRestClientSupplier restSupplier){
         this.settings = settings;
-        this.restOperations = restOperationsSupplier.get();
+        this.client = restSupplier.get();
+
+
     }
 
     @Override
@@ -65,6 +79,37 @@ public class DefaultJiraClient implements JiraClient {
 
         return projectversionissues;
     }
+
+    @Override
+    public List<BasicProject> getProjects() {
+        List<BasicProject> rt = new ArrayList<>();
+
+        if (client != null) {
+            try {
+                Promise<Iterable<BasicProject>> promisedRs = client.getProjectClient().getAllProjects();
+
+//               Promise<SearchResult> promisedR1s =  client.getSearchClient().searchJql("test");
+//                SearchResult searchResult = promisedR1s.claim();
+//                searchResult.getIssues()
+                Iterable<BasicProject> jiraRawRs = promisedRs.claim();
+                if (jiraRawRs != null) {
+                    rt = Lists.newArrayList(jiraRawRs);
+                }
+            } catch (com.atlassian.jira.rest.client.api.RestClientException e) {
+                if (e.getStatusCode().get() != null && e.getStatusCode().get() == 401 ) {
+                    LOG.error("Error 401 connecting to JIRA server, your credentials are probably wrong. Note: Ensure you are using JIRA user name not your email address.");
+                } else {
+                    LOG.error("No result was available from Jira unexpectedly - defaulting to blank response. The reason for this fault is the following:" + e.getCause());
+                }
+                LOG.debug("Exception", e);
+            }
+        } else {
+            LOG.warn("Jira client setup failed. No results obtained. Check your jira setup.");
+        }
+
+        return rt;
+    }
+
 
     URI buildUri(final String projectname, final String versionname) throws URISyntaxException {
         //https://starbucks-mobile.atlassian.net/rest/api/2/search?jql=project=%22API%22+AND+fixVersion=%27Chase%20Pay%201.0%27&maxResults=1000&fields=summary,status
