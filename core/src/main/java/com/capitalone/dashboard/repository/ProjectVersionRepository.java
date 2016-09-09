@@ -15,8 +15,8 @@ import java.util.List;
 public interface ProjectVersionRepository  extends CrudRepository<ProjectVersionIssues, ObjectId>, QueryDslPredicateExecutor<ProjectVersionIssues> {
     /* finds a issue by issueid and collectorid */
 
-    @Query(value="{ 'collectorItemId': ?0,'issueID':?1}")
-    ProjectVersionIssues findByCollectorItemIdAndIssueId(ObjectId collectorItemId, String issueID);
+
+    ProjectVersionIssues findByCollectorItemIdAndIssueId(ObjectId collectorItemId, String issueId);
 
     @Query(value="{ 'collectorItemId': ?0}")
     List<ProjectVersionIssues> findByCollectorItemId(ObjectId collectorItemId);

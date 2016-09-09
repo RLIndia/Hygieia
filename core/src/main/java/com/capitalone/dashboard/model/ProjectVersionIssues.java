@@ -3,7 +3,9 @@ package com.capitalone.dashboard.model;
 /**
  * Created by Vinod on 7/9/16.
  */
+//import org.bson.types.ObjectId;
 import org.bson.types.ObjectId;
+
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "projectversion-issues")
@@ -40,12 +42,12 @@ public class ProjectVersionIssues extends BaseModel{
         return this;
     }
 
-    public String getIssueID() {
-        return issueID;
+    public String getIssueId() {
+        return issueId;
     }
 
-    public ProjectVersionIssues setIssueID(String issueID) {
-        this.issueID = issueID;
+    public ProjectVersionIssues setIssueId(String issueId) {
+        this.issueId = issueId;
         return this;
     }
 
@@ -79,11 +81,15 @@ public class ProjectVersionIssues extends BaseModel{
     @Indexed
     private String versionName;
     private String issueStatus;
-    private String issueID;
+    private String issueId;
     private String issueDescription;
     @Indexed
     private String changeDate;
     private String reportedDate;
+
+
+    private ObjectId collectorItemId;
+    private long timestamp;
 
     public ObjectId getCollectorItemId() {
         return collectorItemId;
@@ -91,11 +97,15 @@ public class ProjectVersionIssues extends BaseModel{
 
     public void setCollectorItemId(ObjectId collectorItemId) {
         this.collectorItemId = collectorItemId;
-
     }
 
-    private ObjectId collectorItemId;
+    public long getTimestamp() {
+        return timestamp;
+    }
 
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
 
 }

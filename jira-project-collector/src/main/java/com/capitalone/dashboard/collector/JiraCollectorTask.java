@@ -34,8 +34,8 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 
     private final BaseCollectorRepository<Collector> collectorRepository;
     private final JiraProjectRepository jiraprojectrepository;
-    private final JiraClient jiraclient;
     private final ProjectVersionRepository projectversionrepository;
+    private final JiraClient jiraclient;
     private final JiraSettings jirasettings;
     private final ComponentRepository dbComponentRepository;
 
@@ -116,10 +116,10 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int projectCount = 0;
         int issueCount = 0;
         clean(collector);
-        for(JiraRepo repo : enabledRepos(collector)){
-            boolean firstRun = false;
-
-        }
+//        for(JiraRepo repo : enabledRepos(collector)){
+//            boolean firstRun = false;
+//
+//        }
 
     }
 
@@ -128,8 +128,8 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
     }
 
     private boolean isNewProjectVersionIssue(JiraRepo repo, ProjectVersionIssues projectversionissues){
-        ProjectVersionIssues newprojectversionissues =  projectversionrepository.findByCollectorItemIdAndIssueId(repo.getId(),projectversionissues.getIssueID());
-       // LOG.info("commit ==>"+newCommit);
-        return newprojectversionissues == null;
+        // ProjectVersionIssues newprojectversionissues =  projectversionrepository.findByCollectorItemIdAndIssueId(repo.getId(),projectversionissues.getIssueID());
+        //LOG.info("commit ==>"+newCommit);
+        return false;//newprojectversionissues == null;
     }
 }
