@@ -94,9 +94,10 @@ public class DefaultJiraClient implements JiraClient {
     }
 
     @Override
-    public List<String> getProjects() {
+    public List<JiraRepo> getProjects() {
         List<BasicProject> rt = new ArrayList<>();
-        List<String> projectVersions = new ArrayList<>();
+       // List<String> projectVersions = new ArrayList<>();
+        List<JiraRepo> projectVersions = new ArrayList<JiraRepo>();
         if (client != null) {
             try {
                 Promise<Iterable<BasicProject>> promisedRs = client.getProjectClient().getAllProjects();
@@ -107,15 +108,32 @@ public class DefaultJiraClient implements JiraClient {
                 Iterable<BasicProject> jiraRawRs = promisedRs.claim();
                 if (jiraRawRs != null) {
                     rt = Lists.newArrayList(jiraRawRs);
-
+                    int count;
+                    count = 0;
                     for (BasicProject jiraProject : rt) {
-                        String projectName = TOOLS.sanitizeResponse(jiraProject.getId());
+                        String projectName = TOOLS.sanitizeResponse(jiraProject.getName());
+                        String projectID = TOOLS.sanitizeResponse(jiraProject.getId());
                         //Fetch Version
                         LOG.info(projectName);
-                        String versions = getProjectVersions(projectName).toJSONString();
-                        LOG.info(versions);
-                        projectVersions.add(versions);
+                        JSONArray versions = getProjectVersions(projectID);
+                        int versioncount = 0;
+                        for(Object version : versions){
+                            JiraRepo jr = new JiraRepo();
+                            jr.setPROJECTID(projectID);
+                            jr.setPROJECTNAME(projectName);
+                            jr.setVERSIONID(str((JSONObject)version,"id"));
+                            jr.setVERSIONDESCRIPTION(str((JSONObject)version,"description"));
+                            jr.setVERSIONNAME(str((JSONObject)version,"name"));
+                            projectVersions.add(jr);
+                           // LOG.info("Added:" + jr.getVERSIONNAME());
+                            count++;
+                            versioncount++;
+                        }
+                        LOG.info("For " + projectName + " found " + versioncount + " Versions.");
+                        //LOG.info(versions);
+                        //projectVersions.add(versions);
                     }
+                    LOG.info("Scanned " + count + " projects.");
 
                 }
 
@@ -156,7 +174,7 @@ public class DefaultJiraClient implements JiraClient {
                                                 String password) {
         // Basic Auth only.
         if (!"".equals(userId) && !"".equals(password)) {
-            LOG.info("Call with userid and password");
+          //  LOG.info("Call with userid and password");
             return restOperations.exchange(url, HttpMethod.GET,
                     new HttpEntity<>(createHeaders(userId, password)),
                     String.class);
@@ -206,7 +224,7 @@ public class DefaultJiraClient implements JiraClient {
 
 
         URI uri = URI.create(settings.getJiraBaseUrl() + "/" +  settings.getApi() + "/search?jql=project=%22" + projectname + "%22+AND+fixVersion=%27" + versionname.replaceAll(" ","%20"));
-        LOG.info(uri);
+        //LOG.info(uri);
         return uri;
     }
 

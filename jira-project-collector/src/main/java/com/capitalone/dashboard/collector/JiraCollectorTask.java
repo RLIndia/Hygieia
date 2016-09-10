@@ -121,8 +121,29 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int projectCount = 0;
         int issueCount = 0;
         clean(collector);
-        List<String> projects = jiraclient.getProjects();
-        logBanner(projects.toString());
+        List<JiraRepo> fetchedprojects = jiraclient.getProjects();
+        List<JiraRepo> repoList = new ArrayList<JiraRepo>();
+        for(JiraRepo repo : fetchedprojects){
+           // LOG.info(jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID()) == null);
+            JiraRepo savedRepo = jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
+
+            if(savedRepo.getPROJECTID() == null){
+                repo.setCollectorId(collector.getId());
+                repo.setEnabled(false);
+
+                LOG.info("To Add:" + repo.getPROJECTNAME() + " " + repo.getVERSIONNAME());
+                repoList.add(repo);
+                try {
+                    jiraprojectrepository.save(repo);
+                }catch(Exception e){
+                    LOG.info(e);
+                }
+            }
+        }
+       // jiraprojectrepository.save(repoList);
+        LOG.info("Finished." + repoList.toString());
+
+        //logBanner(projects.toString());
 
 
 
