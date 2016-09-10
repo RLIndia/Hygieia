@@ -5,26 +5,26 @@ package com.capitalone.dashboard.model;
  */
 public class JiraRepo extends CollectorItem{
 
-    private static final String PROJECTNAME = "projectname";
-    private static final String PROJECTID = "PROJECTID";
-    private static final String VERSIONID = "VERSIONID";
-    private static final String VERSIONNAME = "versionname";
-    private static final String VERSIONDESCRIPTION = "versiondescription";
+    private static final String PROJECTNAME = "projectName";
+    private static final String PROJECTID = "projectId";
+    private static final String VERSIONID = "versionId";
+    private static final String VERSIONNAME = "versionName";
+    private static final String VERSIONDESCRIPTION = "versionDescription";
 
-    public String getPROJECTID() { return (String) getOptions().get("projectid");}
+    public String getPROJECTID() { return (String) getOptions().get(PROJECTID);}
 
     public void setPROJECTID(String projectid){
         getOptions().put(PROJECTID, projectid);
     }
 
-    public String getVERSIONID() { return (String) getOptions().get("versionid");}
+    public String getVERSIONID() { return (String) getOptions().get(VERSIONID);}
 
     public void setVERSIONID(String versionid){
         getOptions().put(VERSIONID, versionid);
     }
 
     public String getPROJECTNAME() {
-        return (String) getOptions().get("projectname");
+        return (String) getOptions().get(PROJECTNAME);
     }
 
     public void setPROJECTNAME(String projectname){
@@ -32,7 +32,7 @@ public class JiraRepo extends CollectorItem{
     }
 
     public String getVERSIONNAME() {
-        return (String) getOptions().get("versionname");
+        return (String) getOptions().get(VERSIONDESCRIPTION);
     }
 
     public void setVERSIONNAME(String versionname){
@@ -40,7 +40,7 @@ public class JiraRepo extends CollectorItem{
     }
 
     public String getVERSIONDESCRIPTION() {
-        return (String) getOptions().get("versiondescription");
+        return (String) getOptions().get(VERSIONDESCRIPTION);
     }
 
     public void setVERSIONDESCRIPTION(String versiondescription){

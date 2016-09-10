@@ -126,8 +126,9 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         for(JiraRepo repo : fetchedprojects){
            // LOG.info(jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID()) == null);
             JiraRepo savedRepo = jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
-
-            if(savedRepo.getPROJECTID() == null){
+            
+          
+            if(savedRepo == null){
                 repo.setCollectorId(collector.getId());
                 repo.setEnabled(false);
 
