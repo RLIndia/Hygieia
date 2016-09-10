@@ -4,6 +4,8 @@ package com.capitalone.dashboard.collector;
  * Created by vinod on 8/9/16.
  */
 
+
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.capitalone.dashboard.model.Collector;
 import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
@@ -13,6 +15,7 @@ import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.JiraProjectRepository;
 import com.capitalone.dashboard.repository.ProjectVersionRepository;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
@@ -34,10 +37,12 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 
     private final BaseCollectorRepository<Collector> collectorRepository;
     private final JiraProjectRepository jiraprojectrepository;
-    private final JiraClient jiraclient;
     private final ProjectVersionRepository projectversionrepository;
+    private final JiraClient jiraclient;
     private final JiraSettings jirasettings;
     private final ComponentRepository dbComponentRepository;
+
+
 
     @Autowired
     public JiraCollectorTask(TaskScheduler taskScheduler,
@@ -116,6 +121,32 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int projectCount = 0;
         int issueCount = 0;
         clean(collector);
+        List<JiraRepo> fetchedprojects = jiraclient.getProjects();
+        List<JiraRepo> repoList = new ArrayList<JiraRepo>();
+        for(JiraRepo repo : fetchedprojects){
+           // LOG.info(jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID()) == null);
+            JiraRepo savedRepo = jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
+
+            if(savedRepo.getPROJECTID() == null){
+                repo.setCollectorId(collector.getId());
+                repo.setEnabled(false);
+
+                LOG.info("To Add:" + repo.getPROJECTNAME() + " " + repo.getVERSIONNAME());
+                repoList.add(repo);
+                try {
+                    jiraprojectrepository.save(repo);
+                }catch(Exception e){
+                    LOG.info(e);
+                }
+            }
+        }
+       // jiraprojectrepository.save(repoList);
+        LOG.info("Finished." + repoList.toString());
+
+        //logBanner(projects.toString());
+
+
+
 //        for(JiraRepo repo : enabledRepos(collector)){
 //            boolean firstRun = false;
 //
@@ -123,12 +154,17 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 
     }
 
+
+
+
+
+
     private List<JiraRepo> enabledRepos(Collector collector) {
         return jiraprojectrepository.findEnabledJiraRepos(collector.getId());   //gitRepoRepository.findEnabledGitRepos(collector.getId());
     }
 
     private boolean isNewProjectVersionIssue(JiraRepo repo, ProjectVersionIssues projectversionissues){
-       // ProjectVersionIssues newprojectversionissues =  projectversionrepository.findByCollectorItemIdAndIssueId(repo.getId(),projectversionissues.getIssueID());
+        // ProjectVersionIssues newprojectversionissues =  projectversionrepository.findByCollectorItemIdAndIssueId(repo.getId(),projectversionissues.getIssueID());
         //LOG.info("commit ==>"+newCommit);
         return false;//newprojectversionissues == null;
     }

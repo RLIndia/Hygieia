@@ -6,9 +6,22 @@ package com.capitalone.dashboard.model;
 public class JiraRepo extends CollectorItem{
 
     private static final String PROJECTNAME = "projectname";
+    private static final String PROJECTID = "PROJECTID";
+    private static final String VERSIONID = "VERSIONID";
     private static final String VERSIONNAME = "versionname";
     private static final String VERSIONDESCRIPTION = "versiondescription";
 
+    public String getPROJECTID() { return (String) getOptions().get("projectid");}
+
+    public void setPROJECTID(String projectid){
+        getOptions().put(PROJECTID, projectid);
+    }
+
+    public String getVERSIONID() { return (String) getOptions().get("versionid");}
+
+    public void setVERSIONID(String versionid){
+        getOptions().put(VERSIONID, versionid);
+    }
 
     public String getPROJECTNAME() {
         return (String) getOptions().get("projectname");
@@ -46,7 +59,7 @@ public class JiraRepo extends CollectorItem{
 
         JiraRepo jirarepo = (JiraRepo) o;
 
-        return getPROJECTNAME().equals(jirarepo.getPROJECTNAME());
+        return (getPROJECTID().equals(jirarepo.getPROJECTID()) && getVERSIONID().equals(jirarepo.getVERSIONID()));
     }
 
     @Override
