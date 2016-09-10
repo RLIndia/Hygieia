@@ -121,7 +121,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int projectCount = 0;
         int issueCount = 0;
         clean(collector);
-        List<BasicProject> projects = jiraclient.getProjects();
+        List<String> projects = jiraclient.getProjects();
         logBanner(projects.toString());
 
 

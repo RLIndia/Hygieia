@@ -19,5 +19,5 @@ public interface JiraClient {
      */
 
     List<ProjectVersionIssues> getprojectversionissues(JiraRepo jirarepo,  boolean firstrun);
-    List<BasicProject> getProjects();
+    List<String> getProjects();
 }

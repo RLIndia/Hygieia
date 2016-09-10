@@ -71,10 +71,6 @@ public class JiraRestClientSupplier implements Supplier<JiraRestClient> {
     }
 
 
-    public JSONObject getVersion(URI uri) {
-        return null;
-    }
-
     /**
      * Converts Jira basic authentication credentials from Base 64 string to a
      * username/password map
@@ -87,7 +83,7 @@ public class JiraRestClientSupplier implements Supplier<JiraRestClient> {
      *            response (e.g., nothing gets decoded)
      * @return Decoded username/password map of strings
      */
-    private Map<String, String> decodeCredentials(String jiraBasicAuthCredentialsInBase64) {
+    public Map<String, String> decodeCredentials(String jiraBasicAuthCredentialsInBase64) {
         Map<String, String> credMap = new LinkedHashMap<String, String>();
         if (jiraBasicAuthCredentialsInBase64 != null) {
             //the tokenize includes a \n to ensure we trim those off the end (mac base64 adds these!)
