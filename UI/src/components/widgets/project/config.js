@@ -49,7 +49,7 @@
                 });
             }
             console.log("Collector Items:");
-            console.log(modalData.dashboard.application.components);
+            console.log(modalData);
             var projectVersionCollector = modalData.dashboard.application.components[0].collectorItems.projectVersion;
             var projectVersionCollectorId = projectVersionCollector ? projectVersionCollector[0].id : null;
             
@@ -60,11 +60,11 @@
             //$scope.$apply(function() {
             console.log('in callback ',data);
                 ctrl.projectVersionDropdownDisabled = false;
-                ctrl.projectVersionDropdownPlaceholder = 'Select your project';
+                ctrl.projectVersionDropdownPlaceholder = 'Select your project 1';
                 ctrl.projectVersions = data.projectVersions;
                 
                 if(data.selectedIndex !== null) {
-                    ctrl.functionalStack = data.functionals[data.selectedIndex];
+                    ctrl.projectVersion = data.projectVersions[data.selectedIndex];
                 }
             //});
         }

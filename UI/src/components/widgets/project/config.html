@@ -1,9 +1,9 @@
 <widget-modal widget-modal-title="Configure Jira Project Widget">
     <form class="projectversion-config" name="configForm" ng-submit="projectVersionConfig.submit(configForm.$valid)" novalidate="novalidate">
-        <form-group input="projectVersions" errors="{required:'Please select your Project - Version'}">
-            <select name="projectVersions"
+        <form-group input="projectVersion" errors="{required:'Please select your Project - Version'}">
+            <select name="projectVersion"
                     class="form-control"
-                    ng-model="projectVersionConfig.projectVersions"
+                    ng-model="projectVersionConfig.projectVersion"
                     ng-options="projectVersion.name for projectVersion in projectVersionConfig.projectVersions | orderBy: 'name' track by projectVersion.value"
                     ng-disabled="projectVersionConfig.jobDropdownDisabled"
                     required>
