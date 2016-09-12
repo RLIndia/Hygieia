@@ -147,11 +147,27 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         //logBanner(projects.toString());
 
 
+        //List<JiraRepo> enabledrepoList = new ArrayList<JiraRepo>();
+        int enabledVersions = 0;
+        for(JiraRepo repo : enabledRepos(collector)){
+            boolean firstRun = false;
+            LOG.info("Enabled repo:");
+            LOG.info(repo);
+           // enabledrepoList.add(repo);
 
-//        for(JiraRepo repo : enabledRepos(collector)){
-//            boolean firstRun = false;
-//
-//        }
+            List<ProjectVersionIssues> enabledProjectVersionIssues  = jiraclient.getprojectversionissues(repo,firstRun);
+            //Each of the project version issue update to
+            LOG.info(enabledProjectVersionIssues.toString());
+            //Check if this issue is present in the repo if present update else insert.
+
+            enabledVersions++;
+
+        }
+
+        LOG.info("Enabled Versions:" + enabledVersions);
+
+        //fetching issues for enabled versions
+
 
     }
 

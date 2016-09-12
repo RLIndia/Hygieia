@@ -80,14 +80,15 @@ public class DefaultJiraClient implements JiraClient {
         List<ProjectVersionIssues> projectversionissues = new ArrayList<>();
         URI queryUriPage = null;
         try{
-            URI queryUri = buildUriVersionIssues((String) jirarepo.getOptions().get("projectname"),(String) jirarepo.getOptions().get("versionname"));
-            LOG.info(queryUri);
+            LOG.info(jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"));
+            LOG.info(jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+            ResponseEntity<String> response = makeRestCall(buildUriVersionIssues((String) jirarepo.getOptions().get("projectId"),(String) jirarepo.getOptions().get("versionId")),jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+            JSONObject jsonParentObject = paresAsObject(response);
+            projectversionissues = (JSONArray) jsonParentObject.get("issues");
 
         }
-        catch (URISyntaxException e) {
-            LOG.error("Invalid uri: " + e.getMessage());
-        } catch (RestClientException re) {
-            LOG.error("Failed to obtain commits from " + queryUriPage, re);
+        catch (Exception e) {
+            LOG.error("Error in call: " + e.getMessage());
         }
 
         return projectversionissues;
@@ -101,7 +102,7 @@ public class DefaultJiraClient implements JiraClient {
         if (client != null) {
             try {
                 Promise<Iterable<BasicProject>> promisedRs = client.getProjectClient().getAllProjects();
-
+client.getSearchClient().searchJql()
 //               Promise<SearchResult> promisedR1s =  client.getSearchClient().searchJql("test");
 //                SearchResult searchResult = promisedR1s.claim();
 //                searchResult.getIssues()
@@ -219,13 +220,14 @@ public class DefaultJiraClient implements JiraClient {
         return value == null ? null : value.toString();
     }
 
-    URI buildUriVersionIssues(final String projectname, final String versionname) throws URISyntaxException {
-        //https://starbucks-mobile.atlassian.net/rest/api/2/search?jql=project=%22API%22+AND+fixVersion=%27Chase%20Pay%201.0%27&maxResults=1000&fields=summary,status
+    String buildUriVersionIssues(final String projectId, final String versionId) throws URISyntaxException {
+        //https://starbucks-mobile.atlassian.net/rest/api/2/search?jql=project=%2714500%27AND+fixVersion=%2718600%27&maxResults=1000&fields=summary,status
 
 
-        URI uri = URI.create(settings.getJiraBaseUrl() + "/" +  settings.getApi() + "/search?jql=project=%22" + projectname + "%22+AND+fixVersion=%27" + versionname.replaceAll(" ","%20"));
-        //LOG.info(uri);
-        return uri;
+        String url = settings.getJiraBaseUrl() + "/" +  settings.getApi() + "/search?jql=project=%27" + projectId + "%27+AND+fixVersion=%27" + versionId + "%27&maxResults=1000&fields=summary%2Cstatus";
+
+        LOG.info(url);
+        return url;
     }
 
     String buildUriVerion(String projectname)throws URISyntaxException {
