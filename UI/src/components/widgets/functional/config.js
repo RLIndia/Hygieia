@@ -25,7 +25,7 @@
         collectorData.itemsByType('functional').then(processResponse);
 
         function processResponse(data) {
-        	
+            
             var worker = {
                 getFunctionals: getFunctionals
             };
@@ -57,7 +57,7 @@
 
         function getFunctionalsCallback(data) {
             //$scope.$apply(function() {
-        	console.log('in callback ',data);
+            console.log('in callback ',data);
                 ctrl.stackDropdownDisabled = false;
                 ctrl.stackDropdownPlaceholder = 'Select your stack';
                 ctrl.functionalStacks = data.functionals;
