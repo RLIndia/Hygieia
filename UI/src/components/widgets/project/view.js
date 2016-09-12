@@ -15,6 +15,7 @@
 		ctrl.statuses = DashStatus;
         ctrl.projectData = projectData;
 		ctrl.load = load;
+		
 		//ctrl.showDetail = showDetail;
 		ctrl.title = "";
 

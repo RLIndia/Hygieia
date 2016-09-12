@@ -21,7 +21,8 @@
 
         // public methods
         ctrl.submit = submit;
-        console.log(collectorData);
+        console.log("modalData");
+        console.log(modalData);
         collectorData.itemsByType('Jiraproject').then(processResponse);
 
         function processResponse(data) {
@@ -50,7 +51,7 @@
             }
             console.log("Collector Items:");
             console.log(modalData);
-            var projectVersionCollector = modalData.dashboard.application.components[0].collectorItems.projectVersion;
+            var projectVersionCollector = modalData.dashboard.application.components[0].collectorItems.Jiraproject;
             var projectVersionCollectorId = projectVersionCollector ? projectVersionCollector[0].id : null;
             
             worker.getprojectVersions(data, projectVersionCollectorId, getprojectVersionCallback);
@@ -60,7 +61,7 @@
             //$scope.$apply(function() {
             console.log('in callback ',data);
                 ctrl.projectVersionDropdownDisabled = false;
-                ctrl.projectVersionDropdownPlaceholder = 'Select your project 1';
+                ctrl.projectVersionDropdownPlaceholder = 'Select your project';
                 ctrl.projectVersions = data.projectVersions;
                 
                 if(data.selectedIndex !== null) {
@@ -82,8 +83,9 @@
                         id: widgetConfig.options.id
                     },
                     componentId: modalData.dashboard.application.components[0].id,
-                    collectorItemId: form.functionalStack.value
+                    collectorItemId: form.projectVersion.value
                 };
+               // console.log(postObj);
                 
                 $modalInstance.close(postObj);
             }
