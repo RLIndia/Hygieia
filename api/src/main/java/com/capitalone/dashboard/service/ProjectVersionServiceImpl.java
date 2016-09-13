@@ -25,11 +25,15 @@ import com.capitalone.dashboard.repository.CollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import  com.capitalone.dashboard.repository.ProjectVersionRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class ProjectVersionServiceImpl implements ProjectVersionService {
     private final ComponentRepository componentRepository;
     private final CollectorRepository collectorRepository;
     private final ProjectVersionRepository projectVersionRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectVersionServiceImpl.class);
 
     @Autowired
     public ProjectVersionServiceImpl(ComponentRepository componentRepository,
@@ -45,15 +49,48 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 
         Component component = componentRepository.findOne(componentId);
         CollectorItem item = component.getCollectorItems()
-                .get(CollectorType.Jiraproject).get(0);
-
-        List<ProjectVersionIssues> projectVersionIssues = projectVersionRepository.findByCollectorItemId(item.getId());
+               .get(CollectorType.Jiraproject).get(0);
+        LOGGER.info("componentId");
+        LOGGER.info(componentId.toString());
+        LOGGER.info(item.getCollectorId().toString());
+        List<ProjectVersionIssues> pvi = projectVersionRepository.findByCollectorItemId(item.getCollectorId());
         JSONObject responseObj = new JSONObject();
-        //To Do after the first fetch by Collector.
+//        //To Do after the first fetch by Collector.
+//        responseObj.put("issues",pvi);
 
-
+        JSONArray issues = new JSONArray();
         Collector collector = collectorRepository
                 .findOne(item.getCollectorId());
+        int doneCount = 0;
+        int progressCount = 0;
+        int issueCount = 0;
+        int pendingCount =0;
+        for(ProjectVersionIssues issue : pvi){
+            JSONObject issueObj = new JSONObject();
+            issueObj.put("issueID",issue.getIssueId());
+            issueObj.put("status",issue.getIssueStatus());
+            issueObj.put("description",issue.getIssueDescription());
+            issues.add(issueObj);
+            if(issue.getIssueStatus().toString().contentEquals("Done")){
+                doneCount++;
+            }
+            if(issue.getIssueStatus().toString().contentEquals("Backlog") || issue.getIssueStatus().toString().contentEquals("Requirement In Progress")){
+                pendingCount++;
+            }
+            if( issue.getIssueStatus().toString().contentEquals("In Progress")){
+                progressCount++;
+            }
+            issueCount++;
+        }
+        JSONObject summary = new JSONObject();
+        summary.put("doneCount",doneCount);
+        summary.put("issueCount",issueCount);
+        summary.put("inprogressCount",progressCount);
+        summary.put("pendingCount",pendingCount);
+        responseObj.put("issues",issues);
+        responseObj.put("summary",summary);
+
+
 
         return  new DataResponse<>(responseObj, collector.getLastExecuted());
     }

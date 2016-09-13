@@ -156,8 +156,27 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
            // enabledrepoList.add(repo);
 
             List<ProjectVersionIssues> enabledProjectVersionIssues  = jiraclient.getprojectversionissues(repo,firstRun);
+
+            for(ProjectVersionIssues pvi : enabledProjectVersionIssues){
+                ProjectVersionIssues savedIssue = projectversionrepository.findByCollectorItemIdAndIssueId(collector.getId(),pvi.getIssueId());
+                if(savedIssue != null){
+                    savedIssue.setIssueDescription(pvi.getIssueDescription());
+                    savedIssue.setIssueStatus(pvi.getIssueStatus());
+                  //  savedIssue.setChangeDate()
+                    projectversionrepository.save(savedIssue);
+                    LOG.info("Updated Issue " + pvi.getIssueDescription());
+                }
+                else{
+                    pvi.setCollectorItemId(collector.getId());
+                    LOG.info("Created Issue " + pvi.getIssueDescription());
+                    projectversionrepository.save(pvi);
+                }
+            }
+
+           //
+
             //Each of the project version issue update to
-            LOG.info(enabledProjectVersionIssues.toString());
+
             //Check if this issue is present in the repo if present update else insert.
 
             enabledVersions++;

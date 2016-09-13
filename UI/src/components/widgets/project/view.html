@@ -1,11 +1,25 @@
-<div class="functional-view">
+<div class="project-view" ng-model="projectView">
     <!-- Removed dropdown based on feedback -->
-    <!--  <div class="col-xs-9.5 text-standard-sm dash-overflow">
-         <select class="form-control deploy-select-env" ng-model="query" style="background-color: #000;">
-             <option ng-repeat="environment in deployView.environments">
-                 {{environment.name}}
-             </option>
-         </select>
-     </div> -->
-
+     <div class="col-xs-9.5 text-standard-sm dash-overflow">
+       <table class="table">
+       		<tr>
+       			<td>Issues</td>
+       			<td>Done</td>
+       			<td>In Progress</td>
+       			<td>To Do</td>
+       			<td></td>
+       		</tr>
+       		<tr>
+       			<td>{{projectVersionView.jiraDashboard.issueSummary.issueCount}}</td>
+       			<td>{{projectVersionView.jiraDashboard.issueSummary.doneCount}}</td>
+       			<td>{{projectVersionView.jiraDashboard.issueSummary.inprogressCount}}</td>
+       			<td>{{projectVersionView.jiraDashboard.issueSummary.pendingCount}}</td>
+       			 <td class="" style="text-align:right">
+            
+                <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
+            	</td>
+       		</tr>
+       </table>
+     
+     </div>
 </div>
