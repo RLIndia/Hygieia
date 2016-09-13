@@ -7,7 +7,9 @@ package com.capitalone.dashboard.collector;
 
 //import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.util.concurrent.Promise;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
@@ -19,6 +21,7 @@ import com.capitalone.dashboard.util.ClientUtil;
 //import org.apache.commons.codec.binary.Base64;
 import com.google.common.collect.Lists;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 //import org.apache.http.client.utils.URIBuilder;
@@ -26,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 //import org.json.simple.JSONObject;
 //import org.json.simple.parser.JSONParser;
 //import org.json.simple.parser.ParseException;
+import org.apache.http.client.utils.URIBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -46,12 +50,13 @@ import org.springframework.web.client.RestOperations;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 //import java.nio.charset.StandardCharsets;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 //Implementation to connect to Jira server
 @Component
@@ -67,6 +72,12 @@ public class DefaultJiraClient implements JiraClient {
     private static final ClientUtil TOOLS = ClientUtil.getInstance();
     private JiraRestClientSupplier jiraRestClientSupplier;
 
+    private static final Set<String> DEFAULT_FIELDS = new HashSet<>();
+    static {
+        DEFAULT_FIELDS.add("summary,status");
+    }
+
+
     @Autowired
     public DefaultJiraClient(JiraSettings settings,Supplier<RestOperations> restOperationsSupplier,JiraRestClientSupplier restSupplier){
         this.settings = settings;
@@ -78,13 +89,49 @@ public class DefaultJiraClient implements JiraClient {
     @Override
     public List<ProjectVersionIssues> getprojectversionissues(JiraRepo jirarepo,  boolean firstrun){
         List<ProjectVersionIssues> projectversionissues = new ArrayList<>();
+
         URI queryUriPage = null;
         try{
-            LOG.info(jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"));
-            LOG.info(jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
-            ResponseEntity<String> response = makeRestCall(buildUriVersionIssues((String) jirarepo.getOptions().get("projectId"),(String) jirarepo.getOptions().get("versionId")),jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
-            JSONObject jsonParentObject = paresAsObject(response);
-            projectversionissues = (JSONArray) jsonParentObject.get("issues");
+//            Set<String> flds = new HashSet<String>();
+//            flds.add("status");
+//            flds.add("summary");
+//            Promise<SearchResult> promisedRs= client.getSearchClient().searchJql("project in (" + (String) jirarepo.getOptions().get("projectId") + ") AND fixVersion in (" +  (String) jirarepo.getOptions().get("versionId") + ")",0,1000,flds);
+//            SearchResult srs = promisedRs.claim();
+//             Iterable<Issue> issues =  srs.getIssues();
+//            List<Issue> arryIssues = Lists.newArrayList(issues);
+//            for(Issue iss : arryIssues){
+//                LOG.info(iss.getSummary().toString());
+//            }
+
+
+//            LOG.info(jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"));
+//            LOG.info(jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+//            ResponseEntity<String> response = makeRestCall1(buildUriVersionIssues(),jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"),(String) jirarepo.getOptions().get("projectId"),(String) jirarepo.getOptions().get("versionId"));
+//            LOG.info("Returned");
+//            LOG.info(response);
+//            JSONObject jsonParentObject = paresAsObject(response);
+//            projectversionissues = (JSONArray) jsonParentObject.get("issues");
+
+          Promise<SearchResult> src =  client.getSearchClient().searchJql("project in (" + (String) jirarepo.getOptions().get("projectId") + ") AND fixVersion in (" + (String) jirarepo.getOptions().get("versionId") + ")",500,0,null);
+            final SearchResult searchResult = src.claim();
+            final Iterable<Issue> searchResultIssues = searchResult.getIssues();
+            if(searchResultIssues != null){
+                LOG.info("Not Null");
+                int count = 0;
+                for(Issue issue : searchResultIssues){
+                    //Status{self=https://starbucks-mobile.atlassian.net/rest/api/2/status/11002, name=Done, id=11002, description=, iconUrl=https://starbucks-mobile.atlassian.net/}
+                    LOG.info(issue.getId() + " - " + issue.getStatus().getName());
+                    ProjectVersionIssues pvi = new ProjectVersionIssues();
+                    pvi.setIssueDescription(issue.getSummary());
+                    pvi.setIssueId(issue.getId().toString());
+                    pvi.setIssueStatus(issue.getStatus().getName());
+                    pvi.setProjectName((String)jirarepo.getOptions().get("projectName"));
+                    pvi.setVersionName((String)jirarepo.getOptions().get("versionName"));
+                    projectversionissues.add(pvi);
+                    count++;
+                }
+                LOG.info("Found " + count + " issues");
+            }
 
         }
         catch (Exception e) {
@@ -102,7 +149,7 @@ public class DefaultJiraClient implements JiraClient {
         if (client != null) {
             try {
                 Promise<Iterable<BasicProject>> promisedRs = client.getProjectClient().getAllProjects();
-client.getSearchClient().searchJql()
+//client.getSearchClient().searchJql()
 //               Promise<SearchResult> promisedR1s =  client.getSearchClient().searchJql("test");
 //                SearchResult searchResult = promisedR1s.claim();
 //                searchResult.getIssues()
@@ -175,7 +222,7 @@ client.getSearchClient().searchJql()
                                                 String password) {
         // Basic Auth only.
         if (!"".equals(userId) && !"".equals(password)) {
-          //  LOG.info("Call with userid and password");
+            LOG.info("Call with userid and password");
             return restOperations.exchange(url, HttpMethod.GET,
                     new HttpEntity<>(createHeaders(userId, password)),
                     String.class);
@@ -186,6 +233,33 @@ client.getSearchClient().searchJql()
         }
 
     }
+
+   // private ResponseEntity<String> makeRestCall1(String url, String userId,
+   //                                             String password,String projectId,String versionId) {
+//        // Basic Auth only.
+//        String params = "";
+//     //   String qu ="jql=project in (\"" + projectId + "\")"; // AND fixVersion in ('" + versionId + "')";
+//        String qu ="project in (\"" + projectId + "\") AND fixVersion in (\"" + versionId + "\")";
+//        try {
+//           params = URLEncoder.encode(qu,"UTF-8") + "&fields=summary,status";
+//            //params += "&fields=summary,status";
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        if (!"".equals(userId) && !"".equals(password)) {
+//            LOG.info("Call with userid and password");
+//            LOG.info(url + "?jql={q}" + params);
+//            return restOperations.exchange(url + "?jql=" + params, HttpMethod.GET,
+//                    new HttpEntity<>(createHeaders(userId, password)),
+//                    String.class,params);
+//
+//        } else {
+//            return restOperations.exchange(url, HttpMethod.GET, null,
+//                    String.class);
+//        }
+
+  //  }
+
 
     private HttpHeaders createHeaders(final String userId, final String password) {
         String auth = userId + ":" + password;
@@ -220,11 +294,22 @@ client.getSearchClient().searchJql()
         return value == null ? null : value.toString();
     }
 
-    String buildUriVersionIssues(final String projectId, final String versionId) throws URISyntaxException {
+   // String buildUriVersionIssues(final String projectId, final String versionId) throws URISyntaxException {
+        String buildUriVersionIssues() throws URISyntaxException {
         //https://starbucks-mobile.atlassian.net/rest/api/2/search?jql=project=%2714500%27AND+fixVersion=%2718600%27&maxResults=1000&fields=summary,status
-
-
-        String url = settings.getJiraBaseUrl() + "/" +  settings.getApi() + "/search?jql=project=%27" + projectId + "%27+AND+fixVersion=%27" + versionId + "%27&maxResults=1000&fields=summary%2Cstatus";
+        //https://starbucks-mobile.atlassian.net/rest/api/2/search?jql=project+in+('14500')+AND+fixVersion+in+('18600')
+//        String qu ="project in (\"" + projectId + "\")"; // AND fixVersion in ('" + versionId + "')";
+//        URIBuilder uriBuilder = new URIBuilder(settings.getJiraBaseUrl() + "/" +  settings.getApi() + "/search");
+//        uriBuilder.setParameter("jql",qu);
+//        uriBuilder.setUserInfo(jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+//        LOG.info(uriBuilder.build().toString());
+//        return(uriBuilder.build());
+//        try {
+//            qu = URLEncoder.encode(qu,"UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            LOG.error(e.getMessage());
+//        }
+        String url = settings.getJiraBaseUrl() + "/" +  settings.getApi() + "/search"; //?jql=" + qu  + "&maxResults=1000"; //&fields=summary%2Cstatus
 
         LOG.info(url);
         return url;
@@ -233,6 +318,7 @@ client.getSearchClient().searchJql()
     String buildUriVerion(String projectname)throws URISyntaxException {
         //projectname = projectname.replaceAll(" ","%20");
         String url = settings.getJiraBaseUrl() + "/" +  settings.getApi() + "/project/" + projectname.replaceAll(" ","%20") + "/versions" + "?maxResults=50&startAt=0";
+
         LOG.info(url);
         return url;
     }
