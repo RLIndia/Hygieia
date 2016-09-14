@@ -16,7 +16,7 @@
 		ctrl.load = load;
 		ctrl.jiraDashboard = {};
 
-		//ctrl.showDetail = showDetail;
+		ctrl.showDetail = showDetail;
 		ctrl.title = "";
 
 		function load() {
@@ -34,7 +34,7 @@
 		}
 		function processProjectData(data) {
 		  console.log("In process project data");
-		  
+		  $scope.subtitle = data.result.summary.projectName;
 	      ctrl.jiraDashboard = {
 	      		"issueSummary" :data.result.summary,
 	      		"issues":data.result.issues
@@ -42,5 +42,28 @@
 	      console.log(ctrl.jiraDashboard.issueSummary);
 	    }
 
+	    function showDetail(jiraDashboard){
+	    	$modal.open({
+				controller: 'projectVersionViewDetailController',
+				controllerAs: 'detail',
+				templateUrl: 'components/widgets/project/detail.html',
+				size: 'lg',
+				resolve: {
+					jiraDashboard: function() {
+						return jiraDashboard;
+					},
+					collectorName: function () {
+						
+						return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector.name;
+					},
+                    collector: function () {
+                        return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector;
+                    }
+				}
+			});
+	    }
+
 	}
+
+
 })();

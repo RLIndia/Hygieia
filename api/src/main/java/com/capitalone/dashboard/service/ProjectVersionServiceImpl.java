@@ -65,28 +65,36 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
         int progressCount = 0;
         int issueCount = 0;
         int pendingCount =0;
+        JSONObject summary = new JSONObject();
         for(ProjectVersionIssues issue : pvi){
             JSONObject issueObj = new JSONObject();
+            //push the first issues projectname and versionname to the summary object
+            if(issueCount == 0){
+                summary.put("projectName",issue.getProjectName());
+                summary.put("versionName",issue.getVersionName());
+            }
             issueObj.put("issueID",issue.getIssueId());
             issueObj.put("status",issue.getIssueStatus());
             issueObj.put("description",issue.getIssueDescription());
+
             issues.add(issueObj);
             if(issue.getIssueStatus().toString().contentEquals("Done")){
                 doneCount++;
             }
-            if(issue.getIssueStatus().toString().contentEquals("Backlog") || issue.getIssueStatus().toString().contentEquals("Requirement In Progress")){
+            if(issue.getIssueStatus().toString().contentEquals("Backlog") ){
                 pendingCount++;
             }
-            if( issue.getIssueStatus().toString().contentEquals("In Progress")){
+            if( issue.getIssueStatus().toString().contentEquals("In Progress") || issue.getIssueStatus().toString().contentEquals("Requirement In Progress")){
                 progressCount++;
             }
             issueCount++;
         }
-        JSONObject summary = new JSONObject();
+
         summary.put("doneCount",doneCount);
         summary.put("issueCount",issueCount);
         summary.put("inprogressCount",progressCount);
         summary.put("pendingCount",pendingCount);
+
         responseObj.put("issues",issues);
         responseObj.put("summary",summary);
 
