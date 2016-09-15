@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
  * Created by Vinod on 7/9/16.
  */
 @Component
-@ConfigurationProperties(prefix = "jira")
+@ConfigurationProperties(prefix = "feature")
 public class JiraSettings {
     private String cron;
     private String host;
