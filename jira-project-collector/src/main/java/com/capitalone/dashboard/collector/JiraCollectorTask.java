@@ -116,43 +116,18 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 
     @Override
     public void collect(Collector collector) {
-        logBanner("JiraProjectCollector..");
+        logBanner("Jira Project Collector..starting");
         long start = System.currentTimeMillis();
         int projectCount = 0;
         int issueCount = 0;
         clean(collector);
-//        List<JiraRepo> fetchedprojects = jiraclient.getProjects();
-//        List<JiraRepo> repoList = new ArrayList<JiraRepo>();
-//        for(JiraRepo repo : fetchedprojects){
-//           // LOG.info(jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID()) == null);
-//            JiraRepo savedRepo = jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
-//            LOG.info(collector.getId() + " " + repo.getVERSIONID() + " " + repo.getPROJECTID());
-//
-//            if(savedRepo == null){
-//                repo.setCollectorId(collector.getId());
-//                repo.setEnabled(false);
-//
-//                LOG.info("To Add:" + repo.getPROJECTNAME() + " " + repo.getVERSIONNAME());
-//                repoList.add(repo);
-//                try {
-//                    jiraprojectrepository.save(repo);
-//                }catch(Exception e){
-//                    LOG.info(e);
-//                }
-//            }
-//        }
-//       // jiraprojectrepository.save(repoList);
-//        LOG.info("Finished." + repoList.toString());
-
-        //logBanner(projects.toString());
-
-
-        //List<JiraRepo> enabledrepoList = new ArrayList<JiraRepo>();
         int enabledVersions = 0;
+        int newIssues = 0;
+        int updatedIssues = 0;
         for(JiraRepo repo : enabledRepos(collector)){
             boolean firstRun = false;
-            LOG.info("Enabled repo:");
-            LOG.info(repo);
+           // LOG.info("Enabled repo:");
+           // LOG.info(repo);
            // enabledrepoList.add(repo);
 
             List<ProjectVersionIssues> enabledProjectVersionIssues  = jiraclient.getprojectversionissues(repo,firstRun);
@@ -164,26 +139,25 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                     savedIssue.setIssueStatus(pvi.getIssueStatus());
                   //  savedIssue.setChangeDate()
                     projectversionrepository.save(savedIssue);
-                    LOG.info("Updated Issue " + pvi.getIssueDescription());
+                   // LOG.info("Updated Issue " + pvi.getIssueDescription());
+                    updatedIssues++;
                 }
                 else{
                     pvi.setCollectorItemId(collector.getId());
-                    LOG.info("Created Issue " + pvi.getIssueDescription());
+                  //  LOG.info("Created Issue " + pvi.getIssueDescription());
                     projectversionrepository.save(pvi);
+                    newIssues++;
                 }
             }
-
-           //
-
-            //Each of the project version issue update to
-
-            //Check if this issue is present in the repo if present update else insert.
 
             enabledVersions++;
 
         }
-
-        LOG.info("Enabled Versions:" + enabledVersions);
+        LOG.info("Enabled Projects Versions:" + enabledVersions);
+        LOG.info("New Issues:" + newIssues);
+        LOG.info("Updated Issues:" + updatedIssues);
+        LOG.info("Total Issues:" + (newIssues + updatedIssues));
+        LOG.info("Finished.");
 
         //fetching issues for enabled versions
 

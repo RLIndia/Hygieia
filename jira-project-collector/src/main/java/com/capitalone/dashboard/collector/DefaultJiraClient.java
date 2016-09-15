@@ -116,11 +116,11 @@ public class DefaultJiraClient implements JiraClient {
             final SearchResult searchResult = src.claim();
             final Iterable<Issue> searchResultIssues = searchResult.getIssues();
             if(searchResultIssues != null){
-                LOG.info("Not Null");
+                //LOG.info("Not Null");
                 int count = 0;
                 for(Issue issue : searchResultIssues){
                     //Status{self=https://starbucks-mobile.atlassian.net/rest/api/2/status/11002, name=Done, id=11002, description=, iconUrl=https://starbucks-mobile.atlassian.net/}
-                    LOG.info(issue.getId() + " - " + issue.getStatus().getName());
+                    //LOG.info(issue.getId() + " - " + issue.getStatus().getName());
                     ProjectVersionIssues pvi = new ProjectVersionIssues();
                     pvi.setIssueDescription(issue.getSummary());
                     pvi.setIssueId(issue.getId().toString());
@@ -130,7 +130,7 @@ public class DefaultJiraClient implements JiraClient {
                     projectversionissues.add(pvi);
                     count++;
                 }
-                LOG.info("Found " + count + " issues");
+               // LOG.info("Found " + count + " issues");
             }
 
         }
@@ -162,7 +162,7 @@ public class DefaultJiraClient implements JiraClient {
                         String projectName = TOOLS.sanitizeResponse(jiraProject.getName());
                         String projectID = TOOLS.sanitizeResponse(jiraProject.getId());
                         //Fetch Version
-                        LOG.info(projectName);
+                       // LOG.info(projectName);
                         JSONArray versions = getProjectVersions(projectID);
                         int versioncount = 0;
                         for(Object version : versions){
@@ -177,7 +177,7 @@ public class DefaultJiraClient implements JiraClient {
                             count++;
                             versioncount++;
                         }
-                        LOG.info("For " + projectName + " found " + versioncount + " Versions.");
+                      //  LOG.info("For " + projectName + " found " + versioncount + " Versions.");
                         //LOG.info(versions);
                         //projectVersions.add(versions);
                     }
@@ -222,7 +222,7 @@ public class DefaultJiraClient implements JiraClient {
                                                 String password) {
         // Basic Auth only.
         if (!"".equals(userId) && !"".equals(password)) {
-            LOG.info("Call with userid and password");
+            //LOG.info("Call with userid and password");
             return restOperations.exchange(url, HttpMethod.GET,
                     new HttpEntity<>(createHeaders(userId, password)),
                     String.class);
