@@ -14,20 +14,35 @@
        		<tr>
        			<td>Issues</td>
        			<td>Done</td>
-       			<td>In Progress</td>
+       			
        			<td>To Do</td>
+            <td>In Progress</td>
        			<td></td>
        		</tr>
-       		<tr class="issue-datarow" ng-click="projectVersionView.showDetail(projectVersionView.jiraDashboard)">
+       		<tr class="issue-datarow pointer" ng-click="projectVersionView.showDetail(projectVersionView.jiraDashboard)" style="cursor:pointer">
        			<td>{{projectVersionView.jiraDashboard.issueSummary.issueCount}}</td>
        			<td>{{projectVersionView.jiraDashboard.issueSummary.doneCount}}</td>
-       			<td>{{projectVersionView.jiraDashboard.issueSummary.inprogressCount}}</td>
+       			
        			<td>{{projectVersionView.jiraDashboard.issueSummary.pendingCount}}</td>
+            <td>{{projectVersionView.jiraDashboard.issueSummary.inprogressCount}}</td>
        			 <td class="" style="text-align:right" >
             
                 <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
             	</td>
        		</tr>
+          <tr>
+            <td colspan="5"><hr/>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="5">
+                 <chartist class="ct-chart ct-major-twelfth"
+                  chartist-chart-type="Pie"
+                  chartist-data="projectVersionView.jiraDashboard.chartData"
+                  chartist-chart-options="projectVersionView.pieOptions"                
+                ></chartist>
+            </td>
+          </tr>
        </table>
      
      </div>

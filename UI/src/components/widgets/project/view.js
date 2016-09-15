@@ -40,6 +40,25 @@
 	      		"issues":data.result.issues
 	  	  }
 	      console.log(ctrl.jiraDashboard.issueSummary);
+
+	      //Data preparation for chart
+	      //{"summary":{"inprogressCount":9,"doneCount":126,"pendingCount":47,"projectName":"API","versionName":"Chase Pay 1.0","issueCount":182},
+	      var chartData = {
+	      	labels: ['Done','Pending','In Progress'],
+	      	series: [data.result.summary.doneCount,data.result.summary.pendingCount,data.result.summary.inprogressCount],
+	      	colors:['green','orange','red']
+	      }
+	      ctrl.pieOptions = {
+            donut: true,
+            donutWidth: 30,
+            startAngle: 270,
+            total: 360,
+            labelOffset:20,
+            width:'350px',
+            height:'200px',
+            showLabel: true
+        };
+	      ctrl.jiraDashboard.chartData = chartData;
 	    }
 
 	    function showDetail(jiraDashboard){
