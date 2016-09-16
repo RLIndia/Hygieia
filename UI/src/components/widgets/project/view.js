@@ -44,7 +44,7 @@
 	      //Data preparation for chart
 	      //{"summary":{"inprogressCount":9,"doneCount":126,"pendingCount":47,"projectName":"API","versionName":"Chase Pay 1.0","issueCount":182},
 	      var chartData = {
-	      	labels: ['Done','Pending','In Progress'],
+	      	labels: ['Done','To Do','In Progress'],
 	      	series: [data.result.summary.doneCount,data.result.summary.pendingCount,data.result.summary.inprogressCount],
 	      	colors:['green','orange','red']
 	      }
