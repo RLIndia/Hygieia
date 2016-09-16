@@ -14,7 +14,7 @@ spring.data.mongodb.password=
 
 #Collector schedule (required)
 feature.cron=0 0/5 * * * *
-
+feature.api=rest/api/2
 #Page size for data calls (Jira maxes at 1000)
 feature.pageSize=100
 

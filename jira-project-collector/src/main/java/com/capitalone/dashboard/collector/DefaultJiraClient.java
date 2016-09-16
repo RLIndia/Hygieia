@@ -181,7 +181,7 @@ public class DefaultJiraClient implements JiraClient {
                         //LOG.info(versions);
                         //projectVersions.add(versions);
                     }
-                    LOG.info("Scanned " + count + " projects.");
+                    LOG.info("Projects Scanned:" + count);
 
                 }
 
@@ -319,7 +319,7 @@ public class DefaultJiraClient implements JiraClient {
         //projectname = projectname.replaceAll(" ","%20");
         String url = settings.getJiraBaseUrl() + "/" +  settings.getApi() + "/project/" + projectname.replaceAll(" ","%20") + "/versions" + "?maxResults=50&startAt=0";
 
-        LOG.info(url);
+        //LOG.info(url);
         return url;
     }
 }
