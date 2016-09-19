@@ -15,6 +15,39 @@ public class ProjectVersionIssues extends BaseModel{
     @Indexed
     private String projectName;
 
+   
+
+    @Indexed
+    private String versionName;
+    private String issueStatus;
+    private String issueId;
+    private String issueDescription;
+    @Indexed
+    private String changeDate;
+    private String reportedDate;
+    private String sprintName;
+    private String sprintId;
+
+
+    private ObjectId collectorItemId;
+    private long timestamp;
+
+    public ObjectId getCollectorItemId() {
+        return collectorItemId;
+    }
+
+    public void setCollectorItemId(ObjectId collectorItemId) {
+        this.collectorItemId = collectorItemId;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+    
     public String getProjectName() {
         return projectName;
     }
@@ -78,34 +111,21 @@ public class ProjectVersionIssues extends BaseModel{
         return this;
     }
 
-    @Indexed
-    private String versionName;
-    private String issueStatus;
-    private String issueId;
-    private String issueDescription;
-    @Indexed
-    private String changeDate;
-    private String reportedDate;
+	public String getSprintId() {
+		return sprintId;
+	}
 
+	public void setSprintId(String sprintId) {
+		this.sprintId = sprintId;
+	}
 
-    private ObjectId collectorItemId;
-    private long timestamp;
+	public String getSprintName() {
+		return sprintName;
+	}
 
-    public ObjectId getCollectorItemId() {
-        return collectorItemId;
-    }
-
-    public void setCollectorItemId(ObjectId collectorItemId) {
-        this.collectorItemId = collectorItemId;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
+	public void setSprintName(String sprintName) {
+		this.sprintName = sprintName;
+	}
 
 
 }

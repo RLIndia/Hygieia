@@ -16,6 +16,7 @@ public class JiraSettings {
     private int pageSize;
     private String jiraBaseUrl;
     private String jiraCredentials;
+    private String jiraSprintDataFieldName;
 
     public String getCron() {
         return cron;
@@ -88,6 +89,14 @@ public class JiraSettings {
         this.jiraCredentials = jiraCredentials;
         return this;
     }
+
+	public String getJiraSprintDataFieldName() {
+		return jiraSprintDataFieldName;
+	}
+
+	public void setJiraSprintDataFieldName(String jiraSprintDataFieldName) {
+		this.jiraSprintDataFieldName = jiraSprintDataFieldName;
+	}
 
 
 }

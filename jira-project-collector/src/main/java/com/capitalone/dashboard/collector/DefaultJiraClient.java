@@ -10,6 +10,7 @@ import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.IssueField;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.util.concurrent.Promise;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
@@ -127,6 +128,12 @@ public class DefaultJiraClient implements JiraClient {
                     pvi.setIssueStatus(issue.getStatus().getName());
                     pvi.setProjectName((String)jirarepo.getOptions().get("projectName"));
                     pvi.setVersionName((String)jirarepo.getOptions().get("versionName"));
+                    LOG.info("custom field ==>"+settings.getJiraSprintDataFieldName());
+                    
+                    IssueField issueField = issue.getField(settings.getJiraSprintDataFieldName());
+                    org.codehaus.jettison.json.JSONArray value = (org.codehaus.jettison.json.JSONArray)issueField.getValue();
+                    LOG.info("value===>"+value.toString());
+                    
                     projectversionissues.add(pvi);
                     count++;
                 }
