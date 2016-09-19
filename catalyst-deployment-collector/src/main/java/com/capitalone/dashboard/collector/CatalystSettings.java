@@ -48,23 +48,23 @@ public class CatalystSettings {
         return this;
     }
 
-    public String getApi() {
-        return api;
-    }
-
-    public CatalystSettings setApi(String api) {
-        this.api = api;
-        return this;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public CatalystSettings setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-        return this;
-    }
+//    public String getApi() {
+//        return api;
+//    }
+//
+//    public CatalystSettings setApi(String api) {
+//        this.api = api;
+//        return this;
+//    }
+//
+//    public int getPageSize() {
+//        return pageSize;
+//    }
+//
+//    public CatalystSettings setPageSize(int pageSize) {
+//        this.pageSize = pageSize;
+//        return this;
+//    }
 
     public String getCatalystBaseUrl() {
         return catalystBaseUrl;
@@ -94,8 +94,8 @@ public class CatalystSettings {
     }
 
     private int firstRunHistoryDays;
-    private String api;
-    private int pageSize;
+//    private String api;
+//    private int pageSize;
     private String catalystBaseUrl;
     private String catalystUserName;
     private String catalystPassword;

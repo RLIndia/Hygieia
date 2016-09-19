@@ -9,7 +9,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "projectversion_issues")
-public class ProjectVersionIssues extends BaseModel{
+    public class ProjectVersionIssues extends BaseModel{
 
 
     @Indexed
