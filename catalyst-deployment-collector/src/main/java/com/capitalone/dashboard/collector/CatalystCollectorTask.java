@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import java.util.Set;
 /**
  * Created by root on 19/9/16.
  */
+@Component
 public class CatalystCollectorTask extends CollectorTask<Collector> {
     private static final Log LOG = LogFactory.getLog(CatalystCollectorTask.class);
 
@@ -30,9 +32,9 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
     private final CatalystSettings catalystSettings;
     private final ComponentRepository dbComponentRepository;
 
-    private String orgId;
-    private String bgId;
-    private String projectId;
+//    private String orgId;
+//    private String bgId;
+//    private String projectId;
 
 
     @Autowired
@@ -43,6 +45,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
                                   CatalystSettings catalystSettings,
                                   ComponentRepository dbComponentRepository){
         super(taskScheduler, "Catalysttask");
+        LOG.info("Reached here");
         this.collectorRepository = collectorRepository;
         this.catalystTaskRepository = catalystTaskRepository;
         this.catalystClient = catalystClient;
