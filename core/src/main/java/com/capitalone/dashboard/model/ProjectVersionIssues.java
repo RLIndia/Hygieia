@@ -27,6 +27,7 @@ public class ProjectVersionIssues extends BaseModel{
     private String reportedDate;
     private String sprintName;
     private String sprintId;
+    private String key;
 
 
     private ObjectId collectorItemId;
@@ -125,6 +126,14 @@ public class ProjectVersionIssues extends BaseModel{
 
 	public void setSprintName(String sprintName) {
 		this.sprintName = sprintName;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 

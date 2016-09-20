@@ -11,6 +11,7 @@ import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.JiraRepo;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
+import com.capitalone.dashboard.model.Sprint;
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.JiraProjectRepository;
@@ -129,6 +130,14 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
            // LOG.info("Enabled repo:");
            // LOG.info(repo);
            // enabledrepoList.add(repo);
+            
+            // geting active sprint 
+            Sprint s = jiraclient.getActiveSprint(repo);
+            if(s != null) {
+            	repo.setACTIVE_SPRINT_ID(s.getSprintId());
+            	repo.setACTIVE_SPRINT_NAME(s.getSprintName());
+            }
+            
 
             List<ProjectVersionIssues> enabledProjectVersionIssues  = jiraclient.getprojectversionissues(repo,firstRun);
 
@@ -137,6 +146,8 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                 if(savedIssue != null){
                     savedIssue.setIssueDescription(pvi.getIssueDescription());
                     savedIssue.setIssueStatus(pvi.getIssueStatus());
+                    savedIssue.setSprintId(pvi.getSprintId());
+                    savedIssue.setSprintName(pvi.getSprintName());
                   //  savedIssue.setChangeDate()
                     projectversionrepository.save(savedIssue);
                    // LOG.info("Updated Issue " + pvi.getIssueDescription());
@@ -151,7 +162,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             }
 
             enabledVersions++;
-
+            jiraprojectrepository.save(repo);
         }
         LOG.info("Enabled Projects Versions:" + enabledVersions);
         LOG.info("New Issues:" + newIssues);
