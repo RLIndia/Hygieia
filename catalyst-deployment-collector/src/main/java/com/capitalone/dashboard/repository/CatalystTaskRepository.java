@@ -11,8 +11,8 @@ import java.util.List;
  */
 public interface CatalystTaskRepository  extends BaseCollectorItemRepository<CatalystRepo> {
 
-    @Query(value="{ 'collectorId' : ?0, options.taskId : ?1}")
-    CatalystRepo findCatalystRepo(ObjectId collectorId, String taskId);
+    @Query(value="{ 'collectorId' : ?0, options.repositoryName : ?1}")
+    CatalystRepo findCatalystRepo(ObjectId collectorId, String repositoryName);
 
     @Query(value="{ 'collectorId' : ?0, enabled: true}")
     List<CatalystRepo> findEnabledCatalystRepos(ObjectId collectorId);

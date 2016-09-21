@@ -1,0 +1,26 @@
+#Database Name - default is test
+#spring.data.mongodb.database=dashboarddb
+database=dashboard
+#Database HostName - default is localhost
+
+#Database Port - default is 27017
+dbport=27017
+
+#Database Username - default is blank
+spring.data.mongodb.username=
+
+#Database Password - default is blank
+spring.data.mongodb.password=
+
+#Collector schedule (required)
+catalyst.cron=0 * * * * *
+catalyst.catalystBaseUrl=http://localhost:3001
+catalyst.catalystUserName=superadmin
+catalyst.catalystPassword=superadmin@123
+catalyst.repository=nexus
+catalyst.scheduledPriorMin=2
+dbhost=localhost
+catalyst.deltaStartDate=2016-06-01T00:00:00.000000
+catalyst.masterStartDate=2016-01-01T00:00:00.000000
+catalyst.firstRunHistoryDays=1
+catalyst.key=tempkey

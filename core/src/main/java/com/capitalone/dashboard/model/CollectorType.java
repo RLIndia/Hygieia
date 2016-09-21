@@ -19,7 +19,7 @@ public enum CollectorType {
     Product,
     Functional,
     Jiraproject,
-    Catalysttask;
+    Catalystdeploy;
 
     public static CollectorType fromString(String value) {
         for (CollectorType collectorType : values()) {

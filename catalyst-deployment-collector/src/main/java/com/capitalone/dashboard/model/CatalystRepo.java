@@ -4,25 +4,25 @@ package com.capitalone.dashboard.model;
  * Created by root on 19/9/16.
  */
 public class CatalystRepo extends CollectorItem{
-    private static final String TASKNAME = "projectName";
-    private static final String TASKID = "taskId";
+    private static final String REPOSITORYNAME = "repositoryName";
+
     private static final String ORGID = "orgId";
     private static final String BGID = "bgId";
     private static final String PROJECTID = "projectId";
-    private static final String TASKTYPE = "taskType";
-    private static final String TASKDESCRIPTION = "taskDescription";
 
-    public String getTASKNAME() { return (String) getOptions().get(TASKNAME);}
+    private static final String ORGNAME = "orgName";
+    private static final String BGNAME = "bgName";
+    private static final String PROJECTNAME = "projectName";
 
-    public void setTASKNAME(String taskname){
-        getOptions().put(TASKNAME, taskname);
+
+
+
+    public String getREPOSITORYNAME() { return (String) getOptions().get(REPOSITORYNAME);}
+
+    public void setREPOSITORYNAME(String repositoryname){
+        getOptions().put(REPOSITORYNAME, repositoryname);
     }
 
-    public String getTASKID() { return (String) getOptions().get(TASKID);}
-
-    public void setTASKID(String taskId){
-        getOptions().put(TASKID, taskId);
-    }
 
 
     public String getORGID() { return (String) getOptions().get(ORGID);}
@@ -30,6 +30,29 @@ public class CatalystRepo extends CollectorItem{
     public void setORGID(String orgId){
         getOptions().put(ORGID, orgId);
     }
+
+
+
+    public String getORGNAME() { return (String) getOptions().get(ORGNAME);}
+
+    public void setORGNAME(String orgName){
+        getOptions().put(ORGNAME, orgName);
+    }
+
+    public String getBGNAME() { return (String) getOptions().get(BGNAME);}
+
+    public void setBGNAME(String bgName){
+        getOptions().put(BGNAME, bgName);
+    }
+
+    public String getPROJECTNAME() { return (String) getOptions().get(PROJECTNAME);}
+
+    public void setPROJECTNAME(String projectName){
+        getOptions().put(PROJECTNAME, projectName);
+    }
+
+
+
 
     public String getBGID() { return (String) getOptions().get(BGID);}
 
@@ -43,17 +66,7 @@ public class CatalystRepo extends CollectorItem{
         getOptions().put(PROJECTID, projectId);
     }
 
-    public String getTASKTYPE() { return (String) getOptions().get(TASKTYPE);}
 
-    public void setTASKTYPE(String taskId){
-        getOptions().put(TASKTYPE, taskId);
-    }
-
-    public String getTASKDESCRIPTION() { return (String) getOptions().get(TASKDESCRIPTION);}
-
-    public void setTASKDESCRIPTION(String taskDescription){
-        getOptions().put(TASKDESCRIPTION, taskDescription);
-    }
 
 
     @Override
@@ -67,7 +80,7 @@ public class CatalystRepo extends CollectorItem{
 
         CatalystRepo catalystRepo = (CatalystRepo) o;
 
-        return (getPROJECTID().equals(catalystRepo.getPROJECTID()) && getTASKID().equals(catalystRepo.getTASKID()));
+        return (getPROJECTID().equals(catalystRepo.getPROJECTID()) && getREPOSITORYNAME().equals(catalystRepo.getREPOSITORYNAME()));
     }
 
     @Override

@@ -11,6 +11,7 @@ public class CatalystSettings {
     private String cron;
     private String host;
     private String key;
+    private String repository;
 
     public String getCron() {
         return cron;
@@ -18,6 +19,15 @@ public class CatalystSettings {
 
     public CatalystSettings setCron(String cron) {
         this.cron = cron;
+        return this;
+    }
+
+    public String getRepository() {
+        return repository;
+    }
+
+    public CatalystSettings setRepository(String repository) {
+        this.repository = repository;
         return this;
     }
 

@@ -8,6 +8,6 @@ import java.util.List;
  */
 public interface CatalystClient {
 
-    List<CatalystRepo> getTasks();
+    List<CatalystRepo> getCatalystRepos();
     List<CatalystTaskHistory> getTaskHistory(CatalystRepo catalystRepo,boolean firstrun);
 }

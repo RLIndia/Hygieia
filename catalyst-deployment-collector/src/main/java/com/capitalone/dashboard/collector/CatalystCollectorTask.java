@@ -44,7 +44,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
                                   CatalystClient catalystClient,
                                   CatalystSettings catalystSettings,
                                   ComponentRepository dbComponentRepository){
-        super(taskScheduler, "Catalysttask");
+        super(taskScheduler, "Catalystdeploy");
         LOG.info("Reached here");
         this.collectorRepository = collectorRepository;
         this.catalystTaskRepository = catalystTaskRepository;
@@ -58,8 +58,8 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
     @Override
     public Collector getCollector() {
         Collector protoType = new Collector();
-        protoType.setName("Catalysttask");
-        protoType.setCollectorType(CollectorType.Catalysttask);
+        protoType.setName("Catalystdeploy");
+        protoType.setCollectorType(CollectorType.Catalystdeploy);
         protoType.setOnline(true);
         protoType.setEnabled(true);
         return protoType;
@@ -85,7 +85,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
          */
         for (com.capitalone.dashboard.model.Component comp : dbComponentRepository.findAll()) {
             if (comp.getCollectorItems() == null || comp.getCollectorItems().isEmpty()) continue;
-            List<CollectorItem> itemList = comp.getCollectorItems().get(CollectorType.Catalysttask);
+            List<CollectorItem> itemList = comp.getCollectorItems().get(CollectorType.Catalystdeploy);
             if (itemList == null) continue;
             for (CollectorItem ci : itemList) {
                 if (ci != null && ci.getCollectorId().equals(collector.getId())) {
@@ -115,7 +115,29 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
         logBanner("Catalyst Project Collector..starting");
         long start = System.currentTimeMillis();
         clean(collector);
-        List<CatalystRepo> fetchedRepos = catalystClient.getTasks();
+        List<CatalystRepo> fetchedRepos = catalystClient.getCatalystRepos();
+        List<CatalystRepo> repoList = new ArrayList<CatalystRepo>();
+        int newRepos = 0;
+        int scannedRepos = 0;
+        for(CatalystRepo repo : fetchedRepos){
+            CatalystRepo savedRepo = catalystTaskRepository.findCatalystRepo(collector.getId(),repo.getREPOSITORYNAME());
+            if(savedRepo == null){
+                repo.setCollectorId(collector.getId());
+                repo.setEnabled(false);
+                try {
+                    catalystTaskRepository.save(repo);
+                    newRepos++;
+                }catch(Exception e){
+                    LOG.info(e);
+                }
+            }
+            scannedRepos++;
+        }
+        //Get active repos
+
+        LOG.info("Scanned Tasks:" + scannedRepos);
+        LOG.info("New Tasks:" + newRepos);
+        LOG.info("Finished");
 
     }
 
