@@ -17,7 +17,11 @@ public class JiraSettings {
     private String jiraBaseUrl;
     private String jiraCredentials;
     private String jiraSprintDataFieldName;
-
+    private String[] doneStatuses;
+    private String[] todoStatuses;
+    private String[] doingStatuses;
+    
+    
     public String getCron() {
         return cron;
     }
@@ -96,6 +100,30 @@ public class JiraSettings {
 
 	public void setJiraSprintDataFieldName(String jiraSprintDataFieldName) {
 		this.jiraSprintDataFieldName = jiraSprintDataFieldName;
+	}
+
+	public String[] getDoneStatuses() {
+		return doneStatuses;
+	}
+
+	public void setDoneStatuses(String[] doneStatuses) {
+		this.doneStatuses = doneStatuses;
+	}
+
+	public String[] getTodoStatuses() {
+		return todoStatuses;
+	}
+
+	public void setTodoStatuses(String[] todoStatuses) {
+		this.todoStatuses = todoStatuses;
+	}
+
+	public String[] getDoingStatuses() {
+		return doingStatuses;
+	}
+
+	public void setDoingStatuses(String[] doingStatuses) {
+		this.doingStatuses = doingStatuses;
 	}
 
 

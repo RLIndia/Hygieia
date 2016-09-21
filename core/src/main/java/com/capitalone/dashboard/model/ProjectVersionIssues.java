@@ -19,7 +19,10 @@ public class ProjectVersionIssues extends BaseModel{
 
     @Indexed
     private String versionName;
+    
     private String issueStatus;
+    private String statusName;
+    
     private String issueId;
     private String issueDescription;
     @Indexed
@@ -134,6 +137,14 @@ public class ProjectVersionIssues extends BaseModel{
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
 	}
 
 

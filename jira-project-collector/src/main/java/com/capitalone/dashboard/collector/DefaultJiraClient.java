@@ -115,18 +115,6 @@ public class DefaultJiraClient implements JiraClient {
 		List<ProjectVersionIssues> projectversionissues = new ArrayList<>();
 		try {
 
-			// Promise<SearchResult> src = client.getSearchClient()
-			// .searchJql("project in (" + (String)
-			// jirarepo.getOptions().get("projectId")
-			// + ") AND fixVersion in (" + (String)
-			// jirarepo.getOptions().get("versionId") + ")", 500, 0,
-			// null);
-			// Promise<SearchResult> src = client.getSearchClient()
-			// .searchJql("project in (" + (String)
-			// jirarepo.getOptions().get("projectId")
-			// + ")", 500, 0,
-			// null);
-			// final SearchResult searchResult = src.claim();
 			boolean hasNextPage = true;
 			int maxCount = 500;
 			int index = 0;
@@ -150,10 +138,38 @@ public class DefaultJiraClient implements JiraClient {
 						pvi.setIssueDescription(issue.getSummary());
 						pvi.setIssueId(issue.getId().toString());
 						pvi.setKey(issue.getKey());
-						pvi.setIssueStatus(issue.getStatus().getName());
+
+						String status = issue.getStatus().getName();
+						pvi.setStatusName(status);
+                        
+						
+						
+						String[] statuses = settings.getTodoStatuses();
+						for (int j = 0; j < statuses.length; j++) {
+							if (statuses[j].equals(status)) {
+								pvi.setIssueStatus("Backlog");
+								break;
+							}
+						}
+
+						statuses = settings.getDoneStatuses();
+						for (int j = 0; j < statuses.length; j++) {
+							if (statuses[j].equals(status)) {
+								pvi.setIssueStatus("Done");
+								break;
+							}
+						}
+						statuses = settings.getDoingStatuses();
+						for (int j = 0; j < statuses.length; j++) {
+							if (statuses[j].equals(status)) {
+								pvi.setIssueStatus("In Progress");
+								break;
+							}
+						}
+						
 						pvi.setProjectName((String) jirarepo.getOptions().get("projectName"));
 						pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
-						
+
 						projectversionissues.add(pvi);
 						count++;
 					}
@@ -208,55 +224,88 @@ public class DefaultJiraClient implements JiraClient {
 						// iconUrl=https://starbucks-mobile.atlassian.net/}
 						// LOG.info(issue.getId() + " - " +
 						// issue.getStatus().getName());
-						ProjectVersionIssues pvi = new ProjectVersionIssues();
-						pvi.setIssueDescription(issue.getSummary());
-						pvi.setIssueId(issue.getId().toString());
-						pvi.setKey(issue.getKey());
-						pvi.setIssueStatus(issue.getStatus().getName());
-						pvi.setProjectName((String) jirarepo.getOptions().get("projectName"));
-						pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
-						LOG.info("custom field ==>" + settings.getJiraSprintDataFieldName());
-						try {
-
-							IssueField issueField = issue.getField(settings.getJiraSprintDataFieldName());
-							org.codehaus.jettison.json.JSONArray value = (org.codehaus.jettison.json.JSONArray) issueField
-									.getValue();
-							LOG.info("value===>" + value.toString());
-							if (value != null) {
-								int length = value.length();
-								if (length > 0) {
-									String grassHopperString = value.getString(length - 1);
-									int indexOfOB = grassHopperString.indexOf('[');
-									if (indexOfOB != -1) {
-										grassHopperString = grassHopperString.substring(indexOfOB + 1,
-												grassHopperString.length() - 1);
-
-										String[] arr = grassHopperString.split(",");
-										for (int i = 0; i < arr.length; i++) {
-											if (arr[i].startsWith("id=")) {
-												String[] sprintIdItems = arr[i].split("=");
-												if (sprintIdItems.length == 2) {
-													pvi.setSprintId(sprintIdItems[1]);
-												}
-											}
-											if (arr[i].startsWith("name=")) {
-												String[] sprintNameItems = arr[i].split("=");
-												if (sprintNameItems.length == 2) {
-													pvi.setSprintName(sprintNameItems[1]);
-												}
-											}
-										}
-
-									}
-
-									LOG.info("grass hopper string ==>" + grassHopperString);
+						if (issue.getIssueType().getName().equals("Story")) {
+							ProjectVersionIssues pvi = new ProjectVersionIssues();
+							pvi.setIssueDescription(issue.getSummary());
+							pvi.setIssueId(issue.getId().toString());
+							pvi.setKey(issue.getKey());
+							
+							
+							String status = issue.getStatus().getName();
+							pvi.setStatusName(status);
+							
+							String[] statuses = settings.getTodoStatuses();
+							for (int j = 0; j < statuses.length; j++) {
+								if (statuses[j].equals(status)) {
+									pvi.setIssueStatus("Backlog");
+									break;
 								}
 							}
-						} catch (Exception e) {
-							LOG.error("Exception occured while extracting sprint data from issue : " + e.getMessage());
+
+							statuses = settings.getDoneStatuses();
+							for (int j = 0; j < statuses.length; j++) {
+								if (statuses[j].equals(status)) {
+									pvi.setIssueStatus("Done");
+									break;
+								}
+							}
+							statuses = settings.getDoingStatuses();
+							for (int j = 0; j < statuses.length; j++) {
+								if (statuses[j].equals(status)) {
+									pvi.setIssueStatus("In Progress");
+									break;
+								}
+							}
+							
+							
+							pvi.setProjectName((String) jirarepo.getOptions().get("projectName"));
+							pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
+							LOG.info("custom field ==>" + settings.getJiraSprintDataFieldName());
+							LOG.info("issue type name ==>" + issue.getIssueType().getName());
+							try {
+
+								IssueField issueField = issue.getField(settings.getJiraSprintDataFieldName());
+								org.codehaus.jettison.json.JSONArray value = (org.codehaus.jettison.json.JSONArray) issueField
+										.getValue();
+								LOG.info("value===>" + value.toString());
+								if (value != null) {
+									int length = value.length();
+									if (length > 0) {
+										String grassHopperString = value.getString(length - 1);
+										int indexOfOB = grassHopperString.indexOf('[');
+										if (indexOfOB != -1) {
+											grassHopperString = grassHopperString.substring(indexOfOB + 1,
+													grassHopperString.length() - 1);
+
+											String[] arr = grassHopperString.split(",");
+											for (int i = 0; i < arr.length; i++) {
+												if (arr[i].startsWith("id=")) {
+													String[] sprintIdItems = arr[i].split("=");
+													if (sprintIdItems.length == 2) {
+														pvi.setSprintId(sprintIdItems[1]);
+													}
+												}
+												if (arr[i].startsWith("name=")) {
+													String[] sprintNameItems = arr[i].split("=");
+													if (sprintNameItems.length == 2) {
+														pvi.setSprintName(sprintNameItems[1]);
+													}
+												}
+											}
+
+										}
+
+										LOG.info("grass hopper string ==>" + grassHopperString);
+									}
+								}
+							} catch (Exception e) {
+								LOG.error("Exception occured while extracting sprint data from issue : "
+										+ e.getMessage());
+							}
+
+							projectversionissues.add(pvi);
 						}
 
-						projectversionissues.add(pvi);
 						count++;
 					}
 					int totalResults = searchResult.getTotal();
@@ -291,7 +340,7 @@ public class DefaultJiraClient implements JiraClient {
 
 		projectversionissues.addAll(issuesV);
 		projectversionissues.addAll(issuesS);
-	
+
 		return projectversionissues;
 	}
 

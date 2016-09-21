@@ -75,6 +75,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
             }
             issueObj.put("issueID",issue.getIssueId());
             issueObj.put("status",issue.getIssueStatus());
+            issueObj.put("statusName",issue.getStatusName());
             issueObj.put("description",issue.getIssueDescription());
 
             issues.add(issueObj);
