@@ -17,6 +17,8 @@ public class JiraSettings {
     private String jiraBaseUrl;
     private String jiraCredentials;
     private String jiraSprintDataFieldName;
+    private String storyPointDataFieldName;
+    
     private String[] doneStatuses;
     private String[] todoStatuses;
     private String[] doingStatuses;
@@ -124,6 +126,14 @@ public class JiraSettings {
 
 	public void setDoingStatuses(String[] doingStatuses) {
 		this.doingStatuses = doingStatuses;
+	}
+
+	public String getStoryPointDataFieldName() {
+		return storyPointDataFieldName;
+	}
+
+	public void setStoryPointDataFieldName(String storyPointDataFieldName) {
+		this.storyPointDataFieldName = storyPointDataFieldName;
 	}
 
 

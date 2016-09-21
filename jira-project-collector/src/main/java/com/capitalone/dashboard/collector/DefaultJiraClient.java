@@ -141,9 +141,7 @@ public class DefaultJiraClient implements JiraClient {
 
 						String status = issue.getStatus().getName();
 						pvi.setStatusName(status);
-                        
-						
-						
+
 						String[] statuses = settings.getTodoStatuses();
 						for (int j = 0; j < statuses.length; j++) {
 							if (statuses[j].equals(status)) {
@@ -166,7 +164,7 @@ public class DefaultJiraClient implements JiraClient {
 								break;
 							}
 						}
-						
+
 						pvi.setProjectName((String) jirarepo.getOptions().get("projectName"));
 						pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
 
@@ -229,11 +227,10 @@ public class DefaultJiraClient implements JiraClient {
 							pvi.setIssueDescription(issue.getSummary());
 							pvi.setIssueId(issue.getId().toString());
 							pvi.setKey(issue.getKey());
-							
-							
+
 							String status = issue.getStatus().getName();
 							pvi.setStatusName(status);
-							
+
 							String[] statuses = settings.getTodoStatuses();
 							for (int j = 0; j < statuses.length; j++) {
 								if (statuses[j].equals(status)) {
@@ -256,8 +253,7 @@ public class DefaultJiraClient implements JiraClient {
 									break;
 								}
 							}
-							
-							
+
 							pvi.setProjectName((String) jirarepo.getOptions().get("projectName"));
 							pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
 							LOG.info("custom field ==>" + settings.getJiraSprintDataFieldName());
@@ -303,6 +299,15 @@ public class DefaultJiraClient implements JiraClient {
 										+ e.getMessage());
 							}
 
+							// getting storypoint
+							try {
+								IssueField issueField = issue.getField(settings.getStoryPointDataFieldName());
+								double storyPoint = (double) issueField.getValue();
+								pvi.setStoryPoint(storyPoint);
+							} catch (Exception e) {
+								LOG.error("Exception occured while extracting story point from issue : "
+										+ e.getMessage());
+							}
 							projectversionissues.add(pvi);
 						}
 

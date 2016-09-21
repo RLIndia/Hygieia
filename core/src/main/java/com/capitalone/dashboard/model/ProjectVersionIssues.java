@@ -31,6 +31,7 @@ public class ProjectVersionIssues extends BaseModel{
     private String sprintName;
     private String sprintId;
     private String key;
+    private double storyPoint;
 
 
     private ObjectId collectorItemId;
@@ -145,6 +146,14 @@ public class ProjectVersionIssues extends BaseModel{
 
 	public void setStatusName(String statusName) {
 		this.statusName = statusName;
+	}
+
+	public double getStoryPoint() {
+		return storyPoint;
+	}
+
+	public void setStoryPoint(double storyPoint) {
+		this.storyPoint = storyPoint;
 	}
 
 
