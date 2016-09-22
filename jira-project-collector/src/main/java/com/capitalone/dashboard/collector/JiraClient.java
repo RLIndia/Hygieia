@@ -2,6 +2,7 @@ package com.capitalone.dashboard.collector;
 
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
+import com.capitalone.dashboard.model.Sprint;
 import com.capitalone.dashboard.model.JiraRepo;
 import java.util.List;
 /**
@@ -20,4 +21,5 @@ public interface JiraClient {
 
     List<ProjectVersionIssues> getprojectversionissues(JiraRepo jirarepo,  boolean firstrun);
     List<JiraRepo> getProjects();
+    Sprint getActiveSprint(JiraRepo jirarepo);
 }

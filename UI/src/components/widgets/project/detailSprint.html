@@ -5,20 +5,20 @@
                 <!-- {{detail}} -->
                 <div class="col-md-4">
                 
-                    <span class="project-version-name">{{detail.jiraDashboard.issueSummary.projectName}} - {{detail.jiraDashboard.issueSummary.versionName}}</span>
+                    <span class="project-version-name">{{detail.jiraDashboard.sprintSummary.sprintName}}</span>
                 </div>
 
                 <div class="col-md-2 last-updated">
-                   <span class="dash-status-lg">Issues:</span>
-                    <span class="project-version-name">{{detail.jiraDashboard.issueSummary.issueCount}}</span>
+                   <span class="dash-status-lg">Estimate:</span>
+                    <span class="project-version-name">{{detail.jiraDashboard.sprintSummary.total}}</span>
                 </div>
 
                 <div class="col-md-3 server-count">
                     <span class="green">
-                        {{detail.jiraDashboard.issueSummary.doneCount}}<span class="fa fa-arrow-up"></span>
+                        {{detail.jiraDashboard.sprintSummary.doneTotal}}<span class="fa fa-arrow-up"></span>
                     </span>
                     <span class="red">
-                        {{detail.jiraDashboard.issueSummary.pendingCount}}<span class="fa fa-arrow-down"></span>
+                        {{detail.jiraDashboard.sprintSummary.pendingTotal}}<span class="fa fa-arrow-down"></span>
                     </span>
                 </div>
                 <div class="col-md-3 view-in-tool hidden">
@@ -33,7 +33,7 @@
         <div class="widget-detail-body">
            <!-- {"issueSummary":{"inprogressCount":12,"doneCount":122,"pendingCount":48,"issueCount":182},"issues":[{"issueID":"74431","description":"Work with CI team to deploy correct config to respective environments","status":"Requirement In Progress"}, -->
            
-            <div class="row rowformat" ng-class="(result.status != 'Done') ? 'red':'green'" ng-repeat="result in detail.jiraDashboard.issues | orderBy:['status','description'] track by $index">
+            <div class="row rowformat" ng-class="(result.status != 'Done') ? 'red':'green'" ng-repeat="result in detail.jiraDashboard.sprintSummary.issues | orderBy:['status','description'] track by $index">
                 <div class="col-md-8" style="font-size:12px;word-wrap:break-word; display:inline-block;">
                     {{result.description}}
                 </div>

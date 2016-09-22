@@ -17,6 +17,7 @@
 		ctrl.jiraDashboard = {};
 
 		ctrl.showDetail = showDetail;
+		ctrl.showDetailSprint= showDetailSprint;
 		ctrl.title = "";
 
 		function load() {
@@ -34,10 +35,11 @@
 		}
 		function processProjectData(data) {
 		  console.log("In process project data");
-		  $scope.subtitle = data.result.summary.projectName;
+		  $scope.subtitle = data.result.version.projectName;
 	      ctrl.jiraDashboard = {
-	      		"issueSummary" :data.result.summary,
-	      		"issues":data.result.issues
+	      		"issueSummary" :data.result.version,
+	      		"issues":data.result.version.issues,
+	      		"sprintSummary":data.result.sprint
 	  	  }
 	      console.log(ctrl.jiraDashboard.issueSummary);
 
@@ -45,7 +47,7 @@
 	      //{"summary":{"inprogressCount":9,"doneCount":126,"pendingCount":47,"projectName":"API","versionName":"Chase Pay 1.0","issueCount":182},
 	      var chartData = {
 	      	labels: ['Done','To Do','In Progress'],
-	      	series: [data.result.summary.doneCount,data.result.summary.pendingCount,data.result.summary.inprogressCount],
+	      	series: [data.result.version.doneCount,data.result.version.pendingCount,data.result.version.inprogressCount],
 	      	colors:['green','orange','red']
 	      }
 	      ctrl.pieOptions = {
@@ -66,6 +68,27 @@
 				controller: 'projectVersionViewDetailController',
 				controllerAs: 'detail',
 				templateUrl: 'components/widgets/project/detail.html',
+				size: 'lg',
+				resolve: {
+					jiraDashboard: function() {
+						return jiraDashboard;
+					},
+					collectorName: function () {
+						
+						return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector.name;
+					},
+                    collector: function () {
+                        return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector;
+                    }
+				}
+			});
+	    }
+	    
+	    function showDetailSprint(jiraDashboard){
+	    	$modal.open({
+				controller: 'projectVersionViewSprintDetailController',
+				controllerAs: 'detail',
+				templateUrl: 'components/widgets/project/detailSprint.html',
 				size: 'lg',
 				resolve: {
 					jiraDashboard: function() {
