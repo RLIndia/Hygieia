@@ -100,6 +100,8 @@ feature.jiraEpicIdFieldName=customfield_10007
 #feature.jiraEpicIdFieldName=customfield_10400
 feature.jiraEpicIdFieldName=customfield_10007
 
+feature.storyPointDataFieldName=customfield_10004
+
 #Start dates from which to begin collector data, if no other data is present - usually, a month back is appropriate (required)
 feature.deltaStartDate=2016-06-01T00:00:00.000000
 feature.masterStartDate=2016-01-01T00:00:00.000000
