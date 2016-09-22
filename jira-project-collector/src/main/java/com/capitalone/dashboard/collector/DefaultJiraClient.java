@@ -167,6 +167,7 @@ public class DefaultJiraClient implements JiraClient {
 
 						pvi.setProjectName((String) jirarepo.getOptions().get("projectName"));
 						pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
+						pvi.setVersionId((String) jirarepo.getOptions().get("versionId"));
 
 						projectversionissues.add(pvi);
 						count++;

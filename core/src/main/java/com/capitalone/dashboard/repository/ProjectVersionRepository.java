@@ -20,4 +20,13 @@ public interface ProjectVersionRepository  extends CrudRepository<ProjectVersion
 
     @Query(value="{ 'collectorItemId': ?0}")
     List<ProjectVersionIssues> findByCollectorItemId(ObjectId collectorItemId);
+    
+    
+    @Query(value="{ 'collectorItemId': ?0,'versionId':?1}")
+    List<ProjectVersionIssues> findByCollectorItemIdAndVersionId(ObjectId collectorItemId,String versionId);
+    
+    @Query(value="{ 'collectorItemId': ?0,'sprintId':?1}")
+    List<ProjectVersionIssues> findByCollectorItemIdAndSprintId(ObjectId collectorItemId,String sprintId);
+    
+
 }

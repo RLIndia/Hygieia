@@ -19,6 +19,7 @@ public class ProjectVersionIssues extends BaseModel{
 
     @Indexed
     private String versionName;
+    private String versionId;
     
     private String issueStatus;
     private String statusName;
@@ -154,6 +155,14 @@ public class ProjectVersionIssues extends BaseModel{
 
 	public void setStoryPoint(double storyPoint) {
 		this.storyPoint = storyPoint;
+	}
+
+	public String getVersionId() {
+		return versionId;
+	}
+
+	public void setVersionId(String versionId) {
+		this.versionId = versionId;
 	}
 
 

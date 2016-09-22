@@ -121,7 +121,38 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         long start = System.currentTimeMillis();
         int projectCount = 0;
         int issueCount = 0;
+        int scannedProjects = 0;
+        int newProjects = 0;
         clean(collector);
+        
+      //Fetching all projects
+
+        List<JiraRepo> fetchedprojects = jiraclient.getProjects();
+        List<JiraRepo> repoList = new ArrayList<JiraRepo>();
+        for(JiraRepo repo : fetchedprojects){
+            // LOG.info(jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID()) == null);
+            JiraRepo savedRepo = jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
+            //LOG.info(collector.getId() + " " + repo.getVERSIONID() + " " + repo.getPROJECTID());
+
+            if(savedRepo == null){
+                repo.setCollectorId(collector.getId());
+                repo.setEnabled(false);
+
+              //  LOG.info("To Add:" + repo.getPROJECTNAME() + " " + repo.getVERSIONNAME());
+                repoList.add(repo);
+                try {
+                    jiraprojectrepository.save(repo);
+                    newProjects++;
+                }catch(Exception e){
+                    LOG.info(e);
+                }
+            }
+            scannedProjects++;
+        }
+
+        LOG.info("New Projects:" + newProjects);
+        
+        
         int enabledVersions = 0;
         int newIssues = 0;
         int updatedIssues = 0;
@@ -148,6 +179,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                     savedIssue.setIssueStatus(pvi.getIssueStatus());
                     savedIssue.setSprintId(pvi.getSprintId());
                     savedIssue.setSprintName(pvi.getSprintName());
+                    savedIssue.setStoryPoint(pvi.getStoryPoint());
                   //  savedIssue.setChangeDate()
                     projectversionrepository.save(savedIssue);
                    // LOG.info("Updated Issue " + pvi.getIssueDescription());
