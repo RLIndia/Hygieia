@@ -99,15 +99,23 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
          * If their id is in the unique set (above), keep them enabled; else, disable them.
          */
         List<CatalystRepo> repoList = new ArrayList<CatalystRepo>();
+        List<CatalystRepo> deleterepoList = new ArrayList<CatalystRepo>();
         Set<ObjectId> collectorIds = new HashSet<ObjectId>();
         collectorIds.add(collector.getId());
         for (CatalystRepo repo : catalystTaskRepository.findByCollectorIdIn(collectorIds)) {
             if (repo != null) {
                 repo.setEnabled(uniqueIDs.contains(repo.getId()));
                 repoList.add(repo);
+                LOG.info(" Found:" + repo.getREPOSITORYNAME() + ' ' + uniqueIDs.contains(repo.getId()));
+                if(!uniqueIDs.contains(repo.getId())) {
+                    deleterepoList.add(repo);
+                    LOG.info("Added to delete list:" + repo.getId());
+                }
             }
         }
+
         catalystTaskRepository.save(repoList);
+        catalystTaskRepository.delete(deleterepoList);
     }
 
     @Override
@@ -134,14 +142,21 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
             scannedRepos++;
         }
         //Get active repos
+        for(CatalystRepo repo : enabledRepos(collector)) {
+            boolean firstRun = false;
+
+        }
+
 
         LOG.info("Scanned Tasks:" + scannedRepos);
-        LOG.info("New Tasks:" + newRepos);
+        LOG.info("New / Updated Tasks:" + newRepos);
         LOG.info("Finished");
 
     }
 
-
+        private List<CatalystRepo> enabledRepos(Collector collector) {
+            return catalystTaskRepository.findEnabledCatalystRepos(collector.getId());   //gitRepoRepository.findEnabledGitRepos(collector.getId());
+        }
 
 
 }

@@ -1,21 +1,23 @@
-<widget-modal widget-modal-title="Configure Catalyst Task">
-{{catalystRepoConfig}}
-    <form class="projectversion-config" name="configForm" ng-submit="catalystTaskConfig.submit(configForm.$valid)" novalidate="novalidate">
-        <form-group input="catalystTaskConfig" errors="{required:'Please select all fields'}">
+<widget-modal widget-modal-title="Configure Catalyst Repository">
+{{catalystRepoConfig.catalystprojects}}
+    <form class="projectversion-config" name="configForm" ng-submit="catalystRepoConfig.submit(configForm.$valid)" novalidate="novalidate">
+        <form-group input="catalystdeployorgs" errors="{required:'Please select all fields'}">
            
              <div class="dash-modal-row clearfix">
-                    <label>Organizaton:</label>
+                    <label>Project:</label>
 
-                     <select name="catalysttaskorgs"
+                     <select name="catalystdeployorgs"
                             class="form-control"
-                            ng-model="catalystTaskConfig.orgs"
-                            ng-options="catalystTaskConfig.orgName for orgName in catalystTaskConfig.orgs"
-                            
+                            ng-model="selectprojects"
+                            ng-options="obj.name for obj in catalystRepoConfig.catalystprojects track by obj.value" 
+                            ng-change="catalystRepoConfig.projectChange(catalystRepoConfig,selectprojects);"
                             required>
-                        <option value="">{{projectVersionConfig.orgNameDropdownPlaceholder}}</option>
+                        <option value="">Select a Project</option>
                     </select>
                 </div>
-                <div class="dash-modal-row clearfix">
+         </form-group>
+         <form-group input="catalystrepositories" errors="{required:'Please select all fields'}">
+                <!-- <div class="dash-modal-row clearfix">
                     <label>Business Group:</label>
 
                      <select name="catalysttaskorgs"
@@ -38,18 +40,18 @@
                             required>
                         <option value="">{{projectVersionConfig.orgNameDropdownPlaceholder}}</option>
                     </select>
-                </div>
+                </div> -->
                 
                 <div class="dash-modal-row clearfix">
-                    <label>Tasks:</label>
+                    <label>Deployment Repository:</label>
 
-                     <select name="catalysttaskorgs"
+                     <select name="catalystrepositories"
                             class="form-control"
-                            ng-model="catalystTaskConfig.orgs"
-                            ng-options="catalystTaskConfig.orgName for orgName in catalystTaskConfig.orgs"
+                            ng-model="selectrepositories"
+                            ng-options="obj.name for obj in catalystRepoConfig.catalystrepositories track by obj.value"
                             
                             required>
-                        <option value="">{{projectVersionConfig.orgNameDropdownPlaceholder}}</option>
+                        <option value="">Select a Repository</option>
                     </select>
                 </div>
         </form-group>

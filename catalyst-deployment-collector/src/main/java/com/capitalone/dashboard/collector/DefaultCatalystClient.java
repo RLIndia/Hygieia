@@ -1,5 +1,6 @@
     package com.capitalone.dashboard.collector;
 
+    import com.capitalone.dashboard.model.CatalystDeploys;
     import com.capitalone.dashboard.model.CatalystRepo;
     import org.apache.commons.codec.binary.Base64;
     import org.apache.commons.logging.Log;
@@ -19,7 +20,7 @@
     import com.capitalone.dashboard.util.Supplier;
 
     import com.capitalone.dashboard.util.ClientUtil;
-    import com.capitalone.dashboard.model.CatalystTaskHistory;
+
 
 
     import java.nio.charset.StandardCharsets;
@@ -99,9 +100,12 @@
        }
 
        @Override
-        public List<CatalystTaskHistory> getTaskHistory(CatalystRepo catalystRepo,boolean firstrun){
-           return  null;
+        public List<CatalystDeploys> getCatalystDeploys(CatalystRepo catalystRepo, boolean firstrun){
+        //   http://localhost:4001/app-deploy/project/b38ccedc-da2c-4e2c-a278-c66333564719/application/catalyst
+           // from the above get nexus.taskId and run the below
 
+        //   http://localhost:4001/tasks/57e22701b1012b8004e9249f
+            return null;
        }
 
        private void getToken(){

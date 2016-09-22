@@ -22,7 +22,7 @@
 		function load() {
 			var deferred = $q.defer();
 			console.log("In Load...");
-			catalystTaskData.details($scope.widgetConfig.componentId).then(function(data){
+			catalystdeploydata.details($scope.widgetConfig.componentId).then(function(data){
 
 				//processProjectData(data);
 				deferred.resolve(data.lastUpdated);

@@ -1,7 +1,7 @@
 package com.capitalone.dashboard.collector;
 
 import com.capitalone.dashboard.model.CatalystRepo;
-import com.capitalone.dashboard.model.CatalystTaskHistory;
+import com.capitalone.dashboard.model.CatalystDeploys;
 import java.util.List;
 /**
  * Created by Vinod on 19/9/16.
@@ -9,5 +9,6 @@ import java.util.List;
 public interface CatalystClient {
 
     List<CatalystRepo> getCatalystRepos();
-    List<CatalystTaskHistory> getTaskHistory(CatalystRepo catalystRepo,boolean firstrun);
+    List<CatalystDeploys> getCatalystDeploys(CatalystRepo catalystRepo,boolean firstrun);
+
 }
