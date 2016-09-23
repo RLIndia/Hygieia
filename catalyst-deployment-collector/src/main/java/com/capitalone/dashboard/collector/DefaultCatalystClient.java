@@ -41,7 +41,7 @@
         public DefaultCatalystClient(CatalystSettings settings,Supplier<RestOperations> restOperationsSupplier){
             this.settings = settings;
             this.restOperations = restOperationsSupplier.get();
-            //Update restToken for further operations
+
 
 
 
@@ -101,11 +101,57 @@
 
        @Override
         public List<CatalystDeploys> getCatalystDeploys(CatalystRepo catalystRepo, boolean firstrun){
+           List<CatalystDeploys> catalystDeployses = new ArrayList<CatalystDeploys>();
         //   http://localhost:4001/app-deploy/project/b38ccedc-da2c-4e2c-a278-c66333564719/application/catalyst
+           String repotaskurl = settings.getCatalystBaseUrl() + "/app-deploy/project/" + catalystRepo.getPROJECTID() + "/repository/" + catalystRepo.getREPOSITORYNAME();
+            LOG.info(repotaskurl);
+               try {
+                   if(this.restToken == "") {
+                      getToken();
+                   }
+                   ResponseEntity<String> response = getAllCatalystRepos(repotaskurl); //returns repo details
+                //   LOG.info("Returned from response");
+                  // LOG.info(response.toString());
+                   JSONArray jsonResponse = paresAsArray(response);
+                   String repotype = settings.getRepository();
+                   int tempCount =0;
+                   for (Object jtask : jsonResponse) {
+                       JSONObject cattask = (JSONObject) jtask;
+                       LOG.info("Env:" + cattask.get("envName"));
+                       LOG.info("Version:" + cattask.get("version"));
+                       JSONObject deployobj = (JSONObject) cattask.get(settings.getRepository());
+
+                       LOG.info("Task ID:" + (deployobj.get("taskId").toString().isEmpty() == true));
+                       if(deployobj.get("taskId").toString().isEmpty() == false) {
+                           String taskdetailsurl = settings.getCatalystBaseUrl() + "/tasks/" + deployobj.get("taskId");
+                           LOG.info("Task Url:" + taskdetailsurl);
+                           ResponseEntity<String> taskResponse = getAllCatalystRepos(taskdetailsurl);
+                           JSONObject jsonTaskResponse = paresAsObject(taskResponse);
+                           LOG.info("Last Status:" + jsonTaskResponse.get("lastTaskStatus"));
+                           LOG.info("Last Run Time:" + jsonTaskResponse.get("lastRunTimestamp"));
+                           CatalystDeploys cd = new CatalystDeploys();
+                           cd.setEnvName(cattask.get("envName").toString());
+                           cd.setVersion(cattask.get("version").toString());
+                           cd.setTaskId(deployobj.get("taskId").toString());
+                           cd.setExecutedDate(jsonTaskResponse.get("lastRunTimestamp").toString());
+                           cd.setLastTaskStatus(jsonTaskResponse.get("lastTaskStatus").toString());
+                           catalystDeployses.add(cd);
+
+                       }else{
+                           LOG.info("No Task ID found. Skipping");
+                       }
+                       LOG.info("In run : " + tempCount);
+                       tempCount++;
+                   }
+               } catch (Exception e) {
+                   LOG.info("Error " + e.getMessage());
+               }
+
            // from the above get nexus.taskId and run the below
 
         //   http://localhost:4001/tasks/57e22701b1012b8004e9249f
-            return null;
+            return catalystDeployses;
+
        }
 
        private void getToken(){
@@ -163,6 +209,8 @@
             }
 
         }
+
+
 
         private ResponseEntity<String> getToken(String url, String userName,
                                                     String password) {

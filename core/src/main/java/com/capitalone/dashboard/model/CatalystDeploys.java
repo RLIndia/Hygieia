@@ -13,6 +13,47 @@ public class CatalystDeploys extends BaseModel{
 
     @Indexed
     private String envName;
+    private String taskId;
+
+
+    @Indexed
+
+    private String version;
+    private String nodeIds;
+
+    @Indexed
+    private String executedDate;
+
+    private String lastTaskStatus;
+
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getRepository() {
+        return repository;
+    }
+
+    public void setRepository(String repository) {
+        this.repository = repository;
+    }
+
+    private String repository;
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    private String projectId;
 
 
     public String getEnvName() {
@@ -55,15 +96,24 @@ public class CatalystDeploys extends BaseModel{
         this.lastTaskStatus = lastTaskStatus;
     }
 
-    @Indexed
+    private ObjectId collectorItemId;
+    private long timestamp;
 
-    private String version;
-    private String nodeIds;
+    public ObjectId getCollectorItemId() {
+        return collectorItemId;
+    }
 
-    @Indexed
-    private String executedDate;
+    public void setCollectorItemId(ObjectId collectorItemId) {
+        this.collectorItemId = collectorItemId;
+    }
 
-    private String lastTaskStatus;
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
 
 

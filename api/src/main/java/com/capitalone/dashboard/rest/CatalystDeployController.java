@@ -31,12 +31,12 @@ public class CatalystDeployController {
     @RequestMapping(value = "/catalystdeployments/{componentId}", method = GET, produces = APPLICATION_JSON_VALUE)
     public DataResponse<JSONObject>  catalystdeployments(@PathVariable ObjectId componentId) {
 
-        JSONObject responseObj = new JSONObject();
-        responseObj.put("componentid", componentId);
-          return  new DataResponse<>(responseObj, 1234);
-        //To be updated to fetch information after collecting.
+//        JSONObject responseObj = new JSONObject();
+//        responseObj.put("componentid", componentId);
+//          return  new DataResponse<>(responseObj, 1234);
+//        //To be updated to fetch information after collecting.
 
-        //return projectVersionService.getProjectVersionIssues(componentId);
+        return catalystDeployService.getCatalystDeployments(componentId);
     }
 
 }

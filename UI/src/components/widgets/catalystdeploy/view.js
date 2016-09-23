@@ -22,9 +22,11 @@
 		function load() {
 			var deferred = $q.defer();
 			console.log("In Load...");
+			 $scope.sortType = 'name';
+            $scope.sortReverse = false;
 			catalystdeploydata.details($scope.widgetConfig.componentId).then(function(data){
 
-				//processProjectData(data);
+				processProjectData(data);
 				deferred.resolve(data.lastUpdated);
 			
 				console.log("Done Load");
@@ -33,7 +35,21 @@
 			return deferred.promise;
 		}
 		function processProjectData(data) {
-		  // console.log("In process project data");
+		   console.log("In process project data");
+		   //Get the Project name and Reponame
+		   var collectorOptions = $scope.dashboard.application.components[0].collectorItems.Catalystdeploy[0].options;
+		   ctrl.repoName = collectorOptions.repositoryName;
+		   $scope.subtitle = "[ " + collectorOptions.projectName + "]";
+		   console.log(data.result.deployments.length);
+		   for(var i = 0; i < data.result.deployments.length;i++){
+		   		data.result.deployments[i].lastdeployed = new Date(data.result.deployments[i].lastdeployed);
+		   		console.log(data.result.deployments[i].lastdeployed);
+		   }
+		   var catalystData = {
+		   		
+		   		"deployments":data.result.deployments
+		   }
+		   ctrl.catalystData = catalystData;
 		  // $scope.subtitle = data.result.summary.projectName;
 	   //    ctrl.catalystTaskDashboard = {
 	   //    		"issueSummary" :data.result.summary,
@@ -59,6 +75,7 @@
        //      showLabel: true
        //  };
 	      // ctrl.jiraDashboard.chartData = chartData;
+	     
 	    }
 
 	    function showDetail(jiraDashboard){

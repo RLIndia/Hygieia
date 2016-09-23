@@ -6,7 +6,10 @@ import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.CatalystTaskRepository;
+import com.capitalone.dashboard.repository.CatalystDeployRepository;
+
 import com.capitalone.dashboard.repository.ComponentRepository;
+import com.capitalone.dashboard.model.CatalystDeploys;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
@@ -31,6 +34,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
     private  final CatalystClient catalystClient;
     private final CatalystSettings catalystSettings;
     private final ComponentRepository dbComponentRepository;
+    private final CatalystDeployRepository catalystDeployRepository;
 
 //    private String orgId;
 //    private String bgId;
@@ -43,6 +47,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
                                   CatalystTaskRepository catalystTaskRepository,
                                   CatalystClient catalystClient,
                                   CatalystSettings catalystSettings,
+                                  CatalystDeployRepository catalystDeployRepository,
                                   ComponentRepository dbComponentRepository){
         super(taskScheduler, "Catalystdeploy");
         LOG.info("Reached here");
@@ -50,6 +55,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
         this.catalystTaskRepository = catalystTaskRepository;
         this.catalystClient = catalystClient;
         this.catalystSettings = catalystSettings;
+        this.catalystDeployRepository = catalystDeployRepository;
         this.dbComponentRepository = dbComponentRepository;
 
 
@@ -141,16 +147,36 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
             }
             scannedRepos++;
         }
+        LOG.info("Scanned Repositories:" + scannedRepos);
+        LOG.info("New / Updated Repositories:" + newRepos);
         //Get active repos
+        int enabledDeploys = 0;
+        int newDeploys = 0;
+        int updatedDeploys = 0;
         for(CatalystRepo repo : enabledRepos(collector)) {
             boolean firstRun = false;
+            List<CatalystDeploys> enabledCatalystDeploys = catalystClient.getCatalystDeploys(repo,firstRun);
+            for(CatalystDeploys cd : enabledCatalystDeploys){
+                CatalystDeploys savedDeploy = catalystDeployRepository.findByCollectorItemIdAndRepository(collector.getId(),cd.getRepository());
+                if(savedDeploy != null){
+                    savedDeploy.setLastTaskStatus(cd.getLastTaskStatus());
+                    savedDeploy.setExecutedDate(cd.getExecutedDate());
+                    catalystDeployRepository.save(savedDeploy);
+                    updatedDeploys++;
+                }
+                else{
+                    cd.setCollectorItemId(collector.getId());
+                    catalystDeployRepository.save(cd);
+                    newDeploys++;
 
+                }
+            }
+            enabledDeploys++;
         }
-
-
-        LOG.info("Scanned Tasks:" + scannedRepos);
-        LOG.info("New / Updated Tasks:" + newRepos);
-        LOG.info("Finished");
+        LOG.info("Enabled Deploys:" + enabledDeploys);
+        LOG.info("Updated Deploys:" + updatedDeploys);
+        LOG.info("New Deploys:" + newDeploys);
+         LOG.info("Finished");
 
     }
 

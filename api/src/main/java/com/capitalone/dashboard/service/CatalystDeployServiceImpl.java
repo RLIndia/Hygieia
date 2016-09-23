@@ -18,6 +18,9 @@ import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.Component;
 import com.capitalone.dashboard.model.DataResponse;
+import com.capitalone.dashboard.model.CatalystDeploys;
+import com.capitalone.dashboard.repository.CatalystDeployRepository;
+
 
 
 import com.capitalone.dashboard.repository.CollectorRepository;
@@ -31,13 +34,15 @@ import org.slf4j.LoggerFactory;
 public class CatalystDeployServiceImpl implements CatalystDeployService {
     private final ComponentRepository componentRepository;
     private final CollectorRepository collectorRepository;
+    private final CatalystDeployRepository catalystDeployRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalystDeployServiceImpl.class);
 
     @Autowired
     public CatalystDeployServiceImpl(ComponentRepository componentRepository,
-                                     CollectorRepository collectorRepository){
+                                     CollectorRepository collectorRepository, CatalystDeployRepository catalystDeployRepository){
         this.collectorRepository = collectorRepository;
         this.componentRepository = componentRepository;
+        this.catalystDeployRepository = catalystDeployRepository;
     }
 
     @Override
@@ -52,10 +57,22 @@ public class CatalystDeployServiceImpl implements CatalystDeployService {
 
         Collector collector = collectorRepository
                 .findOne(item.getCollectorId());
+        List<CatalystDeploys> cd = catalystDeployRepository.findByCollectorItemId(item.getCollectorId());
+
+        JSONArray deploys = new JSONArray();
+        for(CatalystDeploys deploy : cd){
+            JSONObject deployObj = new JSONObject();
+            deployObj.put("envName",deploy.getEnvName());
+            deployObj.put("version",deploy.getVersion());
+            deployObj.put("status",deploy.getLastTaskStatus());
+            deployObj.put("lastdeployed",deploy.getExecutedDate());
+           deploys.add(deployObj);
+        }
+
         JSONObject responseObj = new JSONObject();
-        JSONObject summary = new JSONObject();
-        summary.put("Test","test1");
-        responseObj.put("deployments",summary);
+
+
+        responseObj.put("deployments",deploys);
         return  new DataResponse<>(responseObj,collector.getLastExecuted());
     }
 }
