@@ -36,13 +36,12 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 	private final ComponentRepository componentRepository;
 	private final CollectorRepository collectorRepository;
 	private final ProjectVersionRepository projectVersionRepository;
-	private final CollectorItemRepository collectorItemRepository; 
+	private final CollectorItemRepository collectorItemRepository;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectVersionServiceImpl.class);
 
 	@Autowired
 	public ProjectVersionServiceImpl(ComponentRepository componentRepository, CollectorRepository collectorRepository,
-			ProjectVersionRepository projectVersionRepository,
-			CollectorItemRepository collectorItemRepository) {
+			ProjectVersionRepository projectVersionRepository, CollectorItemRepository collectorItemRepository) {
 		this.collectorRepository = collectorRepository;
 		this.componentRepository = componentRepository;
 		this.projectVersionRepository = projectVersionRepository;
@@ -57,17 +56,14 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 		LOGGER.info("componentId");
 		LOGGER.info(componentId.toString());
 		LOGGER.info(item.getCollectorId().toString());
-		
-		LOGGER.info("itemId==>"+item.getId());
-		
+
+		LOGGER.info("itemId==>" + item.getId());
+
 		item = collectorItemRepository.findOne(item.getId());
 
 		String versionId = (String) item.getOptions().get("versionId");
 		String sprintId = (String) item.getOptions().get("activeSprintId");
-		
-		
-		
-		
+
 		LOGGER.info("versionId ===>" + versionId);
 		LOGGER.info("Sprint Id==>" + sprintId);
 		JSONObject responseObj = new JSONObject();
@@ -98,16 +94,19 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			issueObj.put("description", issue.getIssueDescription());
 
 			issues.add(issueObj);
-			if (issue.getIssueStatus().toString().contentEquals("Done")) {
-				doneCount++;
+			String issueStatus = issue.getIssueStatus();
+			if (issueStatus != null) {
+				if (issueStatus.contentEquals("Done")) {
+					doneCount++;
+				}
+				if (issueStatus.contentEquals("Backlog")) {
+					pendingCount++;
+				}
+				if (issueStatus.contentEquals("In Progress") || issueStatus.contentEquals("Requirement In Progress")) {
+					progressCount++;
+				}
 			}
-			if (issue.getIssueStatus().toString().contentEquals("Backlog")) {
-				pendingCount++;
-			}
-			if (issue.getIssueStatus().toString().contentEquals("In Progress")
-					|| issue.getIssueStatus().toString().contentEquals("Requirement In Progress")) {
-				progressCount++;
-			}
+
 			issueCount++;
 		}
 
@@ -142,17 +141,20 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				issueObj.put("storyPoint", issue.getStoryPoint());
 
 				issuesSprint.add(issueObj);
-				if (issue.getIssueStatus().toString().contentEquals("Done")) {
-					doneTotal = doneTotal + issue.getStoryPoint();
+				String issueStatus = issue.getIssueStatus();
+				if (issueStatus != null) {
+					if (issueStatus.contentEquals("Done")) {
+						doneTotal = doneTotal + issue.getStoryPoint();
+					}
+					if (issueStatus.contentEquals("Backlog")) {
+						pendingTotal = pendingTotal + issue.getStoryPoint();
+					}
+					if (issueStatus.contentEquals("In Progress")
+							|| issueStatus.contentEquals("Requirement In Progress")) {
+						progressTotal = progressTotal + issue.getStoryPoint();
+					}
 				}
-				if (issue.getIssueStatus().toString().contentEquals("Backlog")) {
-					pendingTotal = pendingTotal + issue.getStoryPoint();
-				}
-				if (issue.getIssueStatus().toString().contentEquals("In Progress")
-						|| issue.getIssueStatus().toString().contentEquals("Requirement In Progress")) {
-					progressTotal = progressTotal + issue.getStoryPoint();
-				}
-				total = total+issue.getStoryPoint();
+				total = total + issue.getStoryPoint();
 			}
 
 			summarySprint.put("doneTotal", doneTotal);
@@ -160,10 +162,8 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			summarySprint.put("progressTotal", progressTotal);
 			summarySprint.put("pendingTotal", pendingTotal);
 			summarySprint.put("issues", issuesSprint);
-			
+
 			responseObj.put("sprint", summarySprint);
-			
-			
 
 		}
 
