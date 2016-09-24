@@ -1,15 +1,12 @@
 package com.capitalone.dashboard.collector;
 
-import com.capitalone.dashboard.model.CatalystRepo;
-import com.capitalone.dashboard.model.Collector;
-import com.capitalone.dashboard.model.CollectorItem;
-import com.capitalone.dashboard.model.CollectorType;
+import com.capitalone.dashboard.model.*;
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.CatalystTaskRepository;
 import com.capitalone.dashboard.repository.CatalystDeployRepository;
+import com.capitalone.dashboard.repository.CatalystDeployTaskHistory;
 
 import com.capitalone.dashboard.repository.ComponentRepository;
-import com.capitalone.dashboard.model.CatalystDeploys;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
@@ -35,6 +32,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
     private final CatalystSettings catalystSettings;
     private final ComponentRepository dbComponentRepository;
     private final CatalystDeployRepository catalystDeployRepository;
+    private final CatalystDeployTaskHistory catalystDeployTaskHistory;
 
 //    private String orgId;
 //    private String bgId;
@@ -48,6 +46,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
                                   CatalystClient catalystClient,
                                   CatalystSettings catalystSettings,
                                   CatalystDeployRepository catalystDeployRepository,
+                                  CatalystDeployTaskHistory catalystDeployTaskHistory,
                                   ComponentRepository dbComponentRepository){
         super(taskScheduler, "Catalystdeploy");
         LOG.info("Reached here");
@@ -57,6 +56,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
         this.catalystSettings = catalystSettings;
         this.catalystDeployRepository = catalystDeployRepository;
         this.dbComponentRepository = dbComponentRepository;
+        this.catalystDeployTaskHistory = catalystDeployTaskHistory;
 
 
     }
@@ -119,7 +119,7 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
                 }
             }
         }
-
+        //To Do write a clean up for deactivated repos. CollectorId is being sotored unused
         catalystTaskRepository.save(repoList);
         catalystTaskRepository.delete(deleterepoList);
     }
@@ -170,13 +170,20 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
                     newDeploys++;
 
                 }
+                //Get the task history and Save
+                //List<CatalystDeployTaskHistory> enabledCatalystTaskHistory = catalystClient.
+                List<CatalystDeploysTask> catalystDeploysTasks = catalystClient.getCatalystDeploysTasks(cd.getTaskId().toString());
+                for(CatalystDeploysTask cdTask : catalystDeploysTasks){
+                    //Check if this task is saved
+
+                }
             }
             enabledDeploys++;
         }
         LOG.info("Enabled Deploys:" + enabledDeploys);
         LOG.info("Updated Deploys:" + updatedDeploys);
         LOG.info("New Deploys:" + newDeploys);
-         LOG.info("Finished");
+        LOG.info("Finished");
 
     }
 

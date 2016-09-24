@@ -2,6 +2,8 @@
 
     import com.capitalone.dashboard.model.CatalystDeploys;
     import com.capitalone.dashboard.model.CatalystRepo;
+    import com.capitalone.dashboard.model.CatalystDeploysTask;
+
     import org.apache.commons.codec.binary.Base64;
     import org.apache.commons.logging.Log;
     import org.apache.commons.logging.LogFactory;
@@ -102,6 +104,7 @@
        @Override
         public List<CatalystDeploys> getCatalystDeploys(CatalystRepo catalystRepo, boolean firstrun){
            List<CatalystDeploys> catalystDeployses = new ArrayList<CatalystDeploys>();
+
         //   http://localhost:4001/app-deploy/project/b38ccedc-da2c-4e2c-a278-c66333564719/application/catalyst
            String repotaskurl = settings.getCatalystBaseUrl() + "/app-deploy/project/" + catalystRepo.getPROJECTID() + "/repository/" + catalystRepo.getREPOSITORYNAME();
             LOG.info(repotaskurl);
@@ -152,6 +155,33 @@
         //   http://localhost:4001/tasks/57e22701b1012b8004e9249f
             return catalystDeployses;
 
+       }
+
+       @Override
+       public List<CatalystDeploysTask> getCatalystDeploysTasks(String taskId){
+           List<CatalystDeploysTask> catalystDeploysTasks = new ArrayList<CatalystDeploysTask>();
+           String repotaskhistoryurl = settings.getCatalystBaseUrl() + "/tasks/" + taskId + "/history";
+           LOG.info(repotaskhistoryurl);
+           try {
+               if (this.restToken == "") {
+                   getToken();
+               }
+               ResponseEntity<String> response = getAllCatalystRepos(repotaskhistoryurl); //returns repo historydetails
+               JSONArray jsonResponse = paresAsArray(response);
+               for (Object jtask : jsonResponse) {
+                   JSONObject cattask = (JSONObject) jtask;
+                   CatalystDeploysTask cdt = new CatalystDeploysTask();
+                   cdt.setTaskId(taskId);
+                   cdt.setExecutedDate(cattask.get("timestampStarted").toString());
+                   cdt.setStatus(cattask.get("status").toString());
+                   cdt.setNodeNames(cattask.get("nodeIds").toString());
+                   catalystDeploysTasks.add(cdt);
+                   LOG.info("Task ID" + taskId + " status " + cdt.getStatus());
+               }
+           }catch(Exception e) {
+               LOG.info("Error " + e.getMessage());
+           }
+           return catalystDeploysTasks;
        }
 
        private void getToken(){

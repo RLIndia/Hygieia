@@ -19,7 +19,7 @@ catalyst.catalystUserName=superadmin
 catalyst.catalystPassword=superadmin@123
 catalyst.repository=nexus
 catalyst.scheduledPriorMin=2
-dbhost=localhost
+
 catalyst.deltaStartDate=2016-06-01T00:00:00.000000
 catalyst.masterStartDate=2016-01-01T00:00:00.000000
 catalyst.firstRunHistoryDays=1
