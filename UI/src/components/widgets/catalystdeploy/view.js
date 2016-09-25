@@ -78,25 +78,25 @@
 	     
 	    }
 
-	    function showDetail(jiraDashboard){
-	  //   	$modal.open({
-			// 	controller: 'projectVersionViewDetailController',
-			// 	controllerAs: 'detail',
-			// 	templateUrl: 'components/widgets/project/detail.html',
-			// 	size: 'lg',
-			// 	resolve: {
-			// 		jiraDashboard: function() {
-			// 			return jiraDashboard;
-			// 		},
-			// 		collectorName: function () {
+	    function showDetail(deployment){
+	    	$modal.open({
+				controller: 'Catalystdeployhistorycontroller',
+				controllerAs: 'detail',
+				templateUrl: 'components/widgets/catalystdeploy/detail.html',
+				size: 'lg',
+				resolve: {
+					deployment: function() {
+						return deployment;
+					},
+					collectorName: function () {
 						
-			// 			return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector.name;
-			// 		},
-   //                  collector: function () {
-   //                      return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector;
-   //                  }
-			// 	}
-			// });
+						return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector.name;
+					},
+                    collector: function () {
+                        return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector;
+                    }
+				}
+			});
 	    }
 
 	}

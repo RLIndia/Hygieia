@@ -172,6 +172,7 @@
                    JSONObject cattask = (JSONObject) jtask;
                    CatalystDeploysTask cdt = new CatalystDeploysTask();
                    cdt.setTaskId(taskId);
+                   cdt.setTaskName(cattask.get("taskName").toString());
                    cdt.setExecutedDate(cattask.get("timestampStarted").toString());
                    cdt.setStatus(cattask.get("status").toString());
                    cdt.setNodeNames(cattask.get("nodeIds").toString());

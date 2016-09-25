@@ -173,9 +173,16 @@ public class CatalystCollectorTask extends CollectorTask<Collector> {
                 //Get the task history and Save
                 //List<CatalystDeployTaskHistory> enabledCatalystTaskHistory = catalystClient.
                 List<CatalystDeploysTask> catalystDeploysTasks = catalystClient.getCatalystDeploysTasks(cd.getTaskId().toString());
+                //Get all saved history items
+                List<CatalystDeploysTask> savedTask = catalystDeployTaskHistory.findByTaskId(cd.getTaskId().toString());
+                //Clear out these items
+                catalystDeployTaskHistory.delete(savedTask);
+
                 for(CatalystDeploysTask cdTask : catalystDeploysTasks){
                     //Check if this task is saved
-
+                    cdTask.setCollectorId(collector.getId());
+                    catalystDeployTaskHistory.save(cdTask);
+                    LOG.info("Added history item " + cdTask.getTaskName());
                 }
             }
             enabledDeploys++;
