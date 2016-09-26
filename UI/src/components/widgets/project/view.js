@@ -46,15 +46,15 @@
 	      //Data preparation for chart
 	      //{"summary":{"inprogressCount":9,"doneCount":126,"pendingCount":47,"projectName":"API","versionName":"Chase Pay 1.0","issueCount":182},
 	      var chartData = {
-	      	labels: ['Done','To Do','In Progress'],
-	      	series: [data.result.version.doneCount,data.result.version.pendingCount,data.result.version.inprogressCount],
+	      	labels: ['Done','In Progress','To Do'],
+	      	series: [data.result.version.doneCount,data.result.version.inprogressCount,data.result.version.pendingCount],
 	      	colors:['green','orange','red']
 	      }
 	      ctrl.pieOptions = {
             donut: true,
             donutWidth: 30,
             startAngle: 270,
-            total: 360,
+            total: 310,
             labelOffset:20,
             width:'350px',
             height:'200px',
