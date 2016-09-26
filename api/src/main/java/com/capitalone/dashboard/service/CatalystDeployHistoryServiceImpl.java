@@ -7,6 +7,8 @@ package com.capitalone.dashboard.service;
 
 import java.util.Date;
 import java.util.List;
+
+import com.mongodb.util.JSON;
 import org.bson.types.ObjectId;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -44,7 +46,7 @@ public class CatalystDeployHistoryServiceImpl implements CatalystDeployHistorySe
             cdtobj.put("taskId",cdt.getTaskId());
             cdtobj.put("taskName",cdt.getTaskName());
             cdtobj.put("status",cdt.getStatus());
-            cdtobj.put("nodeNames",cdt.getNodeNames());
+            cdtobj.put("nodeNames", JSON.parse(cdt.getNodeNames().toString()));
             cdtobj.put("executedData",cdt.getExecutedDate());
             deployHistory.add(cdtobj);
         }

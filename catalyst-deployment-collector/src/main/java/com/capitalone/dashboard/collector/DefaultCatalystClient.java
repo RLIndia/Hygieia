@@ -175,7 +175,22 @@
                    cdt.setTaskName(cattask.get("taskName").toString());
                    cdt.setExecutedDate(cattask.get("timestampStarted").toString());
                    cdt.setStatus(cattask.get("status").toString());
-                   cdt.setNodeNames(cattask.get("nodeIds").toString());
+
+                   //Converting nodeId to Nodename[ip].
+                   String nodeurl = settings.getCatalystBaseUrl() + "/instances/";
+                   ResponseEntity<String> responsenode = getNodeDetails(nodeurl,(JSONArray) cattask.get("nodeIds"));
+                   JSONArray jsonNodeResponse = paresAsArray(responsenode);
+                   LOG.info("Node Details: " + jsonNodeResponse.toString());
+                   JSONArray nodes = new JSONArray();
+                   for(Object node : jsonNodeResponse){
+                       JSONObject newnodeobj = (JSONObject) node;
+                       JSONObject nodeobj = new JSONObject();
+                       nodeobj.put("name",newnodeobj.get("name"));
+                       nodeobj.put("ip",newnodeobj.get("instanceIP"));
+                       nodes.add(nodeobj);
+                       LOG.info("Fetched Node details:" + nodes.toString());
+                   }
+                   cdt.setNodeNames(nodes.toString());
                    catalystDeploysTasks.add(cdt);
                    LOG.info("Task ID" + taskId + " status " + cdt.getStatus());
                }
@@ -241,7 +256,24 @@
 
         }
 
+        private ResponseEntity<String> getNodeDetails(String url,JSONArray nodeIds){
+            if (!"".equals(url)) {
+                //LOG.info("Call with userid and password");
+                //       LOG.info("IN getcatalyst data. Hitting " + url);
+                JSONObject request = new JSONObject();
+                request.put("instanceIds",nodeIds);
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("x-catalyst-auth",this.restToken);
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                HttpEntity<String> entity = new HttpEntity<String>(request.toString(),headers);
+                return restOperations.exchange(url, HttpMethod.POST,
+                        entity,String.class);
 
+            } else {
+                return restOperations.exchange(url, HttpMethod.POST, null,
+                        String.class);
+            }
+        }
 
         private ResponseEntity<String> getToken(String url, String userName,
                                                     String password) {

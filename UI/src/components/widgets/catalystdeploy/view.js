@@ -35,7 +35,7 @@
 			return deferred.promise;
 		}
 		function processProjectData(data) {
-		   console.log("In process project data");
+		   console.log("In process catalystdeploydata");
 		   //Get the Project name and Reponame
 		   var collectorOptions = $scope.dashboard.application.components[0].collectorItems.Catalystdeploy[0].options;
 		   ctrl.repoName = collectorOptions.repositoryName;
@@ -79,23 +79,29 @@
 	    }
 
 	    function showDetail(deployment){
+	    	console.log(deployment);
 	    	$modal.open({
 				controller: 'Catalystdeployhistorycontroller',
-				controllerAs: 'detail',
+				controllerAs: 'taskdetail',
 				templateUrl: 'components/widgets/catalystdeploy/detail.html',
 				size: 'lg',
 				resolve: {
 					deployment: function() {
-						return deployment;
+							return deployment;
+					},
+					taskId: function(){
+						return deployment.taskId;
 					},
 					collectorName: function () {
 						
-						return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector.name;
+						return $scope.dashboard.application.components[0].collectorItems.Catalystdeploy[0].collector.name;
 					},
                     collector: function () {
-                        return $scope.dashboard.application.components[0].collectorItems.Jiraproject[0].collector;
+                        return $scope.dashboard.application.components[0].collectorItems.Catalystdeploy[0].collector;
                     }
 				}
+
+
 			});
 	    }
 

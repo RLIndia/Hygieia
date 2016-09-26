@@ -66,6 +66,7 @@ public class CatalystDeployServiceImpl implements CatalystDeployService {
             deployObj.put("version",deploy.getVersion());
             deployObj.put("status",deploy.getLastTaskStatus());
             deployObj.put("lastdeployed",deploy.getExecutedDate());
+            deployObj.put("taskId",deploy.getTaskId());
            deploys.add(deployObj);
         }
 
