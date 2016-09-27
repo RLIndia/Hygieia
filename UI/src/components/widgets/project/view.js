@@ -54,7 +54,7 @@
             donut: true,
             donutWidth: 30,
             startAngle: 270,
-            total: 310,
+            total: 390,
             labelOffset:20,
             width:'350px',
             height:'200px',
