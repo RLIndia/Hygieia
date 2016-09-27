@@ -283,5 +283,6 @@
     <module>sbux-functional-test-collector</module>
       <module>jira-project-collector</module>
       <module>catalyst-deployment-collector</module>
+      <module>testrail-results-collector</module>
   </modules>
 </project>
