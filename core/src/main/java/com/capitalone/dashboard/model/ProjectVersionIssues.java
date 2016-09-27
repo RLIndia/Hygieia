@@ -15,6 +15,45 @@ import org.springframework.data.mongodb.core.mapping.Document;
     @Indexed
     private String projectName;
 
+   
+
+    @Indexed
+    private String versionName;
+    private String versionId;
+    
+    private String issueStatus;
+    private String statusName;
+    
+    private String issueId;
+    private String issueDescription;
+    @Indexed
+    private String changeDate;
+    private String reportedDate;
+    private String sprintName;
+    private String sprintId;
+    private String key;
+    private double storyPoint;
+
+
+    private ObjectId collectorItemId;
+    private long timestamp;
+
+    public ObjectId getCollectorItemId() {
+        return collectorItemId;
+    }
+
+    public void setCollectorItemId(ObjectId collectorItemId) {
+        this.collectorItemId = collectorItemId;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+    
     public String getProjectName() {
         return projectName;
     }
@@ -78,34 +117,53 @@ import org.springframework.data.mongodb.core.mapping.Document;
         return this;
     }
 
-    @Indexed
-    private String versionName;
-    private String issueStatus;
-    private String issueId;
-    private String issueDescription;
-    @Indexed
-    private String changeDate;
-    private String reportedDate;
+	public String getSprintId() {
+		return sprintId;
+	}
 
+	public void setSprintId(String sprintId) {
+		this.sprintId = sprintId;
+	}
 
-    private ObjectId collectorItemId;
-    private long timestamp;
+	public String getSprintName() {
+		return sprintName;
+	}
 
-    public ObjectId getCollectorItemId() {
-        return collectorItemId;
-    }
+	public void setSprintName(String sprintName) {
+		this.sprintName = sprintName;
+	}
 
-    public void setCollectorItemId(ObjectId collectorItemId) {
-        this.collectorItemId = collectorItemId;
-    }
+	public String getKey() {
+		return key;
+	}
 
-    public long getTimestamp() {
-        return timestamp;
-    }
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
+
+	public double getStoryPoint() {
+		return storyPoint;
+	}
+
+	public void setStoryPoint(double storyPoint) {
+		this.storyPoint = storyPoint;
+	}
+
+	public String getVersionId() {
+		return versionId;
+	}
+
+	public void setVersionId(String versionId) {
+		this.versionId = versionId;
+	}
 
 
 }

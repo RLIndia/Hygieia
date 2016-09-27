@@ -5,8 +5,8 @@
         .module(HygieiaConfig.module)
         .controller('projectVersionConfigController', projectVersionConfigController);
 
-    projectVersionConfigController.$inject = ['modalData', 'collectorData','$modalInstance'];
-    function projectVersionConfigController(modalData, collectorData, $modalInstance) {
+    projectVersionConfigController.$inject = ['modalData', 'collectorData','$modalInstance','$timeout'];
+    function projectVersionConfigController(modalData, collectorData, $modalInstance,$timeout) {
         /*jshint validthis:true */
         var ctrl = this;
 
@@ -18,44 +18,54 @@
         ctrl.projectVersionDropdownDisabled = true;
         ctrl.projectVersionDropdownPlaceholder = 'Loading...';
         ctrl.submitted = false;
+        ctrl.projectVersions = {};
+        ctrl.projectVe='';
+        ctrl.versions='';
 
         // public methods
         ctrl.submit = submit;
         console.log("modalData");
         console.log(modalData);
-        collectorData.itemsByType('Jiraproject').then(processResponse);
-
-        function processResponse(data) {
-            
-            var worker = {
-                getprojectVersions: getprojectVersions
-            };
-            console.log(data);
-            function getprojectVersions(data, currentCollectorId, cb) {
-                var selectedIndex = null;
-
-                var projectVersions = _(data).map(function(projectVersionsdata, idx) {
-                    if(projectVersionsdata.id == currentCollectorId) {
-                        selectedIndex = idx;
-                    }
-                    return {
-                        value: projectVersionsdata.id,
-                        name: projectVersionsdata.options.projectName + " - " + projectVersionsdata.options.versionName 
-                    };
-                }).value();
-                console.log(selectedIndex);
-                cb({
-                    projectVersions: projectVersions,
-                    selectedIndex: selectedIndex
-                });
-            }
-            console.log("Collector Items:");
-            console.log(modalData);
-            var projectVersionCollector = modalData.dashboard.application.components[0].collectorItems.Jiraproject;
+        collectorData.itemsByType('Jiraproject').then(
+        function (data) {
+        	
+        	var projectVersionCollector = modalData.dashboard.application.components[0].collectorItems.Jiraproject;
             var projectVersionCollectorId = projectVersionCollector ? projectVersionCollector[0].id : null;
             
-            worker.getprojectVersions(data, projectVersionCollectorId, getprojectVersionCallback);
-        }
+        	var projects = {};
+        	
+        	var verId,projId;
+        	
+        	for(var i=0;i<data.length;i++) {
+        		if(projects[data[i].options.projectId]) {
+        			projects[data[i].options.projectId].versions.push(data[i]);
+        		} else {
+        			projects[data[i].options.projectId] = {
+        					name:data[i].options.projectName,
+        					versions:[data[i]]
+        			};
+        			
+        	   }
+        		
+        		if(projectVersionCollectorId ===data[i].id) {
+        			projId = data[i].options.projectId;
+        			verId = data[i].id;
+        		}
+        	}
+        	ctrl.projectVersions = projects;
+        	$timeout(function(){
+        		ctrl.projectVe =projId; 
+        		$timeout(function(){
+        			 ctrl.versions=verId;
+        		});
+        	});
+        	
+        	
+        	
+        	
+            
+            //worker.getprojectVersions(data, projectVersionCollectorId, getprojectVersionCallback);
+        });
 
         function getprojectVersionCallback(data) {
             //$scope.$apply(function() {
@@ -83,7 +93,7 @@
                         id: widgetConfig.options.id
                     },
                     componentId: modalData.dashboard.application.components[0].id,
-                    collectorItemId: form.projectVersion.value
+                    collectorItemId: ctrl.versions
                 };
                // console.log(postObj);
                 

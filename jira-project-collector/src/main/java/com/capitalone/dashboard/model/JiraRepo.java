@@ -10,7 +10,23 @@ public class JiraRepo extends CollectorItem{
     private static final String VERSIONID = "versionId";
     private static final String VERSIONNAME = "versionName";
     private static final String VERSIONDESCRIPTION = "versionDescription";
+    private static final String ACTIVE_SPRINT_ID = "activeSprintId";
+    private static final String ACTIVE_SPRINT_NAME = "activeSprintName";
+    
 
+    public String getACTIVE_SPRINT_ID() { return (String) getOptions().get(ACTIVE_SPRINT_ID);}
+
+    public void setACTIVE_SPRINT_ID(String sprintId){
+        getOptions().put(ACTIVE_SPRINT_ID, sprintId);
+    }
+    
+    public String getACTIVE_SPRINT_NAME() { return (String) getOptions().get(ACTIVE_SPRINT_NAME);}
+
+    public void setACTIVE_SPRINT_NAME(String sprintName){
+        getOptions().put(ACTIVE_SPRINT_NAME, sprintName);
+    }
+    
+    
     public String getPROJECTID() { return (String) getOptions().get(PROJECTID);}
 
     public void setPROJECTID(String projectid){
