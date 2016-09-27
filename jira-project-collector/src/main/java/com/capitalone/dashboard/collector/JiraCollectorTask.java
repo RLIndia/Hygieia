@@ -167,9 +167,10 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             if(s != null) {
             	repo.setACTIVE_SPRINT_ID(s.getSprintId());
             	repo.setACTIVE_SPRINT_NAME(s.getSprintName());
+            	repo.setACTIVE_SPRINT_START_TIME(s.getStartTime());
+            	repo.setACTIVE_SPRINT_END_TIME(s.getEndTime());
             }
             
-
             List<ProjectVersionIssues> enabledProjectVersionIssues  = jiraclient.getprojectversionissues(repo,firstRun);
 
             for(ProjectVersionIssues pvi : enabledProjectVersionIssues){

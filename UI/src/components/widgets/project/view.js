@@ -36,6 +36,28 @@
 		function processProjectData(data) {
 		  console.log("In process project data");
 		  $scope.subtitle = data.result.version.projectName;
+		  
+		  if(data.result.sprint && data.result.sprint.sprintStart && data.result.sprint.sprintEnd) {
+			 
+			  var str = data.result.sprint.sprintStart.substring(0,8);
+			  console.log(str);
+			  var day = parseInt(str.substring(0,2));
+			  var month = parseInt(str.substring(2,4));
+			  var year = parseInt(str.substring(4));
+			 
+			  
+			  console.log(day,month,year);
+			  
+			  data.result.sprint.startDate = day+'/'+month+'/'+year;
+			 
+			  var str = data.result.sprint.sprintEnd.substring(0,8);
+			  var day = parseInt(str.substring(0,2));
+			  var month = parseInt(str.substring(2,4));
+			  var year = parseInt(str.substring(4));
+			
+			  data.result.sprint.endDate = day+'/'+month+'/'+year;;
+		  }
+		  
 	      ctrl.jiraDashboard = {
 	      		"issueSummary" :data.result.version,
 	      		"issues":data.result.version.issues,
