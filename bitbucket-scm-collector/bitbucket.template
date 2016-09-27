@@ -12,7 +12,7 @@ spring.data.mongodb.username=
 spring.data.mongodb.password=
 
 #Collector schedule (required)
-git.cron=0 * * * * *
+git.cron=0 0/5 * * * *
 
 #mandatory
 git.host=api.bitbucket.org

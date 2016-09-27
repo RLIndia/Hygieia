@@ -1,0 +1,41 @@
+<widget-modal widget-modal-title="Configure Jira Project Widget" >
+    <form class="projectversion-config" name="configForm" ng-submit="projectVersionConfig.submit(configForm.$valid)" novalidate="novalidate">
+        <form-group input="projectVersion" errors="{required:'Please select your Project - Version'}">
+            <!-- <select name="projectVersion"
+                    class="form-control"
+                    ng-model="projectVersionConfig.projectVersion"
+                    ng-options="projectVersion.name for projectVersion in projectVersionConfig.projectVersions | orderBy: 'name' track by projectVersion.value"
+                    ng-disabled="projectVersionConfig.jobDropdownDisabled"
+                    required>
+                <option value="">{{projectVersionConfig.projectVersionDropdownPlaceholder}}</option>
+            </select> -->
+        
+            <select name="project" ng-model="projectVersionConfig.projectVe" class="form-control">
+            	<option value="">Select</option>
+            	<option ng-repeat="(key,value) in projectVersionConfig.projectVersions" value="{{key}}">{{value.name}}</option>
+            
+            </select>
+            
+           <select name="versions" ng-model="projectVersionConfig.versions" class="form-control">
+            	<option value="">Select</option>
+            	<option ng-repeat="vers in  projectVersionConfig.projectVersions[projectVersionConfig.projectVe].versions" value="{{vers.id}}">{{vers.options.versionName}}</option>
+            
+            </select>
+            <!-- {{projectVersionConfig}} -->
+        </form-group>
+
+        <hr/>
+
+        <!-- <div class="form-group text-center">
+            <label class="modal-label">
+                Alert takeover criteria:
+            </label>
+            <br/>
+            If any environment is down
+        </div> -->
+
+        <div class="button-row row text-center">
+            <button type="submit" class="btn btn-primary btn-wide">Save</button>
+        </div>
+    </form>
+</widget-modal>

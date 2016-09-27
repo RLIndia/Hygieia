@@ -16,7 +16,9 @@ public enum CollectorType {
     StaticSecurityScan,
     ChatOps,
     Cloud,
-    Product;
+    Product,
+    Functional,
+    Jiraproject;
 
     public static CollectorType fromString(String value) {
         for (CollectorType collectorType : values()) {

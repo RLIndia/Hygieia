@@ -1,0 +1,55 @@
+<widget-modal widget-modal-close="true">
+    <div class="widget-detail deploy-detail">
+        <div class="widget-detail-heading">
+            <div class="row">
+                <!-- {{detail}} -->
+                <div class="col-md-4">
+                    <span class="dash-status-lg"
+                          dash-status="{{detail.tests.totalPassed > 0 ? detail.statuses.FAIL : detail.statuses.PASS}}"></span>
+                    <span class="environment-name">{{detail.environmentName}}</span>
+                </div>
+
+                <div class="col-md-2 last-updated">
+                    <span>{{detail.testResults.timestamp | date:'MMM d, HH:mm:ss'}}</span>
+                </div>
+
+                <div class="col-md-3 server-count">
+                    <span class="green">
+                        {{detail.testResults.totalPassed}}<span class="fa fa-arrow-up"></span>
+                    </span>
+                    <span ng-class="(functionalTestDay.totalFailed != '0') ? 'red' : 'green'">
+                        {{detail.testResults.totalFailed}}<span class="fa fa-arrow-down"></span>
+                    </span>
+                </div>
+                <div class="col-md-3 view-in-tool">
+                    <a ng-href="http://ms01242.starbucks.net/TestPortal/Home/ReportManagement" target="_blank">
+                        View in portal <span class="fa fa-angle-right"></span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Close button -->
+        </div>
+        <div class="widget-detail-body">
+           <!--  {{detail}} -->
+            
+            <div class="row rowformat" ng-class="(result.result != 'Passed') ? 'red':'green'" ng-repeat="result in detail.testResults.testCases.results | orderBy:['timeExecuted', 'testCaseName'] track by $index">
+                <div class="col-md-8" style="font-size:12px;word-wrap:break-word; display:inline-block;">
+                    {{result.testCaseName}}
+                </div>
+                <div class="col-md-2" style="font-size:12px">
+                    <span>{{result.timeExecuted | date:'MMM d, HH:mm:ss'}}</span>
+                </div>
+                <!-- <div class="col-md-2">
+                    {{result.result}}
+                </div> -->
+                <div class="col-md-1"  ng-show="(result.result == 'Passed')" class="servers-up"><span class="fa fa-arrow-up green"></span>
+                </div>
+                <div class="col-md-1" ng-hide="(result.result == 'Passed')" class="servers-down"><span class="fa fa-arrow-down red"></span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</widget-modal>

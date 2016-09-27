@@ -1,0 +1,59 @@
+<div class="functional-view">
+    <!-- Removed dropdown based on feedback -->
+   <!--  <div class="col-xs-9.5 text-standard-sm dash-overflow">
+        <select class="form-control deploy-select-env" ng-model="query" style="background-color: #000;">
+            <option ng-repeat="environment in deployView.environments">
+                {{environment.name}}
+            </option>
+        </select>
+    </div> -->
+    <table class="table" style="margin-top:-10px">
+        <tr class="dash-row">
+            
+            <td colspan="2" style="cursor:pointer" ng-click="fdsortType = 'date'; sortReverse = !sortReverse">
+                    Date&nbsp;
+                    <span ng-show="fdsortType == 'date' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span ng-show="fdsortType == 'date' && sortReverse" class="fa fa-caret-up"></span>
+            </td>
+            
+            <td align="center">
+                Total Passed
+            </td>
+            <td align="center">
+                Total Failed
+            </td>
+            <td>
+            </td>
+        </tr>
+        <tr class="dash-row clickable" ng-repeat="functionalTestDay in functionalView.functionalTestDays | orderBy:fdsortType:sortReverse | filter:query" ng-click="functionalView.showDetail(functionalTestDay)">
+            <!-- <td>
+                <span
+                        dash-status="{{environment.failedComponents > 0 ? deployView.statuses.FAIL : deployView.statuses.PASS}}"
+                        dash-status-fail-text="{{environment.failedComponents}}"></span>
+            </td> -->
+            
+             <td class="dash-overflow" style="text-align:center" ng-class="(functionalTestDay.totalFailed != '0') ? 'orange' : 'green'">
+               <!--  {{functionalTestDay.status}} -->
+                <span ng-if="functionalTestDay.totalFailed != '0'" class="dash-status-pass fa fa-check ng-scope"></span>
+                <span ng-if="functionalTestDay.totalFailed == '0'" class="dash-status-fail fa fa fa-exclamation-circle ng-scope"></span>
+            </td>
+            <td class="dash-overflow" title="{{ functionalTestDay.date | date : 'HH:mm ss'}}" >
+                {{functionalTestDay.date |   date : shortDate}}
+            </td>
+            <td class="text-standard-date" style="text-align:center">
+                {{functionalTestDay.totalPassed}}
+
+            </td>
+           
+            <td class="text-standard-date" style="text-align:center">
+            {{functionalTestDay.totalFailed}}
+
+            </td>
+            <td class="" style="text-align:right">
+            
+                <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
+            </td>
+           
+        </tr>
+    </table>
+</div>

@@ -44,7 +44,7 @@ public class DefaultJiraClient implements JiraClient {
 	
 	private final FeatureSettings featureSettings;
 	private final FeatureWidgetQueries featureWidgetQueries;
-	
+
 	private JiraRestClient client;
 	
 	@Autowired

@@ -12,6 +12,7 @@
         ctrl.pieOptions = {
             donut: true,
             donutWidth: 20,
+            donutWidth: 20,
             startAngle: 270,
             total: 200,
             showLabel: false

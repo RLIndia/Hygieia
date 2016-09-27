@@ -1,0 +1,28 @@
+<widget-modal widget-modal-title="Configure Functional Test Widget">
+    <form class="functional-config" name="configForm" ng-submit="functionalConfig.submit(configForm.$valid)" novalidate="novalidate">
+        <form-group input="functionalStack" errors="{required:'Please select your project'}">
+            <select name="functionalStack"
+                    class="form-control"
+                    ng-model="functionalConfig.functionalStack"
+                    ng-options="stack.name for stack in functionalConfig.functionalStacks | orderBy: 'name' track by stack.value"
+                    ng-disabled="functionalConfig.jobDropdownDisabled"
+                    required>
+                <option value="">{{functionalConfig.stackDropdownPlaceholder}}</option>
+            </select>
+        </form-group>
+
+        <hr/>
+
+        <!-- <div class="form-group text-center">
+            <label class="modal-label">
+                Alert takeover criteria:
+            </label>
+            <br/>
+            If any environment is down
+        </div> -->
+
+        <div class="button-row row text-center">
+            <button type="submit" class="btn btn-primary btn-wide">Save</button>
+        </div>
+    </form>
+</widget-modal>
