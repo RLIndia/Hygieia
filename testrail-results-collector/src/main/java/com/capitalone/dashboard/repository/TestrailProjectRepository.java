@@ -19,6 +19,6 @@ public interface TestrailProjectRepository extends BaseCollectorItemRepository<T
     @Query(value="{ 'collectorId' : ?0, enabled: true}")
     List<TestrailCollectorModel> findEnabledTestrailProjects(ObjectId collectorId);
 
-    @Query(value="{ 'collectorId' : ?0, options.projectId' : ?1, options.milestoneId : ?2")
-    List<TestrailCollectorModel> findCollectorItemByProjectandMilestone(ObjectId collectorId,String projectId,String milestoneId);
+    @Query(value="{ 'collectorId' : ?0, options.projectId : ?1, options.milestoneId : ?2}")
+    TestrailCollectorModel findCollectorItemByProjectandMilestone(ObjectId collectorId,String projectId,String milestoneId);
 }

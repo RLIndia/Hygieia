@@ -70,7 +70,9 @@ public class TestrailCollectorTask extends CollectorTask<Collector> {
         try{
             List<TestrailCollectorModel> tcmprojects = testrailClient.getTestrailProjects();
             for(TestrailCollectorModel tcm : tcmprojects){
-                TestrailCollectorModel savedtcm = (TestrailCollectorModel) testrailProjectRepository.findCollectorItemByProjectandMilestone(collector.getId(),tcm.getProjectId(),tcm.getMilestoneId());
+                LOG.info("Finding " + tcm.getProjectname() + " " + tcm.getMilestonename());
+                TestrailCollectorModel savedtcm = testrailProjectRepository.findCollectorItemByProjectandMilestone(collector.getId(),tcm.getProjectId(),tcm.getMilestoneId());
+                //LOG.info("Savedtcm " + savedtcm.toString());
                 if(savedtcm == null){
                     tcm.setCollectorId(collector.getId());
                     tcm.setEnabled(false);
