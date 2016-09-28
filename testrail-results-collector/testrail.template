@@ -1,0 +1,20 @@
+#Database Name
+database=dashboard
+
+
+#Database Port - default is 27017
+dbport=27017
+
+#Database Username - default is blank
+dbusername=
+
+#Database Password - default is blank
+dbpassword=
+
+#Collector schedule (required)
+testrail.cron=0 * * * * *
+testrail.baseurl=https://relevancelab.testrail.net/
+testrail.api=index.php?/api/v2/
+testrail.username=vinod.nair@relevancelab.com
+testrail.password=pass@123
+

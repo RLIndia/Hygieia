@@ -1,7 +1,7 @@
-package com.gurock.testrail;
+package com.capitalone.dashboard.collector;
 
 /**
- * Created by root on 27/9/16.
+ * Created by root on 28/9/16.
  */
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -10,14 +10,15 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import com.capitalone.dashboard.collector.TRAPIException;
 
-public class APIClient
+public class TRAPIClient
 {
     private String m_user;
     private String m_password;
     private String m_url;
 
-    public APIClient(String base_url)
+    public TRAPIClient(String base_url)
     {
         if (!base_url.endsWith("/"))
         {
@@ -74,7 +75,7 @@ public class APIClient
      * is basically the same as java.util.Map.
      */
     public Object sendGet(String uri)
-            throws MalformedURLException, IOException, APIException
+            throws MalformedURLException, IOException, TRAPIException
     {
         return this.sendRequest("GET", uri, null);
     }
@@ -98,13 +99,13 @@ public class APIClient
      * is basically the same as java.util.Map.
      */
     public Object sendPost(String uri, Object data)
-            throws MalformedURLException, IOException, APIException
+            throws MalformedURLException, IOException, TRAPIException
     {
         return this.sendRequest("POST", uri, data);
     }
 
     private Object sendRequest(String method, String uri, Object data)
-            throws MalformedURLException, IOException, APIException
+            throws MalformedURLException, IOException, TRAPIException
     {
         URL url = new URL(this.m_url + uri);
 
@@ -144,7 +145,7 @@ public class APIClient
             istream = conn.getErrorStream();
             if (istream == null)
             {
-                throw new APIException(
+                throw new TRAPIException(
                         "TestRail API return HTTP " + status +
                                 " (No additional error message received)"
                 );
@@ -201,7 +202,7 @@ public class APIClient
                 }
             }
 
-            throw new APIException(
+            throw new TRAPIException(
                     "TestRail API returned HTTP " + status +
                             "(" + error + ")"
             );

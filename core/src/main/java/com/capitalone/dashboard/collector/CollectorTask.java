@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.IOException;
 
 /**
  * Base class for Collector task implementation which provides subclasses with
@@ -85,7 +86,7 @@ public abstract class CollectorTask<T extends Collector> implements Runnable {
 
     public abstract String getCron();
 
-    public abstract void collect(T collector);
+    public abstract void collect(T collector) throws IOException, TRAPIException;
 
     private void setOnline(boolean online) {
         T collector = getCollectorRepository().findByName(collectorName);
