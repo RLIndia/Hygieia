@@ -83,18 +83,28 @@
             ctrl.projectChange = projectChange;
             if(ctrl.selectedproject)
                 {
-                   
+                        //selects the saved project
                         $scope.TestRailConfig.selectedProject = {
                             "name": ctrl.selectedproject.name,
                             "value": ctrl.selectedproject.value
+                        }
+                        //populate the milestones dropdown
+                        
+                        for(var k = 0; k < projects.length;k++){
+                            console.log("in loop " + projects[k].value + " " + ctrl.selectedproject.value);
+                            if(projects[k].value == ctrl.selectedproject.value){
+                                $scope.TestRailConfig.testrailmilestones = projects[k].milestones;
+                                $scope.TestRailConfig.selectmilestone = ctrl.selectedproject.milestone;
+                            }
                         }
 
                         
                            console.log('in selected project');
                             console.log($scope.TestRailConfig.selectedProject);
-                           ctrl.projectChange(ctrl,$scope.TestRailConfig.selectedProject);
+                           //ctrl.projectChange(ctrl,$scope.TestRailConfig.selectedProject);
                 }
-            ctrl.testrailmilestones = [];
+                else
+                    ctrl.testrailmilestones = [];
             
             console.log(data);
         	});
