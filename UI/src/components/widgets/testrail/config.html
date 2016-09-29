@@ -1,43 +1,37 @@
-<widget-modal widget-modal-title="Configure TestRail Widget" >
-    <form class="projectversion-config" name="configForm" ng-submit="functionalConfig.submit(configForm.$valid)" novalidate="novalidate">
-        <form-group input="projectVersion" errors="{required:'Please select your Project - Version'}">
-            <!-- <select name="projectVersion"
-                    class="form-control"
-                    ng-model="projectVersionConfig.projectVersion"
-                    ng-options="projectVersion.name for projectVersion in projectVersionConfig.projectVersions | orderBy: 'name' track by projectVersion.value"
-                    ng-disabled="projectVersionConfig.jobDropdownDisabled"
-                    required>
-                <option value="">{{projectVersionConfig.projectVersionDropdownPlaceholder}}</option>
-            </select> -->
-        	<div class="dash-modal-row clearfix">
+<widget-modal widget-modal-title="Configure TestRail Widget">
+<!-- {{catalystRepoConfig.catalystprojects}} -->
+    <form class="projectversion-config" name="configForm" ng-submit="TestRailConfig.submit(configForm.$valid)" novalidate="novalidate">
+        <form-group input="TestRailConfigProjects" errors="{required:'Please select all fields'}">
+           
+             <div class="dash-modal-row clearfix">
                     <label>Project:</label>
 
-            <select name="project" ng-model="functionalConfig.projects" class="form-control">
-            	<option value="">Select</option>
-            	<option ng-repeat="(key,value) in functionalConfig.projects" value="{{key}}">{{value.name}}</option>
-            
-            </select>
-            </div>
-            <div class="dash-modal-row clearfix">
+                     <select name="selectprojects"
+                            class="form-control"
+                            ng-model="TestRailConfig.selectedProject"
+                            ng-options="obj.name for obj in TestRailConfig.testrailprojects track by obj.value" 
+                            ng-change="TestRailConfig.projectChange(TestRailConfig,TestRailConfig.selectedProject);"
+                            required>
+                        <option value="">Select a Project</option>
+                    </select>
+                </div>  
+         </form-group>
+         <form-group input="TestRailConfigMilestones" errors="{required:'Please select all fields'}">
+                <div class="dash-modal-row clearfix">
                     <label>Milestone:</label>
 
-           <select name="versions" ng-model="functionalConfig.milestone" class="form-control">
-            	<option value="">Select</option>
-            	<option ng-repeat="vers in  functionalConfig.projectVersions[functionalConfig.projectVe].versions" value="{{vers.id}}">{{vers.options.versionName}}</option>
-            
-            </select>
-            {{functionalConfig}}
+                     <select name="selectmilestone"
+                            class="form-control"
+                            ng-model="TestRailConfig.selectmilestone"
+                            ng-options="obj.name for obj in TestRailConfig.testrailmilestones track by obj.value"
+                            
+                            required>
+                        <option value="">Select a Milestone</option>
+                    </select>
+                </div>
         </form-group>
 
         <hr/>
-
-        <!-- <div class="form-group text-center">
-            <label class="modal-label">
-                Alert takeover criteria:
-            </label>
-            <br/>
-            If any environment is down
-        </div> -->
 
         <div class="button-row row text-center">
             <button type="submit" class="btn btn-primary btn-wide">Save</button>

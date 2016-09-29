@@ -153,7 +153,7 @@
                         repositoryName: form.catalystrepositories.name
                     },
                     componentId: modalData.dashboard.application.components[0].id,
-                    collectorItemId: form.catalystrepositories.value
+                    collectorItemId: form.TestRailConfigMilestone.value
                 };
                console.log(postObj);
                // console.log(form.catalystrepositories.value);
