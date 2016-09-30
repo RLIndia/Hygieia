@@ -86,7 +86,7 @@ public abstract class CollectorTask<T extends Collector> implements Runnable {
 
     public abstract String getCron();
 
-    public abstract void collect(T collector) throws IOException, TRAPIException;
+    public abstract void collect(T collector);
 
     private void setOnline(boolean online) {
         T collector = getCollectorRepository().findByName(collectorName);

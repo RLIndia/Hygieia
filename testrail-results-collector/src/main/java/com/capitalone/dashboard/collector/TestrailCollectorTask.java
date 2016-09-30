@@ -5,7 +5,6 @@ package com.capitalone.dashboard.collector;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.capitalone.dashboard.repository.ComponentRepository;
@@ -21,6 +20,8 @@ import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.repository.TestrailProjectRepository;
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.model.TestrailCollectorModel;
+import com.capitalone.dashboard.model.TestRailRuns;
+import com.capitalone.dashboard.repository.TestRailRunRepository;
 
 
 @Component
@@ -31,14 +32,16 @@ public class TestrailCollectorTask extends CollectorTask<Collector> {
     private final TestrailProjectRepository testrailProjectRepository;
     private final ComponentRepository dbComponentRepository;
     private final TestrailClient testrailClient;
+    private final TestRailRunRepository testRailRunRepository;
 
     @Autowired
-    public TestrailCollectorTask(TaskScheduler taskScheduler,BaseCollectorRepository<Collector> collectorRepository,TestrailSettings testrailSettings, TestrailProjectRepository testrailProjectRepository,TestrailClient testrailClient,ComponentRepository dbComponentRepository){
+    public TestrailCollectorTask(TaskScheduler taskScheduler,BaseCollectorRepository<Collector> collectorRepository,TestrailSettings testrailSettings, TestrailProjectRepository testrailProjectRepository,TestrailClient testrailClient,TestRailRunRepository testRailRunRepository,ComponentRepository dbComponentRepository){
         super(taskScheduler, "Testrail");
         this.collectorRepository = collectorRepository;
         this.testrailSettings = testrailSettings;
         this.testrailProjectRepository = testrailProjectRepository;
         this.testrailClient = testrailClient;
+        this.testRailRunRepository = testRailRunRepository;
         this.dbComponentRepository = dbComponentRepository;
     }
 
@@ -87,11 +90,32 @@ public class TestrailCollectorTask extends CollectorTask<Collector> {
             }
 
             //Get All the enabled Projects
+            int enabledRuns = 0;
             for(TestrailCollectorModel tcm : enabledRepos(collector)){
                 boolean firstRun = false;
                 //Return back here after creating the testcase repo in core.
-            }
+                LOG.info("Enabled Collector:" + collector.getId());
+                List<TestRailRuns> allRuns = testrailClient.getAllRunsForProjectAndMileStone(tcm.getProjectId(),tcm.getMilestoneId());
+                int runCount = 0;
+                for(TestRailRuns trr : allRuns){
+                    LOG.info(trr.getUrl());
+                    //to do check if entry in db else add.
 
+                    TestRailRuns savedRun = (TestRailRuns) testRailRunRepository.findByCollectorItemIdAndRunId(collector.getId(),trr.getRunid());
+                    LOG.info("Checking if found:" + savedRun);
+                    if(savedRun != null){
+                        //remove existing and add new
+                        testRailRunRepository.delete(savedRun);
+                    }
+                    //To do : Historical run information would be retained in the db.
+                    trr.setCollectorItemId(tcm.getCollectorId());
+                    testRailRunRepository.save(trr);
+                    runCount++;
+                }
+                LOG.info("Found Runs:" + runCount);
+                enabledRuns++;
+            }
+            LOG.info("Enabled runs: " + enabledRuns);
             LOG.info("Finished.");
         }catch (TRAPIException e) {
             LOG.info(e.getMessage());
