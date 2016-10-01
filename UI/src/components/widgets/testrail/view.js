@@ -36,10 +36,54 @@
 		}
 
 		function processResponse(data){
+			// var testrailRuns = [];
+			// for(var i = 0; i < data.runs.length; i++){
+			// 	var datatemp = data.runs[i];
+			// 	var p = parseInt
+
+			// 	datatemp.passPercent = ()
+
+			// }
 			ctrl.testrailRuns = data.runs;
+			ctrl.projectId = $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.projectId;
+			ctrl.milestoneId = $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.milestoneId;
 		}
 
-		function showDetail(){
+		function showDetail(runId1,runName){
+			console.log(runId1);
+			
+			$modal.open({
+				controller: 'testrailviewresults',
+				controllerAs: 'detail',
+				templateUrl: 'components/widgets/testrail/detail.html',
+				size: 'lg',
+				resolve: {
+					runId: function(){
+						return runId1;
+					},
+					runName: function(){
+						return runName;
+					},
+					projectId: function(){
+						return $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.projectId;
+					},
+					milestoneId: function(){
+						return $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.milestoneId;
+					},
+					projectName: function(){
+						return $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.projectName;
+					},
+					milestoneName: function(){
+						return $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.milestoneName;
+					},
+					collectorName: function () {
+						return $scope.dashboard.application.components[0].collectorItems.Testrail[0].collector.name;
+					},
+                    collector: function () {
+                        return $scope.dashboard.application.components[0].collectorItems.Testrail[0].collector;
+                    }
+				}
+			});
 			
 		}
 	}

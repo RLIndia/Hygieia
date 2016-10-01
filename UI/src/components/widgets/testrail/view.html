@@ -9,15 +9,15 @@
        	
        		<tr>
        			<td>Runs</td>
-       			<td><span class=" pull-left fa fa-lg fa-check" title="Passed"></span></td>
-       			<td><span class="pull-left fa fa-lg fa-circle" title="Blocked"></span></td>
-       			<td><span class="pull-left fa fa-lg fa-repeat" title="Retest"></span></td>
-            <td><span class="pull-left fa fa-lg fa-exclamation-circle" title="Failed"></span></td>
+       			<td><span class=" pull-left fa fa-lg fa-check"  style="color: green;" title="Passed"></span></td>
+       			<td><span class="pull-left fa fa-lg fa-circle"  style="color: red;" title="Blocked"></span></td>
+       			<td><span class="pull-left fa fa-lg fa-repeat"  style="color: orange;" title="Retest"></span></td>
+            <td><span class="pull-left fa fa-lg fa-exclamation-circle"  style="color: red;" title="Failed"></span></td>
        			<td></td>
        		</tr>
-       		<tr class="issue-datarow pointer" ng-repeat="run in TestRailView.testrailRuns" ng-click="TestRailView.showDetail()" style="cursor:pointer">
+       		<tr class="issue-datarow pointer" ng-repeat="run in TestRailView.testrailRuns" ng-click="TestRailView.showDetail(run.runId,run.name)" style="cursor:pointer">
        		   <td><span class="pull-left">{{run.name}}</span></td>
-             <td><span class="pull-left">{{run.passedCount}}</span></td>
+             <td><span class="pull-left">{{run.passedCount}} <span style="font-size:10pt">[ {{ ((run.passedCount /(run.passedCount + run.blockedCount + run.retestCount + run.failedCount))*100).toFixed(0)}}% ]</span></span></td>
              <td><span class="pull-left">{{run.blockedCount}}</span></td>
              <td><span class="pull-left">{{run.retestCount}}</span></td>
        			 <td><span class="pull-left">{{run.failedCount}}</span></td>

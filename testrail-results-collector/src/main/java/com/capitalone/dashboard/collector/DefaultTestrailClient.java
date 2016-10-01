@@ -1,6 +1,7 @@
 package com.capitalone.dashboard.collector;
 
 import com.capitalone.dashboard.model.TestRailRuns;
+import com.capitalone.dashboard.model.TestRailRunsResults;
 import com.capitalone.dashboard.model.TestrailCollectorModel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,7 +24,7 @@ public class DefaultTestrailClient implements TestrailClient {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTestrailClient.class);
     private final TestrailSettings testrailSettings;
  //   private final TRAPIClient trapiClient;
-
+    private TRAPIClient client = null;
 
     @Autowired
     public DefaultTestrailClient(TestrailSettings testrailSettings){
@@ -34,10 +35,12 @@ public class DefaultTestrailClient implements TestrailClient {
     @Override
     public List<TestrailCollectorModel> getTestrailProjects() throws IOException, TRAPIException{
         List<TestrailCollectorModel> testrailCollectorModels = new ArrayList<>();
-        TRAPIClient client = new TRAPIClient(testrailSettings.getBaseurl());
-        client.setUser(testrailSettings.getUsername());
-        client.setPassword(testrailSettings.getPassword());
-        LOG.info(testrailSettings.getUsername() + " " + testrailSettings.getPassword());
+        if(client == null) {
+            client = new TRAPIClient(testrailSettings.getBaseurl());
+            client.setUser(testrailSettings.getUsername());
+            client.setPassword(testrailSettings.getPassword());
+        }
+        //LOG.info(testrailSettings.getUsername() + " " + testrailSettings.getPassword());
         JSONArray projects = (JSONArray) client.sendGet("get_projects");
         for(Object obj : projects){
             JSONObject trprojectObj = (JSONObject) obj;
@@ -64,10 +67,12 @@ public class DefaultTestrailClient implements TestrailClient {
     @Override
     public List<TestRailRuns> getAllRunsForProjectAndMileStone(String projectId,String milestoneId) throws IOException, TRAPIException{
         List<TestRailRuns> testRailRuns = new ArrayList<>();
-        TRAPIClient client = new TRAPIClient(testrailSettings.getBaseurl());
-        client.setUser(testrailSettings.getUsername());
-        client.setPassword(testrailSettings.getPassword());
-        LOG.info(testrailSettings.getUsername() + " " + testrailSettings.getPassword());
+        if(client == null) {
+            client = new TRAPIClient(testrailSettings.getBaseurl());
+            client.setUser(testrailSettings.getUsername());
+            client.setPassword(testrailSettings.getPassword());
+        }
+        //LOG.info(testrailSettings.getUsername() + " " + testrailSettings.getPassword());
         JSONArray runs = (JSONArray) client.sendGet("get_runs/" + projectId);
         for(Object rObj : runs){
             JSONObject runObj = (JSONObject) rObj;
@@ -88,6 +93,7 @@ public class DefaultTestrailClient implements TestrailClient {
                 trr.setRetestCount((Long)runDetail.get("retest_count"));
                 trr.setUntestedCount((Long)runDetail.get("untested_count"));
                 trr.setName(runDetail.get("name").toString());
+                trr.setRunid(runObj.get("id").toString());
                 if(runDetail.get("completed_on") != null)
                     trr.setCompletedDate(runDetail.get("completed_on").toString());
                 trr.setUrl(runDetail.get("url").toString());
@@ -96,6 +102,52 @@ public class DefaultTestrailClient implements TestrailClient {
 
         }
         return testRailRuns;
+    }
+
+    @Override
+    public List<TestRailRunsResults> getAllResultsforRun(String runId,String milestoneId,String projectId) throws IOException, TRAPIException {
+        //Fetch result details for run.
+        //1. Get Tests for run
+        //2. Get result statuses
+        //3. Get Results for test
+        List<TestRailRunsResults> testRailRunsResultses = new ArrayList<>();
+        LOG.info("Run ID:" + runId);
+        LOG.info("Milestone ID:" + milestoneId);
+        LOG.info("Project ID:" + projectId);
+        if(client == null) {
+            client = new TRAPIClient(testrailSettings.getBaseurl());
+            client.setUser(testrailSettings.getUsername());
+            client.setPassword(testrailSettings.getPassword());
+        }
+        JSONArray tests = (JSONArray) client.sendGet("get_tests/" + runId);
+        JSONArray resultStatus = (JSONArray)  client.sendGet("get_statuses");
+        for(Object test : tests) {
+
+            JSONObject testObj = (JSONObject) test;
+
+            LOG.info("In tests loop " + testObj.get("id").toString());
+            TestRailRunsResults trrr = new TestRailRunsResults();
+            trrr.setMilestoneId(milestoneId);
+            trrr.setProjectId(projectId);
+            trrr.setTestName(testObj.get("title").toString());
+            trrr.setRunId(runId);
+            trrr.setStatus(getStatus(resultStatus,(Long) testObj.get("status_id")));
+            trrr.setTestId(testObj.get("id").toString());
+            testRailRunsResultses.add(trrr);
+            //trrr.setCreatedOn(getStatus(.));
+        }
+        return testRailRunsResultses;
+    }
+
+    private String getStatus(JSONArray resultStatus,Long id){
+        String statusName = "";
+        for(Object status: resultStatus){
+            JSONObject statusObj = (JSONObject) status;
+            if(id == (Long) statusObj.get("id")){
+                statusName = statusObj.get("name").toString();
+            }
+        }
+        return statusName;
     }
 
 
