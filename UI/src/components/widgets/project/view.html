@@ -13,16 +13,17 @@
        		</tr>
        		<tr>
        			<td style="text-align:center">Issues</td>
-       			<td style="text-align:center">Done</td>
-
-       			<td style="text-align:center">To Do</td>
-            <td style="text-align:center">In Progress</td>
+       			<td style="text-align:center;text-align:center;color: green;font-weight:bold">Done</td>
+            <td style="text-align:center;text-align:center;color: orange;font-weight:bold">In Progress</td>
+       			<td style="text-align:center;text-align:center;color: red;font-weight:bold">To Do</td>
+            
        			<td></td>
        		</tr>
        		<tr class="issue-datarow pointer" ng-click="projectVersionView.showDetail(projectVersionView.jiraDashboard)" style="cursor:pointer">
        			<td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.issueCount}}</td>
-       			<td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.doneCount}}</td>
-				<td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.inprogressCount}}</td>
+       			
+            <td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.doneCount}}</td>
+				    <td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.inprogressCount}}</td>
        			<td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.pendingCount}}</td>
 
        			 <td class="" style="text-align:right" >
@@ -34,7 +35,7 @@
             <td colspan="5"><hr/>
             </td>
           </tr>
-          <!-- <tr>
+          <tr>
             <td colspan="5">
                  <chartist class="ct-chart ct-major-twelfth"
                   chartist-chart-type="Pie"
@@ -42,7 +43,7 @@
                   chartist-chart-options="projectVersionView.pieOptions"                
                 ></chartist>
             </td>
-          </tr> -->
+          </tr>
        </table>
      
      </div>
