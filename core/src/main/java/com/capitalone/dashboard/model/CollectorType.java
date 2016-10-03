@@ -18,7 +18,8 @@ public enum CollectorType {
     Cloud,
     Product,
     Functional,
-    Jiraproject;
+    Jiraproject,
+    ConfigurationManager;
 
     public static CollectorType fromString(String value) {
         for (CollectorType collectorType : values()) {

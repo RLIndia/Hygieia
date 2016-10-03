@@ -282,5 +282,6 @@
     <module>octopus-deployment-collector</module>
     <module>sbux-functional-test-collector</module>
       <module>jira-project-collector</module>
+    <module>chef-collector</module>
   </modules>
 </project>
