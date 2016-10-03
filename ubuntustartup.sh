@@ -51,7 +51,6 @@ cd target
 #nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
 
 
-
 echo "Configuring Jira collector"
 cd ../../jira-feature-collector/
 cp -f jira.template target/application.properties
@@ -85,6 +84,13 @@ cp -f catalyst.template target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
 nohup java -jar catalyst-deployment-collector-2.0.2-SNAPSHOT.jar &
+
+echo "Configuring TestRail collector"
+cd ../../testrail-results-collector/
+cp -f testrail.template target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+nohup java -jar testrail-results-collector.jar &
 
 
  

@@ -432,6 +432,8 @@ public class DefaultJiraClient implements JiraClient {
 						s = new Sprint();
 						s.setSprintId(((Long) obj.get("id")) + "");
 						s.setSprintName((String) obj.get("name"));
+						s.setStartTime((String) obj.get("start"));
+						s.setEndTime((String) obj.get("end"));
 						break;
 					}
 				}

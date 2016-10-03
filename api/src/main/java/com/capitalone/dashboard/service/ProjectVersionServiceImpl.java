@@ -131,6 +131,8 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			JSONObject summarySprint = new JSONObject();
 			summarySprint.put("sprintName", (String) item.getOptions().get("activeSprintName"));
 			summarySprint.put("sprintId", (String) item.getOptions().get("activeSprintId"));
+			summarySprint.put("sprintStart", (String) item.getOptions().get("activeSprintStartTime"));
+			summarySprint.put("sprintEnd", (String) item.getOptions().get("activeSprintEndTime"));
 			for (ProjectVersionIssues issue : pviSprints) {
 				JSONObject issueObj = new JSONObject();
 

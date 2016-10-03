@@ -12,7 +12,20 @@ public class JiraRepo extends CollectorItem{
     private static final String VERSIONDESCRIPTION = "versionDescription";
     private static final String ACTIVE_SPRINT_ID = "activeSprintId";
     private static final String ACTIVE_SPRINT_NAME = "activeSprintName";
+    private static final String ACTIVE_SPRINT_START_TIME = "activeSprintStartTime";
+    private static final String ACTIVE_SPRINT_END_TIME = "activeSprintEndTime";
     
+    
+    public String getACTIVE_SPRINT_START_TIME() { return (String) getOptions().get(ACTIVE_SPRINT_START_TIME);}
+
+    public void setACTIVE_SPRINT_START_TIME(String startTime){
+        getOptions().put(ACTIVE_SPRINT_START_TIME, startTime);
+    }
+    public String geACTIVE_SPRINT_END_TIME() { return (String) getOptions().get(ACTIVE_SPRINT_END_TIME);}
+
+    public void setACTIVE_SPRINT_END_TIME(String endTime){
+        getOptions().put(ACTIVE_SPRINT_END_TIME, endTime);
+    }
 
     public String getACTIVE_SPRINT_ID() { return (String) getOptions().get(ACTIVE_SPRINT_ID);}
 
