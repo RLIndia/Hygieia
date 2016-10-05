@@ -19,4 +19,7 @@ public interface OctopusApplicationRepository extends BaseCollectorItemRepositor
     @Query(value="{ 'collectorId' : ?0, options.instanceUrl : ?1, enabled: true}")
     List<OctopusApplication> findEnabledApplications(ObjectId collectorId, String instanceUrl);
 
+    @Query(value="{ 'collectorId' : ?0}")
+    List<OctopusApplication> findApplications(ObjectId collectorId);
+
 }

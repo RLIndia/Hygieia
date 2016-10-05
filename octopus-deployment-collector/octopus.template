@@ -13,6 +13,8 @@ spring.data.mongodb.username=
 spring.data.mongodb.password=
 
 #Collector schedule (required)
-octopus.cron=0 0/5 * * * *
+octopus.cron=0 * * * * *
 
+octopus.url=http://rlocto.cloudapp.net:8080
+octopus.apiKey=API-SSJ71FBBXK9WUGAMOLNGTWNW1TS
 
