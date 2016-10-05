@@ -7,13 +7,16 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.capitalone.dashboard.chefapi.ChefApiClient;
+import com.capitalone.dashboard.model.ChefNode;
 import com.capitalone.dashboard.model.CookbookCollectorItem;
+import com.google.common.util.concurrent.ExecutionError;
 
 @Component
 public class DefaultChefClient implements ChefClient {
@@ -47,6 +50,50 @@ public class DefaultChefClient implements ChefClient {
 			runlistCollectorItems = null;
 		}
 		return runlistCollectorItems;
+	}
+
+	@Override
+	public List<ChefNode> getNodesByCookbookNames(List<CookbookCollectorItem> cookbookItems) {
+		ChefApiClient cac = new ChefApiClient(chefSettings.getUsername(), chefSettings.getPemFilePath(),
+				chefSettings.getChefServerUrl());
+		LOG.info("Fetching node list");
+		String responseBody = cac.get("/nodes").execute().getResponseBodyAsString();
+		List<ChefNode> nodes = new ArrayList<>();
+		try{
+			JSONObject jsonObj = (JSONObject) new JSONParser().parse(responseBody);
+			Set<String> keys = jsonObj.keySet();
+			LOG.info("total number of nodes ==> "+keys.size());
+			Iterator<String> i = keys.iterator();
+			while(i.hasNext()) {
+				String nodeName = i.next();
+				LOG.info("Fetching node ==> "+nodeName);
+				String nodeData = cac.get("/nodes/"+nodeName).execute().getResponseBodyAsString();
+				JSONObject nodeObj = (JSONObject) new JSONParser().parse(nodeData);
+				JSONArray runlist = (JSONArray)nodeObj.get("run_list");
+				if(runlist != null) {
+					for(int count=0;count<cookbookItems.size();count++) {
+						for(Object o : runlist) {
+							String r = (String)o;
+							if(r.contains("recipe["+cookbookItems.get(count).getCookbookName())){
+								ChefNode chefNode = new ChefNode();
+								chefNode.setEnvName((String)nodeObj.get("chef_environment"));
+								chefNode.setNodeName(nodeName);
+								chefNode.setRunlist(runlist.toJSONString());
+								chefNode.setCollectorItemId(cookbookItems.get(count).getId());
+								chefNode.setCookbookName(cookbookItems.get(count).getCookbookName());
+								nodes.add(chefNode);
+								break;
+							}
+						}	
+					}
+
+				}
+			}
+		}catch(Exception e) {
+			LOG.error("Exception occured ==>"+e.getMessage());
+			nodes= null;
+		}
+		return nodes;
 	}
 
 }
