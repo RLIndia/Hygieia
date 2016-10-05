@@ -2,10 +2,10 @@ package com.capitalone.dashboard.collector;
 
 import java.util.List;
 
-import com.capitalone.dashboard.model.RunlistCollectorItem;
+import com.capitalone.dashboard.model.CookbookCollectorItem;
 
 public interface ChefClient {
 	
-  public List<RunlistCollectorItem> getRunlist();
+  public List<CookbookCollectorItem> getRunlist();
 
 }

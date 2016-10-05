@@ -19,7 +19,7 @@ public enum CollectorType {
     Product,
     Functional,
     Jiraproject,
-    ConfigurationManager;
+    Chef;
 
     public static CollectorType fromString(String value) {
         for (CollectorType collectorType : values()) {

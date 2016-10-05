@@ -42,7 +42,7 @@
         function link(scope, element, attrs, containerController) {
             // make it so name is not case sensitive
             attrs.name = attrs.name.toLowerCase();
-
+            console.log(attrs); 
             scope.$widgetEl = element;
             scope.container = containerController;
             scope.widgetDefinition = widgetManager.getWidget(attrs.name);
