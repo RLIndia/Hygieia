@@ -2,6 +2,7 @@ package com.capitalone.dashboard.rest;
 
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.DataResponse;
+import com.capitalone.dashboard.model.EnvironmentComponentsAll;
 import com.capitalone.dashboard.model.deploy.Environment;
 import com.capitalone.dashboard.request.DeployDataCreateRequest;
 import com.capitalone.dashboard.service.DeployService;
@@ -22,6 +23,7 @@ import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 
 @RestController
 public class DeployController {
@@ -55,6 +57,11 @@ public class DeployController {
         //rdptext += "prompt for credentials:i:1";
         return new ResponseEntity<String>(rdptext, responseHeaders, HttpStatus.OK);
     }*/
+
+    @RequestMapping(value = "/deploy/allcomponents", method = GET, produces = APPLICATION_JSON_VALUE)
+    public DataResponse<List<EnvironmentComponentsAll>> allcomponents() {
+        return deployService.getAllDeployments();
+    }
     
     @RequestMapping(value = "/deploy/rdp/{hostName}", method = GET)
     public String hostRdp(@PathVariable String hostName,HttpServletResponse response) {

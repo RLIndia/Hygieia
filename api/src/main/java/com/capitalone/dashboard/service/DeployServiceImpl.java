@@ -1,13 +1,7 @@
 package com.capitalone.dashboard.service;
 
 import com.capitalone.dashboard.misc.HygieiaException;
-import com.capitalone.dashboard.model.Collector;
-import com.capitalone.dashboard.model.CollectorItem;
-import com.capitalone.dashboard.model.CollectorType;
-import com.capitalone.dashboard.model.Component;
-import com.capitalone.dashboard.model.DataResponse;
-import com.capitalone.dashboard.model.EnvironmentComponent;
-import com.capitalone.dashboard.model.EnvironmentStatus;
+import com.capitalone.dashboard.model.*;
 import com.capitalone.dashboard.model.deploy.DeployableUnit;
 import com.capitalone.dashboard.model.deploy.Environment;
 import com.capitalone.dashboard.model.deploy.Server;
@@ -15,6 +9,7 @@ import com.capitalone.dashboard.repository.CollectorItemRepository;
 import com.capitalone.dashboard.repository.CollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.EnvironmentComponentRepository;
+import com.capitalone.dashboard.repository.EnvironmentComponentsAllRepository;
 import com.capitalone.dashboard.repository.EnvironmentStatusRepository;
 import com.capitalone.dashboard.request.CollectorRequest;
 import com.capitalone.dashboard.request.DeployDataCreateRequest;
@@ -33,26 +28,33 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 @Service
 public class DeployServiceImpl implements DeployService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeployServiceImpl.class);
     private final ComponentRepository componentRepository;
     private final EnvironmentComponentRepository environmentComponentRepository;
     private final EnvironmentStatusRepository environmentStatusRepository;
     private final CollectorRepository collectorRepository;
     private final CollectorItemRepository collectorItemRepository;
     private final CollectorService collectorService;
+    private final EnvironmentComponentsAllRepository environmentComponentsAllRepository;
 
     @Autowired
     public DeployServiceImpl(ComponentRepository componentRepository,
                              EnvironmentComponentRepository environmentComponentRepository,
                              EnvironmentStatusRepository environmentStatusRepository,
-                             CollectorRepository collectorRepository, CollectorItemRepository collectorItemRepository, CollectorService collectorService) {
+                             CollectorRepository collectorRepository, CollectorItemRepository collectorItemRepository,EnvironmentComponentsAllRepository environmentComponentsAllRepository, CollectorService collectorService) {
         this.componentRepository = componentRepository;
         this.environmentComponentRepository = environmentComponentRepository;
+        this.environmentComponentsAllRepository = environmentComponentsAllRepository; //used for fetching all the deployments for all projects.
         this.environmentStatusRepository = environmentStatusRepository;
         this.collectorRepository = collectorRepository;
         this.collectorItemRepository = collectorItemRepository;
+
         this.collectorService = collectorService;
     }
 
@@ -217,6 +219,17 @@ public class DeployServiceImpl implements DeployService {
         return new DataResponse<>(environments, collector.getLastExecuted());
     }
 
+    @Override
+    public DataResponse<List<EnvironmentComponentsAll>> getAllDeployments(){
+
+        List<EnvironmentComponentsAll> eca = environmentComponentsAllRepository.findComponentAll();
+       // LOGGER.info(eca.toString());
+        long lastDate = 0;
+        if(eca != null)
+            lastDate = ((EnvironmentComponentsAll) eca.get(0)).getAsOfDate();
+        return new DataResponse<>(eca,lastDate);
+    }
+
     private Collector createCollector() {
         CollectorRequest collectorReq = new CollectorRequest();
         collectorReq.setName("Jenkins");  //for now hardcode it.
@@ -263,3 +276,4 @@ public class DeployServiceImpl implements DeployService {
         return environmentComponentRepository.save(deploy); // Save = Update (if ID present) or Insert (if ID not there)
     }
 }
+;

@@ -114,7 +114,8 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 		updateData(applications);
 
 		List<OctopusApplication> allApplications = allApplications(collector, octopusSettings.getUrl());
-		LOGGER.info("All Applications ==>"+allApplications.size());
+		LOGGER.info("------------------------------------------");
+        LOGGER.info("All Applications ==>"+allApplications.size());
 		saveAllComponents(allApplications,collector);
 
 		log("Finished", start);
@@ -295,6 +296,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 			//statusList.addAll(getEnvironmentStatus(applicationDeploymentHistoryItems));
 
 			//Converting to envcomponentall
+            LOGGER.info("CompList Size:" + compList.size());
 			for(EnvironmentComponent ec : compList){
 				EnvironmentComponentsAll eca = new EnvironmentComponentsAll();
 				eca.setAsOfDate(ec.getAsOfDate());
@@ -308,7 +310,10 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 				eca.setEnvironmentID(ec.getEnvironmentID());
 				eca.setEnvironmentName(ec.getEnvironmentName());
 				eca.setEnvironmentUrl(ec.getEnvironmentUrl());
-				compListAll.add(eca);
+                //Check if the same componentId and environemntID added then compare deploytime
+
+                if(isLatestDeploy(compListAll,ec))
+                    compListAll.add(eca);
 			}
 
 			LOGGER.info("compListAll ==>"+compListAll.size());
@@ -322,7 +327,8 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 //				envComponentRepository.save(compList);
 //			}
 			if (!compListAll.isEmpty()) {
-				List<EnvironmentComponentsAll> existingComponents = environmentComponentsAllRepository.findComponent(collector.getId());
+                LOGGER.info("Applicaiton ID searched for:" + application.getApplicationId());
+				List<EnvironmentComponentsAll> existingComponents = environmentComponentsAllRepository.findComponentForProject(collector.getId(),application.getApplicationId());
 
 				environmentComponentsAllRepository.delete(existingComponents);
 				environmentComponentsAllRepository.save(compListAll);
@@ -337,6 +343,23 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 			log(" " + application.getApplicationName(), startApp);
 		}
 	}
+
+	private boolean isLatestDeploy(List<EnvironmentComponentsAll> compListAll,EnvironmentComponent ec){
+        boolean canAdd = true;
+        for(EnvironmentComponentsAll eca : compListAll){
+            LOGGER.info("Checking for existing env: " + eca.getEnvironmentID() + " " + ec.getEnvironmentID());
+            LOGGER.info("Checking for existing comp: " + eca.getComponentID() + " " + ec.getComponentID());
+            if(eca.getEnvironmentID().compareTo(ec.getEnvironmentID()) == 0 && eca.getComponentID().compareTo(ec.getComponentID()) == 0){
+                LOGGER.info("Checking for time new - existing : " + ec.getDeployTime() + " " + eca.getDeployTime() + " " + (ec.getDeployTime() - eca.getDeployTime()));
+                if(ec.getDeployTime() < eca.getDeployTime()){
+                    //compListAll.remove(eca);
+                    canAdd = false;
+                    LOGGER.info("Removing : " + eca.getComponentID() + " " + eca.getEnvironmentID());
+                }
+            }
+        }
+        return canAdd;
+    }
 
 	private void updateData(List<OctopusApplication> octopusApplications) {
 		for (OctopusApplication application : octopusApplications) {

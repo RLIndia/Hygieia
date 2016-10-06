@@ -10,6 +10,9 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 public interface EnvironmentComponentsAllRepository extends CrudRepository<EnvironmentComponentsAll, ObjectId>{
-    @Query(value="{ collectorId : ?0}")
-    List<EnvironmentComponentsAll> findComponent(ObjectId collectorId);
+    @Query(value="{ collectorId : ?0, componentID : ?1}")
+    List<EnvironmentComponentsAll> findComponentForProject(ObjectId collectorId,String componentID);
+
+    @Query(value="{}")
+    List<EnvironmentComponentsAll> findComponentAll();
 }
