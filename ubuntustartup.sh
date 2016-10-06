@@ -12,7 +12,7 @@ echo "Configuring API"
 cp -f dashboard.template target/dashboard.properties
 echo "dbhost="$2 >> target/dashboard.properties
 cd target
-java -jar api.jar --spring.config.location=./dashboard.properties > /dev/null 2>&1 &
+nohup java -jar api.jar --spring.config.location=./dashboard.properties  &
 
 echo "Configuring Octopus collector"
 cd ../../octopus-deployment-collector/
@@ -21,7 +21,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Jenkins collector"
 cd ../../jenkins-build-collector/
@@ -30,7 +30,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/20 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Bitbucket collector"
 cd ../../bitbucket-scm-collector/
@@ -39,7 +39,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar  &
 
 echo "Configuring Functional Test collector"
 cd ../../sbux-functional-test-collector/
@@ -51,7 +51,6 @@ cd target
 nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
 
 
-
 echo "Configuring Jira collector"
 cd ../../jira-feature-collector/
 cp -f jira.template target/application.properties
@@ -59,7 +58,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar jira-feature-collector.jar &
+#nohup java -jar jira-feature-collector.jar &
 
 
 echo "Configuring Jira Project collector"
@@ -77,7 +76,22 @@ cd ../../sonar-codequality-collector/
 cp -f sonar.template target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+nohup java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar &
+
+echo "Configuring Catalyst collector"
+cd ../../catalyst-deployment-collector/
+cp -f catalyst.template target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+nohup java -jar catalyst-deployment-collector-2.0.2-SNAPSHOT.jar &
+
+echo "Configuring TestRail collector"
+cd ../../testrail-results-collector/
+cp -f testrail.template target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+nohup java -jar testrail-results-collector.jar &
+
 
  
 echo "Starting UI"

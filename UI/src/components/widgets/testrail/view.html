@@ -1,0 +1,45 @@
+<div class="project-view" ng-model="projectView">
+     <!-- Removed dropdown based on feedback -->
+    <div class="col-xs-9.5 text-standard-sm dash-overflow">
+        Milestone: {{TestRailView.milestoneName}}
+    </div>
+     <div class="col-xs-9.5 text-standard-sm">
+
+       <table class="table">
+       	
+       		<tr>
+       			<td>Runs</td>
+       			<td><span class=" pull-left fa fa-lg fa-check"  style="color: green;" title="Passed"></span></td>
+       			<td><span class="pull-left fa fa-lg fa-circle"  style="color: red;" title="Blocked"></span></td>
+       			<td><span class="pull-left fa fa-lg fa-repeat"  style="color: orange;" title="Retest"></span></td>
+            <td><span class="pull-left fa fa-lg fa-exclamation-circle"  style="color: red;" title="Failed"></span></td>
+       			<td></td>
+       		</tr>
+       		<tr class="issue-datarow pointer" ng-repeat="run in TestRailView.testrailRuns" ng-click="TestRailView.showDetail(run.runId,run.name)" style="cursor:pointer">
+       		   <td><span class="pull-left">{{run.name}}</span></td>
+             <td><span class="pull-left">{{run.passedCount}} <span style="font-size:10pt">[ {{ ((run.passedCount /(run.passedCount + run.blockedCount + run.retestCount + run.failedCount))*100).toFixed(0)}}% ]</span></span></td>
+             <td><span class="pull-left">{{run.blockedCount}}</span></td>
+             <td><span class="pull-left">{{run.retestCount}}</span></td>
+       			 <td><span class="pull-left">{{run.failedCount}}</span></td>
+             <td class="" style="text-align:right" >
+            
+                <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
+              </td>
+       		</tr>
+          <tr>
+            <td colspan="5"><hr/>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="5">
+                 <chartist class="ct-chart ct-major-twelfth"
+                  chartist-chart-type="Pie"
+                  chartist-data="projectVersionView.jiraDashboard.chartData"
+                  chartist-chart-options="projectVersionView.pieOptions"                
+                ></chartist>
+            </td>
+          </tr>
+       </table>
+     
+     </div>
+</div>

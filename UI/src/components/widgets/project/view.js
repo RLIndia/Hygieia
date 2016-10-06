@@ -68,19 +68,22 @@
 	      //Data preparation for chart
 	      //{"summary":{"inprogressCount":9,"doneCount":126,"pendingCount":47,"projectName":"API","versionName":"Chase Pay 1.0","issueCount":182},
 	      var chartData = {
-	      	labels: ['Done','To Do','In Progress'],
-	      	series: [data.result.version.doneCount,data.result.version.pendingCount,data.result.version.inprogressCount],
-	      	colors:['green','orange','red']
+	      	labels: ['Done','In Progress','To Do'],
+	      	series: [data.result.version.doneCount,data.result.version.inprogressCount,data.result.version.pendingCount],
+	      	//colors:['green','orange','red']
+	      	colors:["#333", "#222", "#111"]
 	      }
 	      ctrl.pieOptions = {
-            donut: true,
-            donutWidth: 30,
-            startAngle: 270,
-            total: 360,
-            labelOffset:20,
-            width:'350px',
-            height:'200px',
-            showLabel: true
+            // donut: false,
+            // donutWidth: 30,
+            // startAngle: 270,
+            // total: 390,
+            labelOffset:0,
+            labelDirection: 'explode',
+            chartPadding: 20,
+            width:'200px',
+            height:'160px',
+            showLabel: false
         };
 	      ctrl.jiraDashboard.chartData = chartData;
 	    }

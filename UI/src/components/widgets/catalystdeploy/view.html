@@ -1,0 +1,54 @@
+<div class="project-view" ng-model="projectView">
+     <!-- Removed dropdown based on feedback -->
+    <div class="col-xs-9.5 text-standard-sm dash-overflow">
+        Repository: {{catalystDeployView.repoName}}
+
+    </div>
+    <div class="col-xs-9.5 text-standard-sm dash-overflow">
+         <table class="table">
+        <tr class="dash-row">
+
+            <td style="cursor:pointer" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+                    Environment&nbsp;
+                    <span ng-show="sortType == 'name' && !sortReverse" class="fa fa-caret-down"></span>
+                    <span ng-show="sortType == 'name' && sortReverse" class="fa fa-caret-up"></span>
+            </td>
+            <td>
+                Status
+            </td>
+            <td align="right">
+                Version
+            </td>
+        </tr>
+        <tr class="dash-row clickable" ng-repeat="environment in catalystDeployView.catalystData.deployments | orderBy:sortType:sortReverse | filter:query" ng-click="catalystDeployView.showDetail(environment)">
+           
+            <td class="dash-overflow environment-name">
+                {{environment.envName}}
+            </td>
+           <!--  <td class="text-standard-date">
+                {{environment.lastdeployed | fromNow}}
+            </td> -->
+           <!--  <td class="server-count" ng-class="{'servers-up' : environment.serverUpCount > 0}">
+                {{environment.serverUpCount}}
+                <span class="fa fa-arrow-up"></span>
+            </td>
+            <td class="server-count" ng-class="{'servers-down' : environment.serverDownCount > 0}">
+                {{environment.serverDownCount}}
+                <span class="fa fa-arrow-down"></span>
+            </td> -->
+            <td class="text-standard-date" >
+            {{environment.status}}
+
+            </td>
+             <td style="text-align: right">
+                {{environment.version}}
+            </td>
+            <td width="10px">
+                <span class="pull-right fa fa-lg fa-angle-right"></span>
+            </td>
+        </tr>
+    </table>
+
+    </div>
+    
+ </div>

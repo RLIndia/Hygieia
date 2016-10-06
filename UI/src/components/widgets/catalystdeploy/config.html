@@ -1,0 +1,73 @@
+<widget-modal widget-modal-title="Configure Catalyst Repository">
+<!-- {{catalystRepoConfig.catalystprojects}} -->
+    <form class="projectversion-config" name="configForm" ng-submit="catalystRepoConfig.submit(configForm.$valid)" novalidate="novalidate">
+        <form-group input="catalystdeployorgs" errors="{required:'Please select all fields'}">
+           
+             <div class="dash-modal-row clearfix">
+                    <label>Project:</label>
+
+                     <select name="catalystdeployorgs"
+                            class="form-control"
+                            ng-model="selectprojects"
+                            ng-options="obj.name for obj in catalystRepoConfig.catalystprojects track by obj.value" 
+                            ng-change="catalystRepoConfig.projectChange(catalystRepoConfig,selectprojects);"
+                            required>
+                        <option value="">Select a Project</option>
+                    </select>
+                </div>
+         </form-group>
+         <form-group input="catalystrepositories" errors="{required:'Please select all fields'}">
+                <!-- <div class="dash-modal-row clearfix">
+                    <label>Business Group:</label>
+
+                     <select name="catalysttaskorgs"
+                            class="form-control"
+                            ng-model="catalystTaskConfig.orgs"
+                            ng-options="catalystTaskConfig.orgName for orgName in catalystTaskConfig.orgs"
+                            
+                            required>
+                        <option value="">{{projectVersionConfig.orgNameDropdownPlaceholder}}</option>
+                    </select>
+                </div>
+                <div class="dash-modal-row clearfix">
+                    <label>Project:</label>
+
+                     <select name="catalysttaskorgs"
+                            class="form-control"
+                            ng-model="catalystTaskConfig.orgs"
+                            ng-options="catalystTaskConfig.orgName for orgName in catalystTaskConfig.orgs"
+                            
+                            required>
+                        <option value="">{{projectVersionConfig.orgNameDropdownPlaceholder}}</option>
+                    </select>
+                </div> -->
+                
+                <div class="dash-modal-row clearfix">
+                    <label>Deployment Repository:</label>
+
+                     <select name="catalystrepositories"
+                            class="form-control"
+                            ng-model="selectrepositories"
+                            ng-options="obj.name for obj in catalystRepoConfig.catalystrepositories track by obj.value"
+                            
+                            required>
+                        <option value="">Select a Repository</option>
+                    </select>
+                </div>
+        </form-group>
+
+        <hr/>
+
+        <!-- <div class="form-group text-center">
+            <label class="modal-label">
+                Alert takeover criteria:
+            </label>
+            <br/>
+            If any environment is down
+        </div> -->
+
+        <div class="button-row row text-center">
+            <button type="submit" class="btn btn-primary btn-wide">Save</button>
+        </div>
+    </form>
+</widget-modal>

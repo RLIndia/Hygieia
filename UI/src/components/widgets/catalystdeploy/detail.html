@@ -1,0 +1,62 @@
+<widget-modal widget-modal-close="true">
+    <div class="widget-detail deploy-detail">
+        <div class="widget-detail-heading">
+            <div class="row">
+                <!-- {{detail}} -->
+                <div class="col-md-6">
+                    <span class="dash-status-lg"
+                          dash-status="{{detail.tests.totalPassed > 0 ? detail.statuses.FAIL : detail.statuses.PASS}}"></span>
+                    <span class="environment-name">Environment: {{taskdetail.deployment.envName}}</span>
+                </div>
+
+               <!--  <div class="col-md-2 last-updated">
+                    <span>{{taskdetail.deployment.lastdeployed | date:'MMM d, HH:mm:ss'}}</span>
+                </div> -->
+                <div class="col-md-6 last-updated pull-right">
+                    Version: <span>{{taskdetail.deployment.version }}</span>
+                </div>
+               <!--  <div class="col-md-6 server-count">
+                    <span class="green">
+                       Count Passed<span class="fa fa-arrow-up"></span>
+                    </span>
+                    <span ng-class="(functionalTestDay.totalFailed != '0') ? 'red' : 'green'">
+                        Count Failed<span class="fa fa-arrow-down"></span>
+                    </span>
+                </div> -->
+                <!-- <div class="col-md-3 view-in-tool">
+                    <a ng-href="http://ms01242.starbucks.net/TestPortal/Home/ReportManagement" target="_blank">
+                        View in portal <span class="fa fa-angle-right"></span>
+                    </a>
+                </div> -->
+            </div>
+
+            <!-- Close button -->
+        </div>
+        <div class="widget-detail-body">
+            
+            
+            <div class="row rowformat" ng-class="(result.status != 'success') ? 'red':'green'" ng-repeat="result in taskdetail.historydata.result.deploymenthistory | orderBy:['executedData', 'taskName']:reverse track by $index">
+                <div class="col-md-6" style="font-size:12px;word-wrap:break-word; display:inline-block;">
+                    {{result.taskName}}
+                </div>
+                <div class="col-md-2" style="font-size:12px">
+                    <span>{{result.executedData | date:'MMM d, HH:mm:ss'}}</span>
+                </div>
+                <div class="col-md-3">
+                   <!-- {{result.nodeNames}} -->
+                    <div ng-repeat="node in result.nodeNames track by $index">
+                        <span class="nodedetails">
+                            {{node.name}} [{{node.ip}}]
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-1"  ng-show="(result.status == 'success')" class="servers-up"><span class="fa fa-arrow-up green"></span>
+                </div>
+                <div class="col-md-1" ng-show="(result.status == 'failed')" class="servers-down"><span class="fa fa-arrow-down red"></span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</widget-modal>

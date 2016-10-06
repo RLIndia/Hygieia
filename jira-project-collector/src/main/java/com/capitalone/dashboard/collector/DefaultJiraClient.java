@@ -64,6 +64,7 @@ import java.util.*;
 //Implementation to connect to Jira server
 @Component
 public class DefaultJiraClient implements JiraClient {
+
 	private static final Log LOG = LogFactory.getLog(DefaultJiraClient.class);
 	private final JiraSettings settings;
 
@@ -584,4 +585,5 @@ public class DefaultJiraClient implements JiraClient {
 		LOG.info(url);
 		return url;
 	}
+
 }

@@ -1,0 +1,49 @@
+<widget-modal widget-modal-close="true">
+    <div class="widget-detail testrail-detail">
+        <div class="widget-detail-heading">
+            <div class="row">
+                <!-- {{detail}} -->
+                <div class="col-md-4">
+                
+                    <span class="project-version-name">{{detail.projectName}} </span>- <span class="project-version-name" style="font-size:10pt">{{detail.milestoneName}}</span>
+                </div>
+                <div class="col-md-4 pull-right">
+                
+                    <span class="project-version-name">[ {{detail.runName}} ]</span>
+                </div>
+                
+                <!-- <div class="col-md-3 view-in-tool hidden">
+                    <a ng-href="" target="_blank">
+                        View in portal <span class="fa fa-angle-right"></span>
+                    </a>
+                </div> -->
+            </div>
+
+            <!-- Close button -->
+        </div>
+       
+        <div class="widget-detail-body">
+           <!-- {"issueSummary":{"inprogressCount":12,"doneCount":122,"pendingCount":48,"issueCount":182},"issues":[{"issueID":"74431","description":"Work with CI team to deploy correct config to respective environments","status":"Requirement In Progress"}, -->
+           
+            <div class="row rowformat" ng-class="(result.status == 'failed' || result.status == 'blocked') ? 'red':'green'" ng-repeat="result in detail.results | orderBy:['status','testName'] track by $index">
+                <div class="col-md-8" style="font-size:12px;word-wrap:break-word; display:inline-block;">
+                    {{result.testName}}
+                </div>
+                <div class="col-md-2" style="font-size:12px">
+                    <span>{{result.status}}</span>
+                </div>
+                <!-- <div class="col-md-2">
+                    {{result.result}}
+                </div> -->
+                <div class="col-md-1"  ng-show="(result.status == 'passed')" class="servers-up"><span class="fa fa-arrow-up green"></span>
+                </div>
+                <div class="col-md-1" ng-show="(result.status != 'passed')" class="servers-down"><span class="fa fa-arrow-down red"></span>
+                </div>
+                
+
+            </div>
+
+        </div>
+       <!--  {{detail}} -->
+    </div>
+</widget-modal>

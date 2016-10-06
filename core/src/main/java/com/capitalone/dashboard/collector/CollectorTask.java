@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.IOException;
 
 /**
  * Base class for Collector task implementation which provides subclasses with

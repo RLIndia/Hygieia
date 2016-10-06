@@ -14,7 +14,7 @@ spring.data.mongodb.password=
 
 #Collector schedule (required)
 feature.cron=0 0/5 * * * *
-
+feature.api=rest/api/2
 #Page size for data calls (Jira maxes at 1000)
 feature.pageSize=100
 
@@ -117,9 +117,12 @@ feature.masterStartDate=2016-01-01T00:00:00.000000
 feature.todoStatuses[0]=Open
 feature.todoStatuses[1]=Reopened
 feature.todoStatuses[2]=To Do
+feature.todoStatuses[3]=In Drawer
+
 
 feature.doingStatuses[0]=In Progress
 feature.doingStatuses[1]=In Review
+feature.doingStatuses[2]=Requirement In Progress
 
 feature.doneStatuses[0]=Resolved
 feature.doneStatuses[1]=Closed
