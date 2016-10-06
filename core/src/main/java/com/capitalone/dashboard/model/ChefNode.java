@@ -13,6 +13,7 @@ public class ChefNode {
 	private String envName;
 	private String runlist;
 	private String cookbookName;
+	private String ipAddress;
 
 
 	public String getNodeName() {
@@ -50,5 +51,11 @@ public class ChefNode {
 	}
 	public void setId(ObjectId id) {
 		this.id = id;
+	}
+	public String getIpAddress() {
+		return ipAddress;
+	}
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
 	}
 }

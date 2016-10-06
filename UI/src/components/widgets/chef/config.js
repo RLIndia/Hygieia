@@ -62,7 +62,7 @@
 			ctrl.cookbooks = data.cookbooks;
 
 			if(data.selectedIndex !== null) {
-				ctrl.cookbooks = data.cookbooks[data.selectedIndex];
+				ctrl.cookbook = data.cookbooks[data.selectedIndex];
 			}
 			//});
 		}

@@ -81,6 +81,12 @@ public class DefaultChefClient implements ChefClient {
 								chefNode.setRunlist(runlist.toJSONString());
 								chefNode.setCollectorItemId(cookbookItems.get(count).getId());
 								chefNode.setCookbookName(cookbookItems.get(count).getCookbookName());
+								JSONObject automatic = (JSONObject)nodeObj.get("automatic");
+								if(automatic != null) {
+									String ipAddress = (String)automatic.get("ipaddress");
+									chefNode.setIpAddress(ipAddress);
+								}
+
 								nodes.add(chefNode);
 								break;
 							}
