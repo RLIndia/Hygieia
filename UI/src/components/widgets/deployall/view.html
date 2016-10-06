@@ -3,5 +3,21 @@
     <!--{{deployallView.deployAllData}}-->
 
     <!--{{deployallView.environments}}-->
-    {{deployallView.components}}
+    <!--{{deployallView.components}}-->
+
+    <table class="table" style="margin-top:-10px">
+        <tr style="background-color: #333333;font-size: 12pt">
+            <td> Components </td>
+            <td ng-repeat="environment in deployallView.environments">
+                {{environment.environmentName}}
+            </td>
+        </tr>
+        <tr ng-repeat="component in deployallView.components">
+            <td> {{component.componentName}}</td>
+            <td ng-repeat="environment in component.environments">
+                {{environment.version}}
+            </td>
+
+        </tr>
+    </table>
 </div>
