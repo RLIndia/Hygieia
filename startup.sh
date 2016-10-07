@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/srv/users/opscode/apache-maven-3.3.9/bin/mvn clean install -DskipTests
+/srv/users/opscode/apache-maven-3.3.9/bin/mvn clean install -DskipTests -Dpmd.skip
 cd api
 echo $1
 echo $2
