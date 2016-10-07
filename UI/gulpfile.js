@@ -163,7 +163,7 @@ gulp.task('serve', ['build'], function() {
 
     browserSync.init({
     	ghostMode: false,
-    	port: 3000,
+    	port: 8443,
     	server: {
             baseDir: hygieia.dist,
             startPath: '/',
