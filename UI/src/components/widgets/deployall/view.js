@@ -40,34 +40,38 @@
 
             for(var i = 0; i < data.length; i++){
 
-
-                var machingIndx = -1;
-                for(var j =0; j < masterenv.length;j++){
-                    if(masterenv[j].environmentId == data[i].environmentId){
-                        machingIndx = j;
-                        continue;
+                if(data[i].environmentName == "Test14" || data[i].environmentName == "Load") //to be removed
+                    var machingIndx = -1;
+                    for(var j =0; j < masterenv.length;j++){
+                        if(masterenv[j].environmentID == data[i].environmentID){
+                            machingIndx = j;
+                            break;
+                        }
+                    }
+                    if(machingIndx < 0){
+                        var env = {
+                            "environmentName":data[i].environmentName,
+                            "environmentID":data[i].environmentID
+                        }
+                        console.log("hit here...");
+                        console.log(env);
+                        masterenv.push(env);
                     }
                 }
-                if(machingIndx < 0){
-                    var env = {
-                        "environmentName":data[i].environmentName,
-                        "environmentID":data[i].environmentID
-                    }
-                    console.log("hit here...");
-                    console.log(env);
-                    masterenv.push(env);
-                }
-
 
 
             }
+
+
+
+            console.log(masterenv);
 
             for(var i = 0; i < data.length; i++){
                 var machingIndx = -1;
                 for(var j =0; j < components.length;j++){
                     if(components[j].componentID == data[i].componentID){
                         machingIndx = j;
-                        continue;
+                        break;
                         //To do add version to the matching env.
                     }
                 }
@@ -87,7 +91,7 @@
                             if(components[j].environments[k].environmentID == data[i].environmentID){
                                 components[j].environments[k].version = data[i].componentVersion;
                                 console.log("Version:" + components[j].environments[k].version);
-                                continue;
+                                break;
                             }
                         }
                         components[j].environments = JSON.parse(JSON.stringify(components[j].environments));

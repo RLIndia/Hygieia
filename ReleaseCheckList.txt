@@ -1,0 +1,4 @@
+1. Check all Template files no keys should be present.
+2. Gulp should be serving on port 8443 - gulp.js
+3. Octopus timing should be 0 0/5
+4.
