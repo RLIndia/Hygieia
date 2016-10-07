@@ -15,7 +15,7 @@
         <tr ng-repeat="component in deployallView.components">
             <td> {{component.componentName}}</td>
             <td ng-repeat="environment in component.environments">
-                {{environment.version}}
+                <span style="color:{{environment.color}}">{{environment.version}}</span>
             </td>
 
         </tr>

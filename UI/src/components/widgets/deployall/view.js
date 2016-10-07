@@ -37,10 +37,13 @@
                 "environments":[]
             }
             var masterenv = []; //master list of environments
-
+            var masterversions = []; //used for coloring.
+            var colors = ["#0000FF","#FF0000","#5F9EA0","#00FFFF","#A9A9A9","#9932CC","#FFD700","#DEB887","#CD5C5C","#90EE90","#9370D8","#C71585","#4169E1","#9ACD32","#8A2BE2"];
+            var lastAllotedColorIndex = 0;
             for(var i = 0; i < data.length; i++){
 
-                if(data[i].environmentName == "Test14" || data[i].environmentName == "Load") {//to be removed
+               if(data[i].environmentName == "Test14" || data[i].environmentName == "Load")
+             {//to be removed
                     var machingIndx = -1;
                     for(var j =0; j < masterenv.length;j++){
                         if(masterenv[j].environmentID == data[i].environmentID){
@@ -90,6 +93,8 @@
                         for(var k =0; k < components[j].environments.length;k++){
                             if(components[j].environments[k].environmentID == data[i].environmentID){
                                 components[j].environments[k].version = data[i].componentVersion;
+                                components[j].environments[k].color = getColorCodeForVersion(components[j].environments[k].version);
+                                console.log("Color:" + components[j].environments[k].color);
                                 console.log("Version:" + components[j].environments[k].version);
                                 break;
                             }
@@ -103,6 +108,27 @@
             ctrl.environments = masterenv;
             ctrl.components = components;
 
+            function getColorCodeForVersion(version){
+                var found = false;
+                for(var x = 0; x < masterversions.length; x++){
+                    if(masterversions[x].version == version){
+                        found = true;
+                        console.log(masterversions);
+                        return masterversions[x].color;
+                    }
+                }
+                if(!found){
+                    if(lastAllotedColorIndex > 15)
+                        lastAllotedColorIndex = 0;
+                    var v = {"version":version,"color":JSON.parse(JSON.stringify(colors[lastAllotedColorIndex]))};
+                    masterversions.push(v);
+                   //onsole.log(masterversions);
+                     //now it should find it.
+                    lastAllotedColorIndex++;
+                    return(v.color);
+
+                }
+            }
 
          }
     }
