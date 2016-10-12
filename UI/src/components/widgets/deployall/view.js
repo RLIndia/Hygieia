@@ -118,7 +118,7 @@
                     }
                 }
                 if(!found){
-                    if(lastAllotedColorIndex > 15)
+                    if(lastAllotedColorIndex > 14)
                         lastAllotedColorIndex = 0;
                     var v = {"version":version,"color":JSON.parse(JSON.stringify(colors[lastAllotedColorIndex]))};
                     masterversions.push(v);
