@@ -38,7 +38,7 @@
             }
             var masterenv = []; //master list of environments
             var masterversions = []; //used for coloring.
-            var colors = ["#0000FF","#FF0000","#5F9EA0","#00FFFF","#A9A9A9","#9932CC","#FFD700","#DEB887","#CD5C5C","#90EE90","#9370D8","#C71585","#4169E1","#9ACD32","#8A2BE2"];
+            var colors = ["#FFFFFF","#FF0000","#5F9EA0","#00FFFF","#A9A9A9","#9932CC","#FFD700","#DEB887","#CD5C5C","#90EE90","#9370D8","#C71585","#4169E1","#9ACD32","#8A2BE2"];
             var lastAllotedColorIndex = 0;
             for(var i = 0; i < data.length; i++){
 
