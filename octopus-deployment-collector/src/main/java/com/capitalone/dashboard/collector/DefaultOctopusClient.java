@@ -2,11 +2,7 @@ package com.capitalone.dashboard.collector;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -107,6 +103,12 @@ public class DefaultOctopusClient implements OctopusClient{
 
 	@Override
 	public List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application) {
+		return getApplicationDeploymentHistory(application,"");
+	}
+
+	@Override
+	public List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application,String environments) {
+		List<String> envs = new ArrayList<String>(Arrays.asList(environments.toLowerCase().split(",")));
 		List<ApplicationDeploymentHistoryItem> applicationDeployments = new ArrayList<>();
 
 		boolean hasNext = true;
@@ -120,6 +122,7 @@ public class DefaultOctopusClient implements OctopusClient{
 
 			LOGGER.info("applicationID ==>"+application.getApplicationId());
 			LOGGER.info("Deployment History size ==>"+jsonArray.size());
+			LOGGER.info("environments ==>" + envs.toString());
 
 			for (Object item :jsonArray) {
 				JSONObject jsonObject = (JSONObject) item;
@@ -138,6 +141,13 @@ public class DefaultOctopusClient implements OctopusClient{
 				Environment env = getEnvironmentById(historyItem.getEnvironmentId());
 				historyItem.setEnvironmentName(env.getName());
 
+				//Skip saving if not in the list of environments
+				
+				LOGGER.info("Size " + envs.size() + " contains " + env.getName().toLowerCase() + " " + envs.contains(env.getName().toLowerCase()));
+				if(envs.size() > 0 && envs.contains(env.getName().toLowerCase()) == false){
+					LOGGER.info("Skipping saving history item..No env match found " + env.getName());
+					continue;
+				}
 
 				Release rel = getReleaseById(str(jsonObject, "ReleaseId"));
 

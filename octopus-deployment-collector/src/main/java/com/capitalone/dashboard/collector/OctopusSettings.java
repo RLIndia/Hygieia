@@ -9,6 +9,16 @@ public class OctopusSettings {
 	private String cron;
     private String apiKey;
     private String url;
+
+	public String getEnvironments() {
+		return environments;
+	}
+
+	public void setEnvironments(String environments) {
+		this.environments = environments;
+	}
+
+	private String environments;
 	
     public String getCron() {
 		return cron;

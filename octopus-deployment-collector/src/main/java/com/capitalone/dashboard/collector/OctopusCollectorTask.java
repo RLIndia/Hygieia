@@ -287,7 +287,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 
 			long startApp = System.currentTimeMillis();
 
-			List<ApplicationDeploymentHistoryItem> applicationDeploymentHistoryItems = octopusClient.getApplicationDeploymentHistory(application);
+			List<ApplicationDeploymentHistoryItem> applicationDeploymentHistoryItems = octopusClient.getApplicationDeploymentHistory(application,octopusSettings.getEnvironments());
 
 			LOGGER.info("history ==>"+applicationDeploymentHistoryItems.size());
 

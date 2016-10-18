@@ -16,4 +16,6 @@ public interface OctopusClient {
     
     List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application);
 
+    List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application,String environments);
+
 }
