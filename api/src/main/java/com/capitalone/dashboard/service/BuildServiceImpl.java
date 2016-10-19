@@ -1,5 +1,6 @@
 package com.capitalone.dashboard.service;
 
+import com.capitalone.dashboard.config.JenkinsSettings;
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.*;
 import com.capitalone.dashboard.repository.BuildRepository;
@@ -8,39 +9,60 @@ import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.request.BuildDataCreateRequest;
 import com.capitalone.dashboard.request.BuildSearchRequest;
 import com.capitalone.dashboard.request.CollectorRequest;
+import com.capitalone.dashboard.util.Supplier;
 import com.mysema.query.BooleanBuilder;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.bson.types.ObjectId;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestOperations;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
 public class BuildServiceImpl implements BuildService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BuildServiceImpl.class);
 
     private final BuildRepository buildRepository;
     private final ComponentRepository componentRepository;
     private final CollectorRepository collectorRepository;
     private final CollectorService collectorService;
-
+    private final JenkinsSettings jenkinsSettings;
+    private final RestOperations rest;
 
     @Autowired
     public BuildServiceImpl(BuildRepository buildRepository,
                             ComponentRepository componentRepository,
                             CollectorRepository collectorRepository,
-                            CollectorService collectorService) {
+                            CollectorService collectorService,
+                            JenkinsSettings jenkinsSettings,
+                            Supplier<RestOperations> restOperationsSupplier) {
+    	
         this.buildRepository = buildRepository;
         this.componentRepository = componentRepository;
         this.collectorRepository = collectorRepository;
         this.collectorService = collectorService;
+        this.jenkinsSettings = jenkinsSettings;
+        this.rest = restOperationsSupplier.get();
     }
 
     @Override
     public DataResponse<Iterable<Build>> search(BuildSearchRequest request) {
-        Component component = componentRepository.findOne(request.getComponentId());
+    	Component component = componentRepository.findOne(request.getComponentId());
         CollectorItem item = component.getFirstCollectorItemForType(CollectorType.Build);
         if(item == null){
             Iterable<Build> results = new ArrayList<>();
@@ -161,4 +183,62 @@ public class BuildServiceImpl implements BuildService {
         build.setTimestamp(System.currentTimeMillis());
         return buildRepository.save(build); // Save = Update (if ID present) or Insert (if ID not there)
     }
+
+		@Override
+		public Boolean runJob(ObjectId componentId) {
+			
+			Component component = componentRepository.findOne(componentId);
+	        CollectorItem item = component.getFirstCollectorItemForType(CollectorType.Build);
+	        if(item == null) {
+	            Iterable<Build> results = new ArrayList<>();
+	            return false;
+	        }
+	        String jobUrl = (String)item.getOptions().get("jobUrl");
+	        if(jobUrl == null || jobUrl.isEmpty()) {
+	        	return false;
+	        }
+	        try {
+	        	LOGGER.info("jobUrl ==>",jobUrl);
+	        	 ResponseEntity<String> resEntity = makeRestCall(jobUrl + "/build");
+	        	 LOGGER.info(resEntity.getBody());
+		         return true;	
+	        } catch(Exception e) {
+	        	e.printStackTrace();
+	        	LOGGER.error("Exception occured while triggering build ==>",e.getMessage());
+	            return false;
+	        }
+	        
+	        
+		}
+		
+		protected ResponseEntity<String> makeRestCall(String sUrl) throws MalformedURLException {
+			URI thisuri = URI.create(sUrl);
+			String userInfo = thisuri.getUserInfo();
+
+			//get userinfo from URI or settings (in spring properties)
+			if (StringUtils.isEmpty(userInfo) && (this.jenkinsSettings.getUsername() != null) && (this.jenkinsSettings.getApiKey() != null)) {
+				userInfo = this.jenkinsSettings.getUsername() + ":" + this.jenkinsSettings.getApiKey();
+			}
+			LOGGER.info("userifo ==>"+userInfo);
+			// Basic Auth only.
+			if (StringUtils.isNotEmpty(userInfo)) {
+				return rest.exchange(thisuri, HttpMethod.POST,
+						new HttpEntity<>(createHeaders(userInfo)),
+						String.class);
+			} else {
+				return rest.exchange(thisuri, HttpMethod.POST, null,
+						String.class);
+			}
+
+		}
+		
+		protected HttpHeaders createHeaders(final String userInfo) {
+			byte[] encodedAuth = Base64.encodeBase64(
+					userInfo.getBytes(StandardCharsets.US_ASCII));
+			String authHeader = "Basic " + new String(encodedAuth);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.set(HttpHeaders.AUTHORIZATION, authHeader);
+			return headers;
+		}
 }

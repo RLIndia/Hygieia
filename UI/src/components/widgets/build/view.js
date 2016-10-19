@@ -263,7 +263,11 @@
                         return _.findWhere(builds, { number: build.number });
                     },
                     collectorName: function () {
+                    	console.log('componetid ==>', $scope.dashboard.application.components[0]);
                         return $scope.dashboard.application.components[0].collectorItems.Build[0].collector.name;
+                    },
+                    componentId:function(){
+                    	return $scope.dashboard.application.components[0].id;
                     }
                 }
             });
