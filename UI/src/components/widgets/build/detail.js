@@ -32,7 +32,7 @@
 			$http.get('/api/job/run/'+componentId).then(function(response) {
 				console.log(response);
 			});
-			return false;
+			alert('Build Initiated');
 		};
 	}
 })();
