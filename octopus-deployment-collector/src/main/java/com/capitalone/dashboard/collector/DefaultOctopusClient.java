@@ -36,6 +36,7 @@ public class DefaultOctopusClient implements OctopusClient{
 	private final OctopusSettings octopusSettings;
 	private final RestOperations restOperations;
 	private final Locale locale;
+	private int contextOS;
 
 	@Autowired
 	public DefaultOctopusClient(OctopusSettings octopusSettings,
@@ -43,7 +44,9 @@ public class DefaultOctopusClient implements OctopusClient{
 		this.octopusSettings = octopusSettings;
 		this.restOperations = restOperationsSupplier.get();
 		this.locale = new Locale("en", "US");
+		this.contextOS = 0;
 	}
+
 
 	@Override
 	public List<OctopusApplication> getApplications() {
@@ -52,14 +55,14 @@ public class DefaultOctopusClient implements OctopusClient{
 		String urlPath = "/api/projects";
 		while(hasNext) {
 
-			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),urlPath,octopusSettings.getApiKey()));
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],urlPath,octopusSettings.getApiKey()[contextOS]));
 
 			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
 
 			for (Object item :jsonArray) {
 				JSONObject jsonObject = (JSONObject) item;
 				OctopusApplication application = new OctopusApplication();
-				application.setInstanceUrl(octopusSettings.getUrl());
+				application.setInstanceUrl(octopusSettings.getUrl()[contextOS]);
 				application.setApplicationName(str(jsonObject, "Name"));
 				application.setApplicationId(str(jsonObject, "Id"));
 				applications.add(application);
@@ -75,14 +78,15 @@ public class DefaultOctopusClient implements OctopusClient{
 		return applications;
 	}
 
+
 	@Override
 	public List<Environment> getEnvironments() {
 		List<Environment> environments = new ArrayList<>();
 		boolean hasNext = true;
 		String urlPath = "/api/environments";
 		while(hasNext) {
-			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-					urlPath,octopusSettings.getApiKey()));
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
+					urlPath,octopusSettings.getApiKey()[contextOS]));
 			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
 			for (Object item : jsonArray) {
 				JSONObject jsonObject = (JSONObject) item;
@@ -115,8 +119,8 @@ public class DefaultOctopusClient implements OctopusClient{
 		String urlPath = "/api/deployments?projects="+application.getApplicationId();
 		while(hasNext) {
 
-			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-					urlPath,octopusSettings.getApiKey()));
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
+					urlPath,octopusSettings.getApiKey()[contextOS]));
 
 			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
 
@@ -217,9 +221,19 @@ public class DefaultOctopusClient implements OctopusClient{
 		return applicationDeployments;
 	}
 
+	@Override
+	public void setContext(int sc) {
+		this.contextOS = sc;
+	}
+
+	@Override
+	public int getContext() {
+		return this.contextOS;
+	}
+
 	private Task getTaskById(String taskId) {
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"/api/tasks/"+taskId,octopusSettings.getApiKey()));
+		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
+				"/api/tasks/"+taskId,octopusSettings.getApiKey()[contextOS]));
 		Task task = new Task();
 
 		task.setTaskId(taskId);
@@ -236,8 +250,8 @@ public class DefaultOctopusClient implements OctopusClient{
 	}
 
 	private Set<String> getRolesFromDeploymentProcess(String deploymentProcessId) {
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"/api/deploymentprocesses/"+deploymentProcessId, octopusSettings.getApiKey()));
+		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
+				"/api/deploymentprocesses/"+deploymentProcessId, octopusSettings.getApiKey()[contextOS]));
 		JSONArray steps = (JSONArray)resJsonObject.get("Steps");
         
 		//LOGGER.info("steps size ==>"+steps.size());
@@ -263,8 +277,8 @@ public class DefaultOctopusClient implements OctopusClient{
 	}
 
 	private Machine getMachineById(String machineId,String envId) throws MalformedURLException {
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"/api/machines/"+machineId,octopusSettings.getApiKey()));
+		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
+				"/api/machines/"+machineId,octopusSettings.getApiKey()[contextOS]));
 		Machine machine = new Machine();
 		machine.setEnviromentId(envId);
 		machine.setMachineName((String)resJsonObject.get("Name"));
@@ -297,8 +311,8 @@ public class DefaultOctopusClient implements OctopusClient{
 		String urlPath = "/api/environments/"+envId+"/machines";
 		while(hasNext) {
 
-			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-					urlPath,octopusSettings.getApiKey()));
+			JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
+					urlPath,octopusSettings.getApiKey()[contextOS]));
 
 			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
 			for (Object item :jsonArray) {
@@ -354,8 +368,8 @@ public class DefaultOctopusClient implements OctopusClient{
 	}
 
 	private Release getReleaseById(String id) {
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"/api/releases/"+id,octopusSettings.getApiKey()));
+		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
+				"/api/releases/"+id,octopusSettings.getApiKey()[contextOS]));
 		Release rel = new Release();
 
 		rel.setApplicationId((String)resJsonObject.get("ProjectId"));
@@ -368,8 +382,8 @@ public class DefaultOctopusClient implements OctopusClient{
 
 	private Environment getEnvironmentById(String envId){
 
-		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl(),
-				"/api/environments/"+envId,octopusSettings.getApiKey()));
+		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
+				"/api/environments/"+envId,octopusSettings.getApiKey()[contextOS]));
 		Environment env = new Environment(envId, (String)resJsonObject.get("Name"));
 
 		return env;

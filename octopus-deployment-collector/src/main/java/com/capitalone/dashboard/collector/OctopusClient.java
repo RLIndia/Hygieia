@@ -18,4 +18,8 @@ public interface OctopusClient {
 
     List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application,String environments);
 
+    void setContext(int sc);
+    int getContext();
+
+
 }

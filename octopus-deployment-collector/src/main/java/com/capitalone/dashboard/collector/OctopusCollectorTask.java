@@ -45,6 +45,8 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 	private final OctopusCollectorRepository octopusCollectorRepository;
 	private final OctopusSettings octopusSettings;
 
+	private int contextOctopusIndex = 0;
+
 	private final OctopusApplicationRepository octopusApplicationRepository;
 	private final OctopusClient octopusClient;
 
@@ -54,6 +56,8 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 	private final ComponentRepository dbComponentRepository;
 
 	private final EnvironmentComponentsAllRepository environmentComponentsAllRepository;
+
+	private int contextOserver;
 
 
 	@Autowired
@@ -78,7 +82,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 		this.octopusClient = octopusClient;
 
 		this.dbComponentRepository = dbComponentRepository;
-
+		this.contextOserver = 0;
 
 	}
 
@@ -106,18 +110,25 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 
 		clean(collector);
 
-		addNewApplications(octopusClient.getApplications(),
-				collector);
-		
-		List<OctopusApplication> applications = enabledApplications(collector, octopusSettings.getUrl());
-		LOGGER.info("Enabled Applications ==>"+applications.size());
-		updateData(applications);
+		String[] os = octopusSettings.getUrl();
 
-		List<OctopusApplication> allApplications = allApplications(collector, octopusSettings.getUrl());
-		LOGGER.info("------------------------------------------");
-        LOGGER.info("All Applications ==>"+allApplications.size());
-		saveAllComponents(allApplications,collector);
+		for(int co = 0; co < os.length; co++) {
 
+			this.contextOserver=co;
+			octopusClient.setContext(co);
+			LOGGER.info("Octopus Server " + (octopusClient.getContext() + 1) + " " + octopusSettings.getUrl()[this.contextOserver]);
+			addNewApplications(octopusClient.getApplications(),
+					collector);
+
+			List<OctopusApplication> applications = enabledApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
+			LOGGER.info("Enabled Applications ==>" + applications.size());
+			updateData(applications);
+
+			List<OctopusApplication> allApplications = allApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
+			LOGGER.info("------------------------------------------");
+			LOGGER.info("All Applications ==>" + allApplications.size());
+			saveAllComponents(allApplications, collector);
+		}
 		log("Finished", start);
 
 	}
@@ -194,7 +205,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 	private boolean isNewApplication(OctopusCollector collector,
 			OctopusApplication application) {
 		return octopusApplicationRepository.findUDeployApplication(
-				collector.getId(), octopusSettings.getUrl(),
+				collector.getId(), octopusSettings.getUrl()[this.contextOserver],
 				application.getApplicationId()) == null;
 	}
 
@@ -223,7 +234,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
             
             
             //component.setEnvironmentUrl(octopusSettings.getUrl()+"/app#/environments/"+data.getEnvironmentId());
-            component.setEnvironmentUrl(octopusSettings.getUrl()+data.getDeployedWebUrl());
+            component.setEnvironmentUrl(octopusSettings.getUrl()[this.contextOserver]+data.getDeployedWebUrl());
 			//ex. http://testoctopus2.starbucks.net/app#/deployments/deployments-45583
             component.setComponentVersion(data.getVersion());
             
@@ -287,7 +298,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 
 			long startApp = System.currentTimeMillis();
 
-			List<ApplicationDeploymentHistoryItem> applicationDeploymentHistoryItems = octopusClient.getApplicationDeploymentHistory(application,octopusSettings.getEnvironments());
+			List<ApplicationDeploymentHistoryItem> applicationDeploymentHistoryItems = octopusClient.getApplicationDeploymentHistory(application,octopusSettings.getEnvironments()[this.contextOserver]);
 
 			LOGGER.info("history ==>"+applicationDeploymentHistoryItems.size());
 

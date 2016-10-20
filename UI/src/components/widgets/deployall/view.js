@@ -44,8 +44,8 @@
             var lastAllotedColorIndex = 0;
             for(var i = 0; i < data.length; i++){
 
-               if(data[i].environmentName == "Test14" || data[i].environmentName == "Load")
-             {//to be removed
+               //if(data[i].environmentName == "Test14" || data[i].environmentName == "Load")
+             //{//to be removed
                     var machingIndx = -1;
                     for(var j =0; j < masterenv.length;j++){
                         if(masterenv[j].environmentID == data[i].environmentID){
@@ -62,7 +62,7 @@
                         console.log(env);
                         masterenv.push(env);
                     }
-                }
+             //   }
 
 
             }
