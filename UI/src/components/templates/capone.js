@@ -36,7 +36,8 @@
                 hasAllComponents = false;
             }
 
-            return hasAllComponents;
+            //return hasAllComponents;
+            return true;
         };
     }
 })();
