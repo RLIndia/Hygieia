@@ -130,6 +130,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 			saveAllComponents(allApplications, collector);
 		}
 		log("Finished", start);
+        LOGGER.info("Finished -------------------------------------");
 
 	}
 
