@@ -1,27 +1,34 @@
-<script
-        src="https://code.jquery.com/jquery-3.1.1.min.js"
-        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-        crossorigin="anonymous"></script>
 <div class="deploy-view">
 
     <!--{{deployallView.deployAllData}}-->
 
     <!--{{deployallView.environments}}-->
     <!--{{deployallView.components}}-->
+    <div style="overflow-y:scroll" id="deployTableContainer">
+        <table ng-table="deployallView.components" class="table" style="position:fixed;max-width:94%">
+            <thead>
+            <tr style="background-color: #333333;font-size: 12pt">
+                <td width="30%"> Components </td>
+                <td width="{{70/deployallView.environments.length}}%" ng-repeat="environment in deployallView.environments">
+                    {{environment.environmentName}}
+                </td>
+            </tr>
+            </thead>
+        </table>
+        <table class="table">
+            <tbody >
+                <tr ng-repeat="component in deployallView.components">
+                    <td width="30%"> {{component.componentName}}</td>
+                    <td width="{{70/deployallView.environments.length}}%" ng-repeat="environment in component.environments">
+                        <span style="color:{{environment.color}}">{{environment.version}}</span>
+                    </td>
 
-    <table class="table" style="margin-top:-10px">
-        <tr style="background-color: #333333;font-size: 12pt">
-            <td> Components </td>
-            <td ng-repeat="environment in deployallView.environments">
-                {{environment.environmentName}}
-            </td>
-        </tr>
-        <tr ng-repeat="component in deployallView.components">
-            <td> {{component.componentName}}</td>
-            <td ng-repeat="environment in component.environments">
-                <span style="color:{{environment.color}}">{{environment.version}}</span>
-            </td>
-
-        </tr>
-    </table>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script type="javascript">
+        document.getElementById("deployTableContainer").style.setProperty('height',(screen.height - 260) + 'px');
+        document.getElementById("container").style.setProperty('overflow','hidden');
+    </script>
 </div>

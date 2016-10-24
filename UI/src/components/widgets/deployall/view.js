@@ -23,6 +23,8 @@
                                     processResponse(data.result);
                                     deferred.resolve(data.lastUpdated);
                                 });
+                                document.getElementById("deployTableContainer").style.setProperty('height',(screen.height - 260) + 'px');
+                                document.getElementById("container").style.setProperty('overflow','hidden');
                      return deferred.promise;
         }
 
