@@ -1,5 +1,4 @@
 package com.capitalone.dashboard.repository;
-
 /**
  * Created by vinod on 1/10/16.
  */
@@ -17,7 +16,7 @@ public interface TestRailRunResultRepository extends CrudRepository<TestRailRuns
     @Query(value="{ 'runId': ?0,'testId':?1}")
     TestRailRunsResults findByTestIdAndRunId(String runId, String testId);
 
-    @Query(value="{ 'runId': ?0,'projectId':?1,'milestoneId':?2}")
-    List<TestRailRunsResults> findByRunIdAndProjectIdAndMilestoneId(String id, String milestoneId, String runId);
+    @Query(value="{ 'runId': ?0,'milestoneId':?1,'projectId':?2}")
+    List<TestRailRunsResults> findByRunIdAndProjectIdAndMilestoneId(String runId, String milestoneId, String projectId);
 
 }
