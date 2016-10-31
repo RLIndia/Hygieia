@@ -9,13 +9,13 @@
                     required>
                 <option value="">{{projectVersionConfig.projectVersionDropdownPlaceholder}}</option>
             </select> -->
-        
+            <label class="modal-label">Project</label>
             <select name="project" ng-model="projectVersionConfig.projectVe" class="form-control">
             	<option value="">Select</option>
             	<option ng-repeat="(key,value) in projectVersionConfig.projectVersions" value="{{key}}">{{value.name}}</option>
             
             </select>
-            
+            <label class="modal-label">Version</label>
            <select name="versions" ng-model="projectVersionConfig.versions" class="form-control">
             	<option value="">Select</option>
             	<option ng-repeat="vers in  projectVersionConfig.projectVersions[projectVersionConfig.projectVe].versions" value="{{vers.id}}">{{vers.options.versionName}}</option>

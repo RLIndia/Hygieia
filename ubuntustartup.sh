@@ -1,13 +1,29 @@
 #!/bin/bash
-
-mvn clean install -DskipTests -Dpmd.skip=true
-cd api
 echo $1
 echo $2
+if [ "$3" == "nobuild" ]
+then
+    echo "No Build request found ... proceeding to restart of collectors"
+else
+    mvn clean install -DskipTests -Dpmd.skip=true
+fi
+
+cd api
+
 echo "Installing Nginx"
-apt-get install nginx -y
+#apt-get install nginx -y
 echo "Stopping all java services"
 #killall java
+kill -9 $(ps -aux | grep java | grep api.jar | grep spring | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep octopus-deployment-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep jenkins-build-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep bitbucket-scm-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep sbux-functional-test-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep jira-project-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep sonar-codequality-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep catalyst-deployment-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep testrail-results-collector.jar | awk '{print $2}')
+
 echo "Configuring API"
 cp -f dashboard.template target/dashboard.properties
 echo "dbhost="$2 >> target/dashboard.properties
@@ -98,6 +114,7 @@ echo "Starting UI"
 cd ../../UI
 cp -r dist/* /usr/share/nginx/html/
 cat ../nginx.default > /etc/nginx/sites-enabled/default
-service nginx reload
+service nginx stop 
+service nginx start 
 #nohup node/node node_modules/gulp/bin/gulp.js serve &
 echo "Done..."

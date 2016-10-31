@@ -230,7 +230,6 @@ public class DefaultBitbucketServerClient implements GitClient {
 			return restOperations.exchange(uri, HttpMethod.GET, null,
 					String.class);
 		}
-
 	}
 
 	private HttpHeaders createHeaders(final String userId, final String password) {
