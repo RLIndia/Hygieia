@@ -30,7 +30,7 @@
 
          function processResponse(data){
             ctrl.deployAllData = data;
-            console.log("here..");
+          //  console.log("here..");
             var components = [];
             //templates to position values
             var tcomp = {
@@ -60,8 +60,8 @@
                             "environmentName":data[i].environmentName,
                             "environmentID":data[i].environmentID
                         }
-                        console.log("hit here...");
-                        console.log(env);
+              //          console.log("hit here...");
+               //         console.log(env);
                         masterenv.push(env);
                     }
              //   }
@@ -71,7 +71,7 @@
 
 
 
-            console.log(masterenv);
+           // console.log(masterenv);
 
             for(var i = 0; i < data.length; i++){
                 var machingIndx = -1;
@@ -98,8 +98,8 @@
                             if(components[j].environments[k].environmentID == data[i].environmentID){
                                 components[j].environments[k].version = data[i].componentVersion;
                                 components[j].environments[k].color = getColorCodeForVersion(components[j].environments[k].version);
-                                console.log("Color:" + components[j].environments[k].color);
-                                console.log("Version:" + components[j].environments[k].version);
+                           //     console.log("Color:" + components[j].environments[k].color);
+                          //      console.log("Version:" + components[j].environments[k].version);
                                 break;
                             }
                         }
@@ -117,7 +117,7 @@
                 for(var x = 0; x < masterversions.length; x++){
                     if(masterversions[x].version == version){
                         found = true;
-                        console.log(masterversions);
+                     //   console.log(masterversions);
                         return masterversions[x].color;
                     }
                 }

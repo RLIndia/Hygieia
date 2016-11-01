@@ -136,8 +136,6 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             if(savedRepo == null){
                 repo.setCollectorId(collector.getId());
                 repo.setEnabled(false);
-
-              //  LOG.info("To Add:" + repo.getPROJECTNAME() + " " + repo.getVERSIONNAME());
                 repoList.add(repo);
                 try {
                     jiraprojectrepository.save(repo);
