@@ -1,13 +1,14 @@
 <div ng-if="dropdownList.length" class="widget-heading pullup">
     <span class="subtitle">Branch:</span>&nbsp;
-    <select   ng-model="selectedDropDownValue" ng-change="test(selectedDropDownValue.name,'live')" ng-options="opt as opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect">
+    <!--ng-change="test(selectedDropDownValue.name,'live')"-->
+    <select   ng-model="selectedDropDownValue"  ng-change="updateValue(selectedDropDownValue,selectedDropDownValue.id)" ng-options="opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect">
         <option value="" ng-if="false"></option>
     </select>
 </div>
 <div class="repo-view" ng-repeat="branchName in repoView.branchNames">
 
     <div ng-show="repoView.branches[branchName].show" class="commit-chart" ng-class="repoView.branches[branchName].cssClass">
-    <div class="widget">
+        <div class="widget">
        <!--  <div class="widget-heading">
             Summary
         </div> -->
@@ -35,7 +36,7 @@
         </div>
     </div>
 
-    <div class="widget">
+        <div class="widget">
         <div class="widget-heading">
             Commits per day
         </div>
@@ -49,6 +50,6 @@
             </chartist>
         </div>
     </div>
-</div>
+    </div>
     
 </div>

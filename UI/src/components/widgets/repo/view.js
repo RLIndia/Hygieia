@@ -51,7 +51,13 @@
 		$scope.dropdownList  = [];
 		ctrl.$scope =  $scope;
 
-		var selectedBranch; 
+		var selectedBranch;
+		$scope.updateValue = function(obj1,obj2){
+		    console.log('-------------------------------------------');
+		    console.log(obj1);
+		    console.log(obj2);
+
+		};
 
 		$scope.test = function(selectedDropDownValue,live) {
 			var brancheNames = Object.keys(ctrl.branches);
@@ -59,13 +65,15 @@
 				ctrl.branches[brancheNames[i]].show = true;
 				ctrl.branches[brancheNames[i]].cssClass='';
 			}
-			ctrl.branches[selectedDropDownValue].show = true;
-			ctrl.branches[selectedDropDownValue].cssClass='commit-chart-visible';
-			selectedBranch = selectedDropDownValue;
-			if(document.getElementById('buildBranchSelect') && document.getElementById('container') && live){
-				console.log('Setting------Vaule:');
-				document.getElementById('container').setAttribute('buildBranchSelect',document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value ].text);
-			}
+//			ctrl.branches[selectedDropDownValue].show = true;
+//			ctrl.branches[selectedDropDownValue].cssClass='commit-chart-visible';
+//			selectedBranch = selectedDropDownValue;
+//			console.log("****************************");
+//			console.log(document.getElementById('buildBranchSelect').length + " " + document.getElementById('container').length + " " + live);
+//			if(document.getElementById('buildBranchSelect') && document.getElementById('container') && live){
+//				console.log('Setting------Vaule:');
+//				document.getElementById('container').setAttribute('buildBranchSelect',document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value].text);
+//			}
 
 		}
 		console.log('ctrl ==>',ctrl)
@@ -364,49 +372,49 @@
 	}
 
 
-	setInterval(function(){ 
-		var scope = angular.element(document.getElementById('buildBranchSelect')).scope();
-
-
-		if(document.getElementById('container').getAttribute('buildBranchSelect')){
-			//console.log('Found Localstored select:' + scope.buildBranchSelect + ':');
-			var lastText = document.getElementById('container').getAttribute('buildBranchSelect');
-			scope.test(lastText,null);
-			//set the dropdown to show this value
-			var dd = document.getElementById('buildBranchSelect');
-			for (var i = 0; i < dd.options.length; i++) {
-			    if (dd.options[i].text === lastText) {
-			        dd.selectedIndex = i;
-			        break;
-			    }
-			}
-			scope.$apply();
-			return;
-		}
-		else{
-			//Since none is selected select the first one.
-			if(document.getElementById('buildBranchSelect')){
-				document.getElementById('buildBranchSelect').value = 0;
-				scope.test(document.getElementById('buildBranchSelect').options[0].text);
-			}
-		}
-		//console.log('Entered here....>>>>>>>>>>>>>>>>>>>>>>');
-		// if(document.getElementById('buildBranchSelect')){
-		// 	if(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value]){
-		// 		scope.test(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value ].text);
-		// 		document.getElementById('container').setAttribute('buildBranchSelect',document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value ].text);
-		// 	}else{
-		// 		if(document.getElementById('buildBranchSelect').options){
-		// 			document.getElementById('buildBranchSelect').value = 0;
-		// 			if(document.getElementById('buildBranchSelect').options[1]){
-		// 				scope.test(document.getElementById('buildBranchSelect').options[1].text);
-		// 				document.getElementById('container').setAttribute('buildBranchSelect',document.getElementById('buildBranchSelect').options[1].text);
-		// 			}
-		// 		}
-		// 	}
-		// 	scope.$apply();
-		// }
-
-
-	}, 3000);
+//	setInterval(function(){
+//		var scope = angular.element(document.getElementById('buildBranchSelect')).scope();
+//
+//
+//		if(document.getElementById('container').getAttribute('buildBranchSelect')){
+//			//console.log('Found Localstored select:' + scope.buildBranchSelect + ':');
+//			var lastText = document.getElementById('container').getAttribute('buildBranchSelect');
+//			scope.test(lastText,null);
+//			//set the dropdown to show this value
+//			var dd = document.getElementById('buildBranchSelect');
+//			for (var i = 0; i < dd.options.length; i++) {
+//			    if (dd.options[i].text === lastText) {
+//			        dd.selectedIndex = i;
+//			        break;
+//			    }
+//			}
+//			scope.$apply();
+//			return;
+//		}
+//		else{
+//			//Since none is selected select the first one.
+//			if(document.getElementById('buildBranchSelect')){
+//				document.getElementById('buildBranchSelect').value = 0;
+//				scope.test(document.getElementById('buildBranchSelect').options[0].text);
+//			}
+//		}
+//		//console.log('Entered here....>>>>>>>>>>>>>>>>>>>>>>');
+//		// if(document.getElementById('buildBranchSelect')){
+//		// 	if(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value]){
+//		// 		scope.test(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value ].text);
+//		// 		document.getElementById('container').setAttribute('buildBranchSelect',document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value ].text);
+//		// 	}else{
+//		// 		if(document.getElementById('buildBranchSelect').options){
+//		// 			document.getElementById('buildBranchSelect').value = 0;
+//		// 			if(document.getElementById('buildBranchSelect').options[1]){
+//		// 				scope.test(document.getElementById('buildBranchSelect').options[1].text);
+//		// 				document.getElementById('container').setAttribute('buildBranchSelect',document.getElementById('buildBranchSelect').options[1].text);
+//		// 			}
+//		// 		}
+//		// 	}
+//		// 	scope.$apply();
+//		// }
+//
+//
+//	}, 3000);
 })();
