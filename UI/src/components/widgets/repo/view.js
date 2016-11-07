@@ -77,7 +77,7 @@
 			var deferred = $q.defer();
 			var params = {
 					componentId: $scope.widgetConfig.componentId,
-					numberOfDays: 14
+					numberOfDays: 30
 			};
 			console.log("config -==>",$scope.widgetConfig);
 			var widgetConfig = $scope.widgetConfig;

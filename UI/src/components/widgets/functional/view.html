@@ -34,8 +34,8 @@
             
              <td class="dash-overflow" style="text-align:center" ng-class="(functionalTestDay.totalFailed != '0') ? 'orange' : 'green'">
                <!--  {{functionalTestDay.status}} -->
-                <span ng-if="functionalTestDay.totalFailed != '0'" class="dash-status-pass fa fa-check ng-scope"></span>
-                <span ng-if="functionalTestDay.totalFailed == '0'" class="dash-status-fail fa fa fa-exclamation-circle ng-scope"></span>
+                <span ng-if="functionalTestDay.totalFailed != '0'" class="fa fa-check ng-scope"></span>
+                <span ng-if="functionalTestDay.totalFailed == '0'" class="fa fa fa-exclamation-circle ng-scope"></span>
             </td>
             <td class="dash-overflow" title="{{ functionalTestDay.date | date : 'HH:mm ss'}}" >
                 {{functionalTestDay.date |   date : shortDate}}

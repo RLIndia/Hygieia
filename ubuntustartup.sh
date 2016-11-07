@@ -92,21 +92,21 @@ cd ../../sonar-codequality-collector/
 cp -f sonar.template target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar &
+#nohup java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Catalyst collector"
 cd ../../catalyst-deployment-collector/
 cp -f catalyst.template target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar catalyst-deployment-collector-2.0.2-SNAPSHOT.jar &
+#nohup java -jar catalyst-deployment-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring TestRail collector"
 cd ../../testrail-results-collector/
 cp -f testrail.template target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar testrail-results-collector.jar &
+#nohup java -jar testrail-results-collector.jar &
 
 
  
