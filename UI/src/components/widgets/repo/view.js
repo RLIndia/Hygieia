@@ -54,39 +54,80 @@
 		var selectedBranch;
         $scope.savedBranch = null;
 
-		$scope.branchChange = function(selectedOption,dl,live){
+		$scope.branchChange = function(selectedOption){
 		    console.log("*********<<<< ******* >>> ************");
 		    console.log(selectedOption);
-		    console.log(dl);
 
-		    if(live && $scope.branches){
-		    //force change
+            if($scope.branches){
+                if(selectedOption){
+                //force change
 
-//		        var brancheNames = Object.keys($scope.branches);
-//                for(var i=0;i<brancheNames.length;i++) {
-//                    ctrl.branches[brancheNames[i]].show = true;
-//                    ctrl.branches[brancheNames[i]].cssClass='';
-//                }
-//                ctrl.branches[selectedOption.id].show = true;
-//                ctrl.branches[selectedOption.id].cssClass='commit-chart-visible';
-                console.log("----" + $scope.selectedDropDownValue);
-                $scope.savedBranch = selectedOption.id;
-		        console.log('Saved Branch --------- ' + $scope.savedBranch);
-		        console.log('Scope Branch --------- ');
-		        console.log($scope.branches);
-                var branches = Object.keys($scope.branches);
-                for(var i=0;i<brancheNames.length;i++) {
-                    $scope.branches[branches[i]].show = true;
-                    $scope.branches[branches[i]].cssClass='';
+    //		        var brancheNames = Object.keys($scope.branches);
+    //                for(var i=0;i<brancheNames.length;i++) {
+    //                    ctrl.branches[brancheNames[i]].show = true;
+    //                    ctrl.branches[brancheNames[i]].cssClass='';
+    //                }
+    //                ctrl.branches[selectedOption.id].show = true;
+    //                ctrl.branches[selectedOption.id].cssClass='commit-chart-visible';
+                    console.log("----" + $scope);
+                    $scope.savedBranch = selectedOption.name;
+                    $scope.savedBranchIdx = selectedOption.id;
+
+                    console.log('Saved Branch --------- ' + $scope.savedBranch);
+                    console.log('Scope Branch --------- ');
+                    console.log($scope.branches);
+                    var branches = Object.keys($scope.branches);
+                    for(var i=0;i<branches.length;i++) {
+                            console.log(branches[i]);
+                            $scope.branches[branches[i]].show = true;
+                            if(branches[i] == $scope.savedBranch){
+                                $scope.branches[branches[i]].cssClass = "commit-chart-visible";
+                            }
+                            else{
+                                $scope.branches[branches[i]].cssClass = "";
+                            }
+    //                    $scope.branches[branches[i]].show = true;
+    //                    $scope.branches[branches[i]].cssClass='';
+                    }
+    //		        $scope.branches[selectedOption.id].show = true;
+    //		        $scope.branches[selectedOption.id].cssClass='commit-chart-visible';
+
                 }
-		        $scope.branches[selectedOption.id].show = true;
-		        $scope.branches[selectedOption.id].cssClass='commit-chart-visible';
+                else{
+                    //Automated refresh load from scope
 
-		    }
-		    else{
-		        //Automated refresh load from scope
+                        //found branches
+                        var branches = Object.keys($scope.branches);
+                        if(!$scope.savedBranch && branches.length > 0)
+                            {
+                                $scope.savedBranch = branches[0];
+                                console.log("Set saved branch " + $scope.savedBranch);
+                            }
+                        for(var i=0;i<branches.length;i++) {
+                                console.log(branches[i]);
+                                $scope.branches[branches[i]].show = true;
+                                if(branches[i] == $scope.savedBranch){
+                                    $scope.branches[branches[i]].cssClass = "commit-chart-visible";
+                                }
+                                else{
+                                    $scope.branches[branches[i]].cssClass = "";
+                                }
 
-		    }
+                        }
+                        //set the dropdown to saved branch
+                        if($scope.savedBranchIdx && $scope.dropdownList && $scope.selectedDropDownValue){
+                            console.log("About to set....");
+                            $scope.selectedDropDownValue = $scope.dropdownList[$scope.savedBranchIdx];
+                        }
+                        console.log($scope.savedBranchIdx);
+                        console.log($scope.dropdownList);
+
+                        console.log($scope.selectedDropDownValue);
+
+
+                }
+		    }//scope.branches found, Nothing much to do when no branch is found.
+
 		    console.log("*********<<<< ******* >>> ************");
 //		    var savedValue = document.getElementById('container').getAttribute('savedValue');
 //		    if(savedValue){
@@ -122,6 +163,7 @@
 
 		    console.log('')
 			$scope.dropdownList  = [];
+
 			var deferred = $q.defer();
 			var params = {
 					componentId: $scope.widgetConfig.componentId,
@@ -158,11 +200,20 @@
 								name:brancheNames[j]
 						}
 						bn.push(_br);
+						if($scope.savedBranch == brancheNames[j]){
+						    $scope.selectedDropDownValue = _br;
+						}
 					}
 					$scope.dropdownList = bn;
+
 					console.log(bn);
 					console.log(ctrl.branches);
 					$scope.branches = ctrl.branches;
+					$scope.branchChange();
+					if($scope.selectedDropDownValue){
+					    console.log("Found the dropdown ------------------");
+					    console.log($scope.selectedDropDownValue);
+					}
 
 				} else {
 
