@@ -2,9 +2,17 @@
     <div class="widget-detail repo-detail">
         <div class="widget-detail-heading">
             <div class="row">
-                
-                <div class="col-md-3 view-in-tool pull-right">
-                    <a ng-href="{{detail.branchURL}}" target="_blank" class="ahover">
+                <div class="col-md-3">
+                    <span class="dash-status-lg repo-desc">Code Repo</span>
+
+                </div>
+                <div class="col-md-6 repo-desc-text-padding">
+
+                    Branch: <span ng-show="detail.commits.length"> {{detail.commits[0].scmBranch}}</span>
+                </div>
+
+                <div class="col-md-3 view-in-tool pull-right repo-desc-text-padding">
+                    <a ng-href="{{detail.branchURL}}" target="_blank" class="ahover pull-right">
                         View in Repo <span class="fa fa-angle-right"></span>
                     </a>
                 </div>
@@ -13,9 +21,9 @@
             <!-- Close button -->
         </div>
         <div class="widget-detail-body">
-           
+
             <span class="no-changesets" ng-hide="detail.commits.length">No Changes</span>
-            <table class="table" ng-show="detail.commits.length">
+            <table class="table repo-table-top-margin-fix" ng-show="detail.commits.length">
                 <thead>
                 <tr>
                     <th>Revision</th>

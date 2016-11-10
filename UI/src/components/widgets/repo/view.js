@@ -47,7 +47,6 @@
 		ctrl.commits = [];
 		ctrl.branches = {};
 		ctrl.branchNames = [];
-		//$scope.selectedDropDownValue='';
 		$scope.dropdownList  = [];
 		ctrl.$scope =  $scope;
 
@@ -55,21 +54,12 @@
         $scope.savedBranch = null;
 
 		$scope.branchChange = function(selectedOption){
-		    console.log("*********<<<< ******* >>> ************");
-		    console.log(selectedOption);
-
+		 //   console.log("*********<<<< ******* >>> ************");
+		  //  console.log(selectedOption);
+            selectedBranch = selectedOption;
             if($scope.branches){
                 if(selectedOption){
-                //force change
-
-    //		        var brancheNames = Object.keys($scope.branches);
-    //                for(var i=0;i<brancheNames.length;i++) {
-    //                    ctrl.branches[brancheNames[i]].show = true;
-    //                    ctrl.branches[brancheNames[i]].cssClass='';
-    //                }
-    //                ctrl.branches[selectedOption.id].show = true;
-    //                ctrl.branches[selectedOption.id].cssClass='commit-chart-visible';
-                    console.log("----" + $scope);
+     //               console.log("----" + $scope);
                     $scope.savedBranch = selectedOption.name;
                     $scope.savedBranchIdx = selectedOption.id;
 
@@ -86,13 +76,8 @@
                             else{
                                 $scope.branches[branches[i]].cssClass = "";
                             }
-    //                    $scope.branches[branches[i]].show = true;
-    //                    $scope.branches[branches[i]].cssClass='';
                     }
-    //		        $scope.branches[selectedOption.id].show = true;
-    //		        $scope.branches[selectedOption.id].cssClass='commit-chart-visible';
-
-                }
+              }
                 else{
                     //Automated refresh load from scope
 
@@ -101,10 +86,10 @@
                         if(!$scope.savedBranch && branches.length > 0)
                             {
                                 $scope.savedBranch = branches[0];
-                                console.log("Set saved branch " + $scope.savedBranch);
+                            //    console.log("Set saved branch " + $scope.savedBranch);
                             }
                         for(var i=0;i<branches.length;i++) {
-                                console.log(branches[i]);
+                             //   console.log(branches[i]);
                                 $scope.branches[branches[i]].show = true;
                                 if(branches[i] == $scope.savedBranch){
                                     $scope.branches[branches[i]].cssClass = "commit-chart-visible";
@@ -116,28 +101,19 @@
                         }
                         //set the dropdown to saved branch
                         if($scope.savedBranchIdx && $scope.dropdownList && $scope.selectedDropDownValue){
-                            console.log("About to set....");
+                           // console.log("About to set....");
                             $scope.selectedDropDownValue = $scope.dropdownList[$scope.savedBranchIdx];
                         }
-                        console.log($scope.savedBranchIdx);
-                        console.log($scope.dropdownList);
-
-                        console.log($scope.selectedDropDownValue);
+//                        console.log($scope.savedBranchIdx);
+//                        console.log($scope.dropdownList);
+//
+//                        console.log($scope.selectedDropDownValue);
 
 
                 }
 		    }//scope.branches found, Nothing much to do when no branch is found.
 
-		    console.log("*********<<<< ******* >>> ************");
-//		    var savedValue = document.getElementById('container').getAttribute('savedValue');
-//		    if(savedValue){
-//		        console.log('Found Saved Value ' + savedValue);
-//
-//		    }
-//		    else{
-//		        //setting saved value
-//		        document.getElementById('container').setAttribute('savedValue',selectedOption);
-//		    }
+		    //console.log("*********<<<< ******* >>> ************");
 		}
 
 		$scope.test = function(selectedDropDownValue,live) {
@@ -248,6 +224,20 @@
 			var target = evt.target,
 			pointIndex = target.getAttribute('ct:point-index');
 
+            console.log(ctrl.branches);
+            console.log($scope.branches);
+            //select the first branch if null
+            //to do : exit if no branches are found.
+            var selectedBranchName = "";
+            if(!selectedBranch){
+                var branchNames = Object.keys(ctrl.branches);
+                selectedBranchName = branchNames[0];
+            }
+            else{ //required when the dropdown changes.
+                selectedBranchName = selectedBranch.name;
+            }
+            console.log(selectedBranchName);
+
 			$modal.open({
 				controller: 'RepoDetailController',
 				controllerAs: 'detail',
@@ -255,12 +245,12 @@
 				size: 'lg',
 				resolve: {
 					commits: function() {
-						return ctrl.branches[selectedBranch].groupedCommitData[pointIndex];
+						return ctrl.branches[selectedBranchName].groupedCommitData[pointIndex];
 					},
 					branchURL: function(){
-						if(ctrl.branches[selectedBranch].groupedCommitData[pointIndex][0]){
-							if(ctrl.branches[selectedBranch].groupedCommitData[pointIndex][0].scmBranch){
-								return $scope.dashboard.application.components[0].collectorItems.SCM[0].options.url + 'src/?at=' + ctrl.branches[selectedBranch].groupedCommitData[pointIndex][0].scmBranch;
+						if(ctrl.branches[selectedBranchName].groupedCommitData[pointIndex][0]){
+							if(ctrl.branches[selectedBranchName].groupedCommitData[pointIndex][0].scmBranch){
+								return $scope.dashboard.application.components[0].collectorItems.SCM[0].options.url + 'src/?at=' + ctrl.branches[selectedBranchName].groupedCommitData[pointIndex][0].scmBranch;
 							}
 							else
 								return $scope.dashboard.application.components[0].collectorItems.SCM[0].options.url + 'src';
@@ -368,7 +358,7 @@
 
 		function processResponseWithBranch(branchName,data, numberOfDays) {
 			// get total commits by day
-			console.log("processing branchnames = >"+branchName,data);
+		//	console.log("processing branchnames = >"+branchName,data);
 			var commits = [];
 			var groups = _(data).sortBy('timestamp')
 			.groupBy(function(item) {
@@ -446,7 +436,7 @@
 
 			});
 
-			console.log(lastDayContributors,lastSevenDaysContributors,lastFourteenDaysContributors);
+		//	console.log(lastDayContributors,lastSevenDaysContributors,lastFourteenDaysContributors);
 
 			ctrl.branches[branchName].lastDayCommitCount = lastDayCount;
 			ctrl.branches[branchName].lastDayContributorCount = lastDayContributors.length;
@@ -463,51 +453,4 @@
 
 
 	}
-
-
-//	setInterval(function(){
-//		var scope = angular.element(document.getElementById('buildBranchSelect')).scope();
-//
-//
-//		if(document.getElementById('container').getAttribute('buildBranchSelect')){
-//			//console.log('Found Localstored select:' + scope.buildBranchSelect + ':');
-//			var lastText = document.getElementById('container').getAttribute('buildBranchSelect');
-//			scope.test(lastText,null);
-//			//set the dropdown to show this value
-//			var dd = document.getElementById('buildBranchSelect');
-//			for (var i = 0; i < dd.options.length; i++) {
-//			    if (dd.options[i].text === lastText) {
-//			        dd.selectedIndex = i;
-//			        break;
-//			    }
-//			}
-//			scope.$apply();
-//			return;
-//		}
-//		else{
-//			//Since none is selected select the first one.
-//			if(document.getElementById('buildBranchSelect')){
-//				document.getElementById('buildBranchSelect').value = 0;
-//				scope.test(document.getElementById('buildBranchSelect').options[0].text);
-//			}
-//		}
-//		//console.log('Entered here....>>>>>>>>>>>>>>>>>>>>>>');
-//		// if(document.getElementById('buildBranchSelect')){
-//		// 	if(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value]){
-//		// 		scope.test(document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value ].text);
-//		// 		document.getElementById('container').setAttribute('buildBranchSelect',document.getElementById('buildBranchSelect').options[document.getElementById('buildBranchSelect').value ].text);
-//		// 	}else{
-//		// 		if(document.getElementById('buildBranchSelect').options){
-//		// 			document.getElementById('buildBranchSelect').value = 0;
-//		// 			if(document.getElementById('buildBranchSelect').options[1]){
-//		// 				scope.test(document.getElementById('buildBranchSelect').options[1].text);
-//		// 				document.getElementById('container').setAttribute('buildBranchSelect',document.getElementById('buildBranchSelect').options[1].text);
-//		// 			}
-//		// 		}
-//		// 	}
-//		// 	scope.$apply();
-//		// }
-//
-//
-//	}, 3000);
 })();
