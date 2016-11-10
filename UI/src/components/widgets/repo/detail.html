@@ -36,7 +36,7 @@
                 <tr ng-repeat="commit in detail.commits">
                     <td>{{::commit.scmRevisionNumber | limitTo:8}}</td>
                     <td>{{::commit.scmAuthor}}</td>
-                    <td>{{::commit.scmCommitLog}}</td>
+                    <td><div class="repo-table-commit-div">{{::commit.scmCommitLog}}</div></td>
                     <td>{{::commit.scmCommitTimestamp | date:'MMM d, HH:mm:ss'}}</td>
                 </tr>
                 </tbody>
