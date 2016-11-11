@@ -34,10 +34,10 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="commit in detail.commits">
-                    <td>{{::commit.scmRevisionNumber | limitTo:8}}</td>
-                    <td>{{::commit.scmAuthor}}</td>
-                    <td><div class="repo-table-commit-div">{{::commit.scmCommitLog}}</div></td>
-                    <td>{{::commit.scmCommitTimestamp | date:'MMM d, HH:mm:ss'}}</td>
+                    <td class="repo-desc-bottom-border">{{::commit.scmRevisionNumber | limitTo:8}}</td>
+                    <td class="repo-desc-bottom-border">{{::commit.scmAuthor}}</td>
+                    <td class="repo-desc-bottom-border"><div class="repo-table-commit-div">{{::commit.scmCommitLog}}</div></td>
+                    <td class="repo-desc-bottom-border">{{::commit.scmCommitTimestamp | date:'MMM d, HH:mm:ss'}}</td>
                 </tr>
                 </tbody>
             </table>
