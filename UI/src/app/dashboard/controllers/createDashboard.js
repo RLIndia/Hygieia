@@ -21,11 +21,11 @@
 
         // TODO: dynamically register templates with script
         ctrl.templates = [
-            {value: 'capone', name: 'Cap One', type: DashboardType.TEAM},
+            {value: 'capone', name: 'Component', type: DashboardType.TEAM},
             {value: 'deployall', name: 'Deployment Summary', type: DashboardType.TEAM},
-            {value: 'caponechatops', name: 'Cap One ChatOps', type: DashboardType.TEAM},
-            {value: 'splitview', name: 'Split View', type: DashboardType.TEAM},
-            {value: 'product-dashboard', name: 'Product Dashboard', type: DashboardType.PRODUCT}
+            {value: 'caponechatops', name: 'Component with Chatops', type: DashboardType.TEAM},
+            {value: 'splitview', name: 'Component Split', type: DashboardType.TEAM},
+            {value: 'product-dashboard', name: 'Pipeline', type: DashboardType.PRODUCT}
         ];
 
         // public methods
