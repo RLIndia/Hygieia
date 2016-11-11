@@ -1,6 +1,6 @@
 <div ng-if="dropdownList.length" class="widget-heading pullup">
     <span class="subtitle">Branch:</span>&nbsp;
-    <select   ng-model="selectedDropDownValue" ng-change="test(selectedDropDownValue.name,'live')" ng-options="opt as opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect">
+    <select   ng-model="selectedDropDownValue" ng-change="branchChange(selectedDropDownValue)" ng-options="opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect">
         <option value="" ng-if="false"></option>
     </select>
 </div>
