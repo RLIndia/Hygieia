@@ -359,14 +359,14 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 	private boolean isLatestDeploy(List<EnvironmentComponentsAll> compListAll,EnvironmentComponent ec){
         boolean canAdd = true;
         for(EnvironmentComponentsAll eca : compListAll){
-            LOGGER.info("Checking for existing env: " + eca.getEnvironmentID() + " " + ec.getEnvironmentID());
-            LOGGER.info("Checking for existing comp: " + eca.getComponentID() + " " + ec.getComponentID());
+        //    LOGGER.info("Checking for existing env: " + eca.getEnvironmentID() + " " + ec.getEnvironmentID());
+        //    LOGGER.info("Checking for existing comp: " + eca.getComponentID() + " " + ec.getComponentID());
             if(eca.getEnvironmentID().compareTo(ec.getEnvironmentID()) == 0 && eca.getComponentID().compareTo(ec.getComponentID()) == 0){
-                LOGGER.info("Checking for time new - existing : " + ec.getDeployTime() + " " + eca.getDeployTime() + " " + (ec.getDeployTime() - eca.getDeployTime()));
+        //        LOGGER.info("Checking for time new - existing : " + ec.getDeployTime() + " " + eca.getDeployTime() + " " + (ec.getDeployTime() - eca.getDeployTime()));
                 if(ec.getDeployTime() < eca.getDeployTime()){
                     //compListAll.remove(eca);
                     canAdd = false;
-                    LOGGER.info("Removing : " + eca.getComponentID() + " " + eca.getEnvironmentID());
+         //           LOGGER.info("Removing : " + eca.getComponentID() + " " + eca.getEnvironmentID());
                 }
             }
         }

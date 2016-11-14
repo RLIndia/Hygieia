@@ -147,9 +147,9 @@ public class DefaultOctopusClient implements OctopusClient{
 
 				//Skip saving if not in the list of environments
 				
-				LOGGER.info("Size " + envs.size() + " contains " + env.getName().toLowerCase() + " " + envs.contains(env.getName().toLowerCase()));
+				//LOGGER.info("Size " + envs.size() + " contains " + env.getName().toLowerCase() + " " + envs.contains(env.getName().toLowerCase()));
 				if(envs.size() > 0 && envs.contains(env.getName().toLowerCase()) == false){
-					LOGGER.info("Skipping saving history item..No env match found " + env.getName());
+					//LOGGER.info("Skipping saving history item..No env match found " + env.getName());
 					continue;
 				}
 
@@ -157,7 +157,7 @@ public class DefaultOctopusClient implements OctopusClient{
 
 				historyItem.setVersion(rel.getVersion());
 
-
+				LOGGER.info("Env Match found proceeding");
 
 
 				//historyItem.setAsOfDate(System.currentTimeMillis());// for testing
@@ -184,7 +184,9 @@ public class DefaultOctopusClient implements OctopusClient{
 					Set<String> roleSet = getRolesFromDeploymentProcess(deploymentProcessId);
 					List<Machine> machines;
 					try {
+
 						machines = getMachinesByEnvId(historyItem.getEnvironmentId(),roleSet);
+						LOGGER.info("Machines by env ID: " + historyItem.getEnvironmentId() + " roleset:" + roleSet.toString());
 					} catch (MalformedURLException e) {
 						// TODO Auto-generated catch block
 						LOGGER.error(e.getMessage());
@@ -198,6 +200,7 @@ public class DefaultOctopusClient implements OctopusClient{
 						Machine m =null;
 						try {
 							m = getMachineById(machineId, historyItem.getEnvironmentId());
+							LOGGER.info("Machines by ID : " + machineId +  " env id:" + historyItem.getEnvironmentId());
 						} catch (MalformedURLException e) {
 							// TODO Auto-generated catch block
 							LOGGER.error(e.getMessage());
@@ -280,25 +283,30 @@ public class DefaultOctopusClient implements OctopusClient{
 		JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
 				"/api/machines/"+machineId,octopusSettings.getApiKey()[contextOS]));
 		Machine machine = new Machine();
-		machine.setEnviromentId(envId);
-		machine.setMachineName((String)resJsonObject.get("Name"));
-		machine.setMachineId((String)resJsonObject.get("Id"));
-		String status = (String)resJsonObject.get("Status");
-		if(status.equals("Online")) {
-			machine.setStatus(true);
-		} else {
-			machine.setStatus(false);	
+		//checking for 404
+		if(resJsonObject.isEmpty()){
+			LOGGER.info("Machine not found :" + machineId);
 		}
-		
-		String url = (String)resJsonObject.get("Uri");
-		//LOGGER.info("url ==>"+url);
-		
-		if(url != null && !url.isEmpty()) {
-			String hostname = new URL(url).getHost();
-			//LOGGER.info("Host name ==>"+hostname);
-			machine.setHostName(hostname);
-		}
+		else {
+			machine.setEnviromentId(envId);
+			machine.setMachineName((String) resJsonObject.get("Name"));
+			machine.setMachineId((String) resJsonObject.get("Id"));
+			String status = (String) resJsonObject.get("Status");
+			if (status.equals("Online")) {
+				machine.setStatus(true);
+			} else {
+				machine.setStatus(false);
+			}
 
+			String url = (String) resJsonObject.get("Uri");
+			//LOGGER.info("url ==>"+url);
+
+			if (url != null && !url.isEmpty()) {
+				String hostname = new URL(url).getHost();
+				//LOGGER.info("Host name ==>"+hostname);
+				machine.setHostName(hostname);
+			}
+		}
 		return machine;
 
 	}
