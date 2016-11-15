@@ -127,7 +127,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 			List<OctopusApplication> allApplications = allApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
 			LOGGER.info("------------------------------------------");
 			LOGGER.info("All Applications ==>" + allApplications.size());
-			//saveAllComponents(allApplications, collector);
+			saveAllComponents(allApplications, collector);
 		}
 		log("Finished", start);
         LOGGER.info("Finished -------------------------------------");
