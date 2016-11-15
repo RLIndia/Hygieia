@@ -8,5 +8,5 @@ echo "dbhost="$2 >> target/application.properties
 #echo "dbhost=localhost" >> target/application.properties
 cd target
 cat application.properties
-nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
-tail -f nohup.out
+ java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar
+#tail -f nohup.out

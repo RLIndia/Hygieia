@@ -115,6 +115,10 @@ public class DefaultOctopusClient implements OctopusClient{
 		List<String> envs = new ArrayList<String>(Arrays.asList(environments.toLowerCase().split(",")));
 		List<ApplicationDeploymentHistoryItem> applicationDeployments = new ArrayList<>();
 
+		//setting envs to empty if argument is empty. Is is a fix due to the overloaded function
+		if(environments.isEmpty())
+			envs = new ArrayList<>();
+
 		boolean hasNext = true;
 		String urlPath = "/api/deployments?projects="+application.getApplicationId();
 		while(hasNext) {
@@ -147,9 +151,9 @@ public class DefaultOctopusClient implements OctopusClient{
 
 				//Skip saving if not in the list of environments
 				
-				//LOGGER.info("Size " + envs.size() + " contains " + env.getName().toLowerCase() + " " + envs.contains(env.getName().toLowerCase()));
+				LOGGER.info("Envs : " + envs.isEmpty() + " Size " + envs.size() + " contains " + env.getName().toLowerCase() + " " + envs.contains(env.getName().toLowerCase()));
 				if(envs.size() > 0 && envs.contains(env.getName().toLowerCase()) == false){
-					//LOGGER.info("Skipping saving history item..No env match found " + env.getName());
+					LOGGER.info("Skipping saving history item..No env match found " + env.getName());
 					continue;
 				}
 
