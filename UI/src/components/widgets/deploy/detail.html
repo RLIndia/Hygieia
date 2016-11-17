@@ -1,6 +1,6 @@
 <widget-modal widget-modal-close="true">
     <div class="widget-detail deploy-detail">
-        <div class="widget-detail-heading">
+        <div class="widget-detail-heading ">
             <div class="row">
                 <div class="col-md-4">
                     <span class="dash-status-lg"
@@ -9,12 +9,14 @@
                     <span class="environment-name">{{::detail.environment.name}}</span>
                 </div>
 
-                <div class="col-md-3 last-updated">
-                    <span>{{::detail.environment.lastUpdated | date:'MMM d, HH:mm:ss'}}</span>
-                </div>
+                <!--<div class="col-md-3 last-updated">-->
+                    <!--<span>{{::detail.environment.lastUpdated | date:'MMM d, HH:mm:ss'}}</span>-->
+                <!--</div>-->
 
-                <div class="col-md-2 server-count">
+                <div class="col-md-5 server-count">
+                    <span class="deploy-status">Resource Status:</span>
                     <span ng-class="{'servers-up' : detail.environment.serverUpCount > 0}">
+
                         {{detail.environment.serverUpCount}}<span class="fa fa-arrow-up"></span>
                     </span>
                     <span ng-class="{'servers-down' : detail.environment.serverDownCount > 0}">
@@ -30,7 +32,7 @@
 
             <!-- Close button -->
         </div>
-        <div class="widget-detail-body">
+        <div class="widget-detail-body deploy-detail-table-margin">
              <table class="table">
                 <thead>
                     <tr>
