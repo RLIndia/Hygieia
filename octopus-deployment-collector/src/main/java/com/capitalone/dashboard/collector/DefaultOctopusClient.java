@@ -128,9 +128,9 @@ public class DefaultOctopusClient implements OctopusClient{
 
 			JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
 
-			LOGGER.info("applicationID ==>"+application.getApplicationId());
-			LOGGER.info("Deployment History size ==>"+jsonArray.size());
-			LOGGER.info("environments ==>" + envs.toString());
+		//	LOGGER.info("applicationID ==>"+application.getApplicationId());
+		//	LOGGER.info("Deployment History size ==>"+jsonArray.size());
+		//	LOGGER.info("environments ==>" + envs.toString());
 
 			for (Object item :jsonArray) {
 				JSONObject jsonObject = (JSONObject) item;
@@ -151,9 +151,9 @@ public class DefaultOctopusClient implements OctopusClient{
 
 				//Skip saving if not in the list of environments
 				
-				LOGGER.info("Envs : " + envs.isEmpty() + " Size " + envs.size() + " contains " + env.getName().toLowerCase() + " " + envs.contains(env.getName().toLowerCase()));
+	//			LOGGER.info("Envs : " + envs.isEmpty() + " Size " + envs.size() + " contains " + env.getName().toLowerCase() + " " + envs.contains(env.getName().toLowerCase()));
 				if(envs.size() > 0 && envs.contains(env.getName().toLowerCase()) == false){
-					LOGGER.info("Skipping saving history item..No env match found " + env.getName());
+					//LOGGER.info("Skipping saving history item..No env match found " + env.getName());
 					continue;
 				}
 
@@ -161,7 +161,7 @@ public class DefaultOctopusClient implements OctopusClient{
 
 				historyItem.setVersion(rel.getVersion());
 
-				LOGGER.info("Env Match found proceeding");
+				//LOGGER.info("Env Match found proceeding");
 
 
 				//historyItem.setAsOfDate(System.currentTimeMillis());// for testing
@@ -190,10 +190,10 @@ public class DefaultOctopusClient implements OctopusClient{
 					try {
 
 						machines = getMachinesByEnvId(historyItem.getEnvironmentId(),roleSet);
-						LOGGER.info("Machines by env ID: " + historyItem.getEnvironmentId() + " roleset:" + roleSet.toString());
+	//					LOGGER.info("Machines by env ID: " + historyItem.getEnvironmentId() + " roleset:" + roleSet.toString());
 					} catch (MalformedURLException e) {
 						// TODO Auto-generated catch block
-						LOGGER.error(e.getMessage());
+	//					LOGGER.error(e.getMessage());
 						machines = new ArrayList<>();
 					}
 					historyItem.setMachines(machines);
@@ -204,16 +204,17 @@ public class DefaultOctopusClient implements OctopusClient{
 						Machine m =null;
 						try {
 							m = getMachineById(machineId, historyItem.getEnvironmentId());
-							LOGGER.info("Machines by ID : " + machineId +  " env id:" + historyItem.getEnvironmentId());
+	//						LOGGER.info("Machines by ID : " + machineId +  " env id:" + historyItem.getEnvironmentId());
 						} catch (MalformedURLException e) {
 							// TODO Auto-generated catch block
-							LOGGER.error(e.getMessage());
+	//						LOGGER.error(e.getMessage());
 						}
 						machines.add(m);
 					}
 					historyItem.setMachines(machines);
 				}
 				applicationDeployments.add(historyItem);
+		//		LOGGER.info("."); //including a running indicator
 			}
 
 			JSONObject links = (JSONObject)resJsonObject.get("Links");
@@ -288,10 +289,7 @@ public class DefaultOctopusClient implements OctopusClient{
 				"/api/machines/"+machineId,octopusSettings.getApiKey()[contextOS]));
 		Machine machine = new Machine();
 		//checking for 404
-		if(resJsonObject.isEmpty()){
-			LOGGER.info("Machine not found :" + machineId);
-		}
-		else {
+		if(resJsonObject.isEmpty() == false){
 			machine.setEnviromentId(envId);
 			machine.setMachineName((String) resJsonObject.get("Name"));
 			machine.setMachineId((String) resJsonObject.get("Id"));

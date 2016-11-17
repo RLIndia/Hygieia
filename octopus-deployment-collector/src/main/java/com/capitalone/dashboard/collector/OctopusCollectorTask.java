@@ -111,7 +111,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 		clean(collector);
 
 		String[] os = octopusSettings.getUrl();
-
+		LOGGER.info("Only errors would be displayed..wait for finshed message");
 		for(int co = 0; co < os.length; co++) {
 
 			this.contextOserver=co;
@@ -183,7 +183,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 		long start = System.currentTimeMillis();
 		int count = 0;
 
-		log("All apps", start, applications.size());
+		//log("All apps", start, applications.size());
 		for (OctopusApplication application : applications) {
 
 			if (isNewApplication(collector, application)) {
@@ -193,14 +193,14 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 				try {
 					octopusApplicationRepository.save(application);
 				} catch (org.springframework.dao.DuplicateKeyException ce) {
-					log("Duplicates items not allowed", 0);
+				//	log("Duplicates items not allowed", 0);
 
 				}
 				count++;
 			}
 
 		}
-		log("New apps", start, count);
+		//log("New apps", start, count);
 	}
 
 	private boolean isNewApplication(OctopusCollector collector,
@@ -381,7 +381,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 
 			List<ApplicationDeploymentHistoryItem> applicationDeploymentHistoryItems = octopusClient.getApplicationDeploymentHistory(application);
 		    
-			LOGGER.info("history ==>"+applicationDeploymentHistoryItems.size()); 
+		//	LOGGER.info("history ==>"+applicationDeploymentHistoryItems.size());
 			
 			compList.addAll(getEnvironmentComponent(applicationDeploymentHistoryItems));
 			
@@ -389,9 +389,9 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 			
 			
 			
-			LOGGER.info("compList ==>"+compList.size()); 
+		//	LOGGER.info("compList ==>"+compList.size());
 			
-			LOGGER.info("statusList ==>"+statusList.size()); 
+		//	LOGGER.info("statusList ==>"+statusList.size());
 			
 			if (!compList.isEmpty()) {
 				List<EnvironmentComponent> existingComponents = envComponentRepository
@@ -406,7 +406,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 				environmentStatusRepository.save(statusList);
 			}
 
-			log(" " + application.getApplicationName(), startApp);
+		//	log(" " + application.getApplicationName(), startApp);
 		}
 	}
 

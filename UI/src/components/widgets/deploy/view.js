@@ -20,15 +20,12 @@
        
         function load() {
             var deferred = $q.defer();
-            console.log("************$$$$*********");
-            console.log($scope.widgetConfig.componentId);
-            console.log($scope.dashboard.application.components[0].collectorItems.Deployment[0].options.applicationName);
+
             ctrl.title = $scope.dashboard.application.components[0].collectorItems.Deployment[0].options.applicationName;
             $scope.subtitle = '[' + ctrl.title + ']';
             $scope.sortType = 'name';
             $scope.sortReverse = false;
-            console.log(deployData);
-            console.log("***********$$$$************");
+
             deployData.details($scope.widgetConfig.componentId).then(function(data) {
                 processResponse(data.result);
                 deferred.resolve(data.lastUpdated);
@@ -125,15 +122,11 @@
         }
 
         function defaultStateCallback(isDefaultState) {
-            //$scope.$apply(function() {
                 $scope.display = isDefaultState ? DisplayState.DEFAULT : DisplayState.ERROR;
-            //});
         }
 
         function environmentsCallback(data) {
-            //$scope.$apply(function () {
-                ctrl.environments = data.environments;
-            //});
+                   ctrl.environments = data.environments;
         }
     }
 })();

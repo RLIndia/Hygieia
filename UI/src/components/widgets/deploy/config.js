@@ -9,11 +9,7 @@
     function deployConfigController(modalData, collectorData, $modalInstance) {
         /*jshint validthis:true */
         var ctrl = this;
-
         var widgetConfig = modalData.widgetConfig;
-
-        // public variables
-        // ctrl.deployJob;
         ctrl.deployJobs = [];
         ctrl.jobDropdownDisabled = true;
         ctrl.jobDropdownPlaceholder = 'Loading...';
@@ -54,21 +50,18 @@
         }
 
         function getDeploysCallback(data) {
-            //$scope.$apply(function() {
-                ctrl.jobDropdownDisabled = false;
+                 ctrl.jobDropdownDisabled = false;
                 ctrl.jobDropdownPlaceholder = 'Select your application';
                 ctrl.deployJobs = data.deploys;
 
                 if(data.selectedIndex !== null) {
                     ctrl.deployJob = data.deploys[data.selectedIndex];
                 }
-            //});
         }
 
 
         function submit(valid) {
             ctrl.submitted = true;
-
             if (valid) {
                 var form = document.configForm;
                 var postObj = {
