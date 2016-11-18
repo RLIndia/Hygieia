@@ -1,6 +1,6 @@
 <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 <div class="widget row"
-     ng-class="{'configure' : state == widget_state.CONFIGURE, 'alert': display == display_state.ERROR}">
+     ng-class="{'configure' : state == widget_state.CONFIGURE}">
     <div class="widget-heading" ng-if="header">
         {{title}}
 
