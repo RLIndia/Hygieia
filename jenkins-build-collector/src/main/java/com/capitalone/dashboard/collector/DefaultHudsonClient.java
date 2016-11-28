@@ -152,6 +152,7 @@ public class DefaultHudsonClient implements HudsonClient {
 
 	@Override
 	public Build getBuildDetails(String buildUrl, String instanceUrl) {
+		LOG.info("instance url ==>"+instanceUrl);
 		try {
 			String newUrl = rebuildJobUrl(buildUrl, instanceUrl);
 			String url = joinURL(newUrl, BUILD_DETAILS_URL_SUFFIX);
@@ -184,7 +185,9 @@ public class DefaultHudsonClient implements HudsonClient {
 					// getting the link to trx file 
 					BuildTestResult testResult;
 					try {
-						testResult =  getBuildTestResult(buildUrl);
+						//testResult =  getBuildTestResult(buildUrl);
+						testResult =  getBuildTestResultCatalyst(buildUrl,instanceUrl);
+
 					} catch (Exception e) {
 						testResult = null;
 					}
@@ -211,13 +214,45 @@ public class DefaultHudsonClient implements HudsonClient {
 		}
 		return null;
 	}
-	
-	
+
+	private BuildTestResult getBuildTestResultCatalyst(String buildUrl,String instanceUrl) throws MalformedURLException, ParseException{
+		BuildTestResult buildTestResult = null;
+		JSONParser parser = new JSONParser();
+		String buildJSONUrl = buildUrl+"/api/json";
+		ResponseEntity<String> jsonResp = makeRestCall(buildJSONUrl);
+		JSONObject obj = (JSONObject)parser.parse(jsonResp.toString());
+		// getting sub builds of main job
+		JSONArray subBuilds = (JSONArray)obj.get("subBuilds");
+		if(subBuilds != null && subBuilds.size() >0) {
+			JSONObject subBuild = (JSONObject) subBuilds.get(0);
+			String jobName = (String)subBuild.get("jobName");
+			int buildNumber = (int)subBuild.get("buildNumber");
+			String subBuildUrl = instanceUrl+"/"+jobName+"/"+buildNumber+"/api/json";
+			LOG.info("sub build url ===>"+subBuildUrl);
+			ResponseEntity<String> jsonRespSubBuild = makeRestCall(subBuildUrl);
+			JSONObject objSubBuild = (JSONObject)parser.parse(jsonRespSubBuild.toString());
+
+			// getting sub builds for sub build
+			JSONArray subBuildsInner = (JSONArray)obj.get("subBuilds");
+			if(subBuildsInner != null && subBuildsInner.size() >0) {
+				for(Object o:subBuildsInner) {
+					JSONObject jsonObj = (JSONObject)o;
+				}
+			}
+
+
+
+
+		}
+
+		return buildTestResult;
+	}
+
 	private BuildTestResult getBuildTestResult(String buildUrl) throws MalformedURLException {
-		
+
 		String artifactHTMLUrl = buildUrl+"deployedArtifacts/";
 		ResponseEntity<String> htmlResp = makeRestCall(artifactHTMLUrl);
-		
+
 		String htmlString = htmlResp.getBody();
 
 		Document doc = Jsoup.parse(htmlString);
@@ -259,9 +294,9 @@ public class DefaultHudsonClient implements HudsonClient {
 
 			}
 		}
-		
+
 		return null;
-		
+
 	}
 
 
