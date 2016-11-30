@@ -32,29 +32,15 @@ nohup java -jar api.jar --spring.config.location=./dashboard.properties  &
 
 echo "Configuring Octopus collector"
 cd ../../octopus-deployment-collector/
-cp -f octopus.template target/application.properties
+cp -f octopus.temifconplate target/application.properties
 wget $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
+#nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Jenkins collector"
-cd ../../jenkins-build-collector/
-cp -f jenkins.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/20 -O target/temp.properties
-cat target/temp.properties >> target/application.properties
-echo "dbhost="$2 >> target/application.properties
-cd target
-#nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
-
-echo "Configuring Bitbucket collector"
-cd ../../bitbucket-scm-collector/
-cp -f bitbucket.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
-cat target/temp.properties >> target/application.properties
-echo "dbhost="$2 >> target/application.properties
-cd target
+cd ../../jenkins-build-collectocd /
 #nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar  &
 
 echo "Configuring Functional Test collector"
@@ -64,7 +50,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/29 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-#nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
 
 
 echo "Configuring Jira collector"
@@ -84,7 +70,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar jira-project-collector-2.0.2-SNAPSHOT.jar &
+#nohup java -jar jira-project-collector-2.0.2-SNAPSHOT.jar &
 
 
 echo "Configuring Sonar collector"
@@ -113,8 +99,10 @@ cd target
 echo "Starting UI"
 cd ../../UI
 cp -r dist/* /usr/share/nginx/html/
+mkdir -p /etc/nginx/sites-enabled
+chmod 777 /etc/nginx/sites-enabled
 cat ../nginx.default > /etc/nginx/sites-enabled/default
 service nginx stop 
-service nginx start 
+service nginx start
 #nohup node/node node_modules/gulp/bin/gulp.js serve &
 echo "Done..."

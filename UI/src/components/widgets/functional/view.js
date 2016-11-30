@@ -20,14 +20,14 @@
 
 		function load() {
 			var deferred = $q.defer();
-			console.log("*********************");
+			console.log("**********Functional Test***********");
 			console.log($scope.widgetConfig.componentId);
 			console.log($scope.dashboard.application.components[0].collectorItems.Functional[0].options.envId);
 			ctrl.title = $scope.dashboard.application.components[0].collectorItems.Functional[0].options.envName;
 			$scope.subtitle = '[' + ctrl.title + ']';
 			$scope.fdsortType = 'date';
 			$scope.sortReverse = true;
-			console.log("***********************");
+			console.log("**********End functional test*************");
 			functionalData.details($scope.widgetConfig.componentId).then(function(data) {
 				processResponse(data.result);
 				deferred.resolve(data.lastUpdated);
@@ -67,6 +67,7 @@
 					date : date,
 					totalPassed:data[days[i]].totalPassed,
 					totalFailed:data[days[i]].totalFailed,
+					totalNotrun:data[days[i]].totalNotrun,
 					status:data[days[i]].status,
 					testCases:data[days[i]]
 				});

@@ -57,6 +57,7 @@ public class FunctionalTestServiceImpl implements FunctionalTestService {
         		dayResponse.put("results", new JSONArray());
         		dayResponse.put("totalPassed", 0);
         		dayResponse.put("totalFailed", 0);
+				dayResponse.put("totalNotrun", 0);
         		
         		responseObj.put(functionalTestResult.getTimeExecuted().toString(),dayResponse);
         	} else {
@@ -69,7 +70,12 @@ public class FunctionalTestServiceImpl implements FunctionalTestService {
         		int countFailed = (int)dayResponse.get("totalFailed");
         		countFailed++;
         		dayResponse.put("totalFailed", countFailed);
-        	} else {
+        	} else if(testResult.equals("Not Run")){
+				int countNotrun = (int)dayResponse.get("totalNotrun");
+				countNotrun++;
+				dayResponse.put("totalNotrun", countNotrun);
+			}
+        	else {
         		int countPassed = (int)dayResponse.get("totalPassed");
         		countPassed++;
         		dayResponse.put("totalPassed", countPassed);

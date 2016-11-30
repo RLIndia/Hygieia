@@ -14,16 +14,32 @@
     color:#fff;
 }
 
-.red{
+.red .Failed{
     color: red;
 }
 
-.green{
+.green .Passed{
     color: green;
 }
 
-.orange{
+.orange .Notrun{
     color: orange;
+}
+
+.brown{
+    color: brown;
+}
+
+.Failed{
+    color: red;
+}
+
+.Passed{
+    color: green;
+}
+
+.Notrun{
+    color: brown;
 }
 
 .rowformat{
@@ -43,7 +59,7 @@
 
         .environment-name {
             /*.text-lg;*/
-            font-size: 11pt;
+            font-size: 10pt;
             max-width: 8rem;
         }
 
@@ -65,6 +81,8 @@
         .servers-down {
             color: @dash-status-fail;
         }
+
+
     }
 
     .widget.alert {
@@ -75,6 +93,10 @@
         .servers-down {
             color: @dash-status-alert-fail;
         }
+
+        .servers-notrun {
+            color: @dash-status-alert-warn;
+        }
     }
 }
 
@@ -84,9 +106,11 @@
     }
     .last-updated {
         padding-top: .5em;
+        margin-top:-3px;
+        font-size:12pt;
     }
     .view-in-tool {
-        padding-top: .5em;
+
         a {
             display: inline-block;
             width: 100%;
@@ -97,11 +121,24 @@
                 color: #000;
             }
         }
+
+    }
+    .widget-pushup{
+        margin-bottom:-10px;
+        border-bottom:0px;
+    }
+    .pushup
+    {
+      margin-top:-6px;
+    }
+
+    .border-bottom{
+        border-bottom:1px solid silver;
     }
 
     .server-count {
         color: #777;
-        .text-2x-bold;
+        font-size:11pt;
 
         .fa-arrow-up {
             padding-right: .25em;
