@@ -59,11 +59,11 @@
                 <div class="col-md-2">
                     {{result.result}}
                 </div> -->
-                <div class="col-md-1 border-bottom"  ng-show="(result.result == 'Passed')" class="servers-up"><span class="fa fa-arrow-up green"></span>
+                <div class="col-md-1 border-bottom"  ng-show="(result.result == 'Passed')" class="servers-up"><span class="fa fa-check Passed"></span>
                 </div>
-                <div class="col-md-1 border-bottom" ng-show="(result.result == 'Failed')" class="servers-down"><span class="fa fa-arrow-down red"></span>
+                <div class="col-md-1 border-bottom" ng-show="(result.result == 'Failed')" class="servers-down"><span class="fa fa-times Failed"></span>
                 </div>
-                <div class="col-md-1 border-bottom" ng-show="(result.result == 'Not Run')" class="servers-notrun"><span class="fa fa-exclamation orange"></span>
+                <div class="col-md-1 border-bottom" ng-show="(result.result == 'Not Run')" class="servers-notrun"><span class="fa fa-exclamation Notrun"></span>
                 </div>
                 <div class="col-md-11 border-bottom" style="font-size:12px;word-wrap:break-word; display:inline-block;">
                     {{result.testCaseName}}
