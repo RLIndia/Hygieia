@@ -1,11 +1,19 @@
 package com.capitalone.dashboard.collector;
 
-import com.capitalone.dashboard.model.Build;
-import com.capitalone.dashboard.model.BuildStatus;
-import com.capitalone.dashboard.model.BuildTestResult;
-import com.capitalone.dashboard.model.HudsonJob;
-import com.capitalone.dashboard.model.SCM;
-import com.capitalone.dashboard.util.Supplier;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
@@ -28,19 +36,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import com.capitalone.dashboard.model.Build;
+import com.capitalone.dashboard.model.BuildStatus;
+import com.capitalone.dashboard.model.BuildTestResult;
+import com.capitalone.dashboard.model.HudsonJob;
+import com.capitalone.dashboard.model.SCM;
+import com.capitalone.dashboard.util.Supplier;
 
 
 /**
@@ -183,13 +184,15 @@ public class DefaultHudsonClient implements HudsonClient {
 					addChangeSets(build, buildJson);
 
 					// getting the link to trx file 
-					BuildTestResult testResult;
+					BuildTestResult testResult = null;
 					try {
 						//testResult =  getBuildTestResult(buildUrl);
+						LOG.info("getting test results");
 						testResult =  getBuildTestResultCatalyst(buildUrl,instanceUrl);
 
 					} catch (Exception e) {
 						testResult = null;
+						LOG.error("Exception Occured while trying to fetch test result",e.getMessage());
 					}
 					if(testResult!=null) {
 						build.setBuildTestResult(testResult);
@@ -220,24 +223,75 @@ public class DefaultHudsonClient implements HudsonClient {
 		JSONParser parser = new JSONParser();
 		String buildJSONUrl = buildUrl+"/api/json";
 		ResponseEntity<String> jsonResp = makeRestCall(buildJSONUrl);
-		JSONObject obj = (JSONObject)parser.parse(jsonResp.toString());
+		JSONObject obj = (JSONObject)parser.parse(jsonResp.getBody());
 		// getting sub builds of main job
 		JSONArray subBuilds = (JSONArray)obj.get("subBuilds");
 		if(subBuilds != null && subBuilds.size() >0) {
 			JSONObject subBuild = (JSONObject) subBuilds.get(0);
 			String jobName = (String)subBuild.get("jobName");
-			int buildNumber = (int)subBuild.get("buildNumber");
-			String subBuildUrl = instanceUrl+"/"+jobName+"/"+buildNumber+"/api/json";
-			LOG.info("sub build url ===>"+subBuildUrl);
-			ResponseEntity<String> jsonRespSubBuild = makeRestCall(subBuildUrl);
-			JSONObject objSubBuild = (JSONObject)parser.parse(jsonRespSubBuild.toString());
+			long buildNumber = (long)subBuild.get("buildNumber");
+			String subBuildUrl = instanceUrl+"/job/"+jobName+"/"+buildNumber+"/api/json";
+			int totalCases = 0;
+			int passedCount = 0;
+			int failedcount = 0;
+			try{
+				LOG.info("sub build url ===>"+subBuildUrl);
+				ResponseEntity<String> jsonRespSubBuild = makeRestCall(subBuildUrl);
+				JSONObject objSubBuild = (JSONObject)parser.parse(jsonRespSubBuild.getBody());
 
-			// getting sub builds for sub build
-			JSONArray subBuildsInner = (JSONArray)obj.get("subBuilds");
-			if(subBuildsInner != null && subBuildsInner.size() >0) {
-				for(Object o:subBuildsInner) {
-					JSONObject jsonObj = (JSONObject)o;
+				// getting sub builds for sub build
+				JSONArray subBuildsInner = (JSONArray)objSubBuild.get("subBuilds");
+				if(subBuildsInner != null && subBuildsInner.size() >0) {
+					for(Object o:subBuildsInner) {
+						JSONObject jsonObj = (JSONObject)o;
+						String subJobName = (String)jsonObj.get("jobName");
+						long subBuildNumber = (long)jsonObj.get("buildNumber");
+						String url = instanceUrl+"/job/"+subJobName+"/"+subBuildNumber+"/cucumber-html-reports/catalyst/target/reports/json/CucumberCatalystReport.json";
+						LOG.info("report url ==>"+url);
+						ResponseEntity<String> reportEntity = makeRestCall(url);
+						JSONArray reportJsonArray = (JSONArray)parser.parse(reportEntity.getBody());
+						if(reportJsonArray != null && reportJsonArray.size()>0) {
+							for(Object testObj : reportJsonArray) {
+								JSONObject jObj = (JSONObject)testObj;
+								JSONArray elements = (JSONArray)jObj.get("elements");
+								if(elements !=null) {
+									totalCases = totalCases + elements.size();
+									for(Object casesObj : elements){
+										JSONObject caseJsonObj = (JSONObject)casesObj;
+										JSONArray steps = (JSONArray)caseJsonObj.get("steps");
+										String result = "passed";
+										for(Object stepObj : steps){
+											JSONObject stepJsonObj = (JSONObject)stepObj;
+											String status = (String)((JSONObject)stepJsonObj.get("result")).get("status");
+											if(status.equals("failed")) {
+												result = "failed";
+												break;
+											}
+										}
+										if(result.equals("failed")) {
+											failedcount++;
+										} else {
+											passedCount++;
+										}
+
+									}
+
+								}
+							}
+						}
+					}
 				}
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			if(totalCases>0) {
+				buildTestResult = new BuildTestResult();
+				buildTestResult.setFailed(failedcount+"");
+				buildTestResult.setTotal(totalCases+"");
+				buildTestResult.setExecuted(totalCases+"");
+				buildTestResult.setError(0+"");
+				buildTestResult.setPassed(passedCount+"");
 			}
 
 
