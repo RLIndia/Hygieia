@@ -9,9 +9,7 @@
     function FunctionalDetailController($modalInstance, day, collectorName, collector,DashStatus) {
         /*jshint validthis:true */
         var ctrl = this;
-        
         ctrl.statuses = DashStatus;
-        //console.log('statuses ==>',DashStatus,environment,collectorName)
         ctrl.environmentName = day.testCases.results[0].envName;
         ctrl.collectorName = collectorName;
         ctrl.testResults = day;

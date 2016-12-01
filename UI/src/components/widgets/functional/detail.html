@@ -4,8 +4,6 @@
             <div class="row">
                 <!-- {{detail}} -->
                 <div class="col-md-4">
-                    <!--<span class="dash-status-lg"-->
-                          <!--dash-status="{{detail.tests.totalPassed > 0 ? detail.statuses.FAIL : detail.statuses.PASS}}"></span>-->
                     <span class="environment-name">{{detail.environmentName}}</span>
                 </div>
 
@@ -49,16 +47,7 @@
             <!-- Close button -->
         </div>
         <div class="widget-detail-body">
-           <!--  {{detail}} -->
-            <!--(result.result != 'Passed') ? 'red':'green'"-->
             <div class="row border-bottom" ng-class="{Notrun:result.result=='Not Run',Passed:result.result=='Passed',Failed:result.result=='Failed'}" ng-repeat="result in detail.testResults.testCases.results | orderBy:['timeExecuted', 'testCaseName'] track by $index">
-
-                <!-- <div class="col-md-2" style="font-size:12px">
-                    <span>{{result.timeExecuted | date:'MMM d, HH:mm:ss'}}</span>
-                </div>
-                <div class="col-md-2">
-                    {{result.result}}
-                </div> -->
                 <div class="col-md-1 "  ng-show="(result.result == 'Passed')" class="servers-up"><span class="fa fa-check Passed"></span>
                 </div>
                 <div class="col-md-1 " ng-show="(result.result == 'Failed')" class="servers-down"><span class="fa fa-times Failed"></span>
@@ -69,7 +58,6 @@
                     {{result.testCaseName}}
                 </div>
             </div>
-
         </div>
     </div>
 </widget-modal>

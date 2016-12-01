@@ -29,43 +29,34 @@
             </td>
         </tr>
         <tr class="dash-row clickable" ng-repeat="functionalTestDay in functionalView.functionalTestDays | orderBy:fdsortType:sortReverse | filter:query" ng-click="functionalView.showDetail(functionalTestDay)">
-            <!-- <td>
-                <span
-                        dash-status="{{environment.failedComponents > 0 ? deployView.statuses.FAIL : deployView.statuses.PASS}}"
-                        dash-status-fail-text="{{environment.failedComponents}}"></span>
-            </td> -->
-            
              <td class="dash-overflow" style="text-align:center" >
-               <!--  {{functionalTestDay.status}} ng-class="(functionalTestDay.totalFailed != '0') ? 'orange' : 'green'" -->
-                <!--<span ng-if="functionalTestDay.totalFailed != '0'" class="fa fa-check ng-scope"></span>-->
-                <!--<span ng-if="functionalTestDay.totalFailed == '0'" class="fa fa fa-exclamation-circle ng-scope"></span>-->
                  <span ng-if="(functionalTestDay.totalPassed != '0') && (functionalTestDay.totalFailed == '0') && (functionalTestDay.totalNotrun == '0')" class="fa fa-check ng-scope green"></span>
                  <span ng-if="(functionalTestDay.totalPassed == '0') && (functionalTestDay.totalFailed == '0') && (functionalTestDay.totalNotrun != '0')" class="fa fa-exclamation ng-scope orange"></span>
                  <span ng-if="(functionalTestDay.totalPassed != '0') && (functionalTestDay.totalFailed != '0')" class="fa fa-check ng-scope orange"></span>
                  <span ng-if="(functionalTestDay.totalPassed == '0') && (functionalTestDay.totalFailed != '0')" class="fa fa-exclamation ng-scope red"></span>
-
-
              </td>
              <td class="dash-overflow" title="{{ functionalTestDay.date | date : 'HH:mm ss'}}" >
                  {{functionalTestDay.date |   date : shortDate}}
              </td>
              <td class="text-standard-date" style="text-align:center">
                  {{functionalTestDay.totalPassed}}
-
              </td>
-
              <td class="text-standard-date" style="text-align:center">
              {{functionalTestDay.totalFailed}}
-
              </td>
              <td class="text-standard-date" style="text-align:center">
                  {{functionalTestDay.totalNotrun}}
              </td>
              <td class="" style="text-align:right">
-
                  <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
              </td>
 
          </tr>
+        <tr>
+            <td ng-show="functionalView.functionalTestDays.length == 0" style="text-align:center" colspan="6">
+                <i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i>&nbsp;Data fetch in progress...
+            </td>
+
+        </tr>
      </table>
  </div>

@@ -126,18 +126,13 @@ public class SbuxFunctionalTestCollectorTask extends CollectorTask<Collector>{
 		List<FunctionalTestResult> newFunctionalTestResults = new ArrayList<>();
 		for (SBUXFunctionalTestEnvrironment environment : environments) {
 			List<FunctionalTestResult> functionalTestResults = sbuxClient.getFunctionalTestResults(environment);
-			
-			// removing old data 
+
 			List<FunctionalTestResult> oldFunctionalTestResults = functionalTestResultRepository.findByCollectorItemIdEnvId(environment.getId(),environment.getEnvId());
 			functionalTestResultRepository.delete(oldFunctionalTestResults);
-			
-			
 			for(FunctionalTestResult functionalTestResult : functionalTestResults) {
 				functionalTestResult.setCollectorItemId(environment.getId());
 				newFunctionalTestResults.add(functionalTestResult);
 			}
-			
-			
 		}
 		functionalTestResultRepository.save(newFunctionalTestResults);
 	}
