@@ -31,10 +31,27 @@
 			   required />
 	</form-group>
 
-	<form-group ng-if="repoConfig.repoOption.name == 'GitHub (public)' || repoConfig.repoOption.name == 'GitHub'  || repoConfig.repoOption.name == 'Bitbucket'"
+	<!-- <form-group ng-if="repoConfig.repoOption.name == 'GitHub (public)' || repoConfig.repoOption.name == 'GitHub'  || repoConfig.repoOption.name == 'Bitbucket'"
 				errors="{required:'Branch is required'}"
 				input="gitBranch"
 				class="text-center hidden">
+
+		<label class="modal-label" id="repoLabel">Branch</label>
+
+		<input
+			type="text"
+			name="gitBranch"
+			class="form-control text-center"
+			ng-model="repoConfig.gitBranch"
+			placeholder="Enter Branch"
+			required />
+
+	</form-group> -->
+	
+	<form-group ng-if="repoConfig.repoOption.name == 'GitHub (public)' || repoConfig.repoOption.name == 'GitHub'"
+				errors="{required:'Branch is required'}"
+				input="gitBranch"
+				class="text-center">
 
 		<label class="modal-label" id="repoLabel">Branch</label>
 
