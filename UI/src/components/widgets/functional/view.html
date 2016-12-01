@@ -35,31 +35,37 @@
                         dash-status-fail-text="{{environment.failedComponents}}"></span>
             </td> -->
             
-             <td class="dash-overflow" style="text-align:center" ng-class="(functionalTestDay.totalFailed != '0') ? 'orange' : 'green'">
-               <!--  {{functionalTestDay.status}} -->
-                <span ng-if="functionalTestDay.totalFailed != '0'" class="fa fa-check ng-scope"></span>
-                <span ng-if="functionalTestDay.totalFailed == '0'" class="fa fa fa-exclamation-circle ng-scope"></span>
-            </td>
-            <td class="dash-overflow" title="{{ functionalTestDay.date | date : 'HH:mm ss'}}" >
-                {{functionalTestDay.date |   date : shortDate}}
-            </td>
-            <td class="text-standard-date" style="text-align:center">
-                {{functionalTestDay.totalPassed}}
+             <td class="dash-overflow" style="text-align:center" >
+               <!--  {{functionalTestDay.status}} ng-class="(functionalTestDay.totalFailed != '0') ? 'orange' : 'green'" -->
+                <!--<span ng-if="functionalTestDay.totalFailed != '0'" class="fa fa-check ng-scope"></span>-->
+                <!--<span ng-if="functionalTestDay.totalFailed == '0'" class="fa fa fa-exclamation-circle ng-scope"></span>-->
+                 <span ng-if="(functionalTestDay.totalPassed != '0') && (functionalTestDay.totalFailed == '0') && (functionalTestDay.totalNotrun == '0')" class="fa fa-check ng-scope green"></span>
+                 <span ng-if="(functionalTestDay.totalPassed == '0') && (functionalTestDay.totalFailed == '0') && (functionalTestDay.totalNotrun != '0')" class="fa fa-exclamation ng-scope orange"></span>
+                 <span ng-if="(functionalTestDay.totalPassed != '0') && (functionalTestDay.totalFailed != '0')" class="fa fa-check ng-scope orange"></span>
+                 <span ng-if="(functionalTestDay.totalPassed == '0') && (functionalTestDay.totalFailed != '0')" class="fa fa-exclamation ng-scope red"></span>
 
-            </td>
-           
-            <td class="text-standard-date" style="text-align:center">
-            {{functionalTestDay.totalFailed}}
 
-            </td>
-            <td class="text-standard-date" style="text-align:center">
-                {{functionalTestDay.totalNotrun}}
-            </td>
-            <td class="" style="text-align:right">
-            
-                <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
-            </td>
-           
-        </tr>
-    </table>
-</div>
+             </td>
+             <td class="dash-overflow" title="{{ functionalTestDay.date | date : 'HH:mm ss'}}" >
+                 {{functionalTestDay.date |   date : shortDate}}
+             </td>
+             <td class="text-standard-date" style="text-align:center">
+                 {{functionalTestDay.totalPassed}}
+
+             </td>
+
+             <td class="text-standard-date" style="text-align:center">
+             {{functionalTestDay.totalFailed}}
+
+             </td>
+             <td class="text-standard-date" style="text-align:center">
+                 {{functionalTestDay.totalNotrun}}
+             </td>
+             <td class="" style="text-align:right">
+
+                 <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
+             </td>
+
+         </tr>
+     </table>
+ </div>

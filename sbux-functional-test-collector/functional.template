@@ -12,6 +12,6 @@ dbusername=
 dbpassword=
 
 #Collector schedule (required)
-sbux.cron=0 * * * * *
+sbux.cron=0 0/10 * * * *
 
 
