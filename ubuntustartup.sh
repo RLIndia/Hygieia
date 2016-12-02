@@ -32,16 +32,30 @@ nohup java -jar api.jar --spring.config.location=./dashboard.properties  &
 
 echo "Configuring Octopus collector"
 cd ../../octopus-deployment-collector/
-cp -f octopus.temifconplate target/application.properties
+cp -f octopus.template target/application.properties
 wget $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-#nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Jenkins collector"
-cd ../../jenkins-build-collectocd /
-#nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar  &
+cd ../../jenkins-build-collector/
+cp -f jenkins.template target/application.properties
+wget $1/d4dMastersCICD/readmasterjsonnew/20 -O target/temp.properties
+cat target/temp.properties >> target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
+
+echo "Configuring Bitbucket collector"
+cd ../../bitbucket-scm-collector/
+cp -f bitbucket.template target/application.properties
+wget $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
+cat target/temp.properties >> target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar  &
 
 echo "Configuring Functional Test collector"
 cd ../../sbux-functional-test-collector/
@@ -70,7 +84,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-#nohup java -jar jira-project-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar jira-project-collector-2.0.2-SNAPSHOT.jar &
 
 
 echo "Configuring Sonar collector"
@@ -93,7 +107,6 @@ cp -f testrail.template target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
 #nohup java -jar testrail-results-collector.jar &
-
 
  
 echo "Starting UI"
