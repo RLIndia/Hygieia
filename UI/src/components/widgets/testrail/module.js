@@ -5,7 +5,7 @@
         config = {
             view: {
                 defaults: {
-                    title: 'TestRail' // widget title
+                    title: 'Functional Test' // widget title
                 },
                 controller: 'TestRailViewController',
                 controllerAs: 'TestRailView',
