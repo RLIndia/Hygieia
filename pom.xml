@@ -284,5 +284,6 @@
       <module>jira-project-collector</module>
       <module>catalyst-deployment-collector</module>
       <module>testrail-results-collector</module>
+      <module>octopus-deployment-all-collector</module>
   </modules>
 </project>
