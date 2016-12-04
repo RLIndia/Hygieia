@@ -1,7 +1,16 @@
 package com.capitalone.dashboard;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 /**
- * Created by root on 12/3/16.
+ * Octopus Deploy Collector
+ *
  */
-public class App {
+@SpringBootApplication
+public class App
+{
+    public static void main( String[] args ){
+        SpringApplication.run(App.class, args);
+    }
 }

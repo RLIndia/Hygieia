@@ -1,7 +1,7 @@
 package com.capitalone.dashboard.repository;
 
-/**
- * Created by vinod on 12/3/16.
- */
-public interface OctopusCollectorRepository {
+import com.capitalone.dashboard.model.OctopusCollector;
+
+public interface OctopusCollectorRepository extends BaseCollectorRepository<OctopusCollector>{
+
 }

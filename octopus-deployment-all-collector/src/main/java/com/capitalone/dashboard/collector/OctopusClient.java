@@ -1,7 +1,25 @@
 package com.capitalone.dashboard.collector;
 
-/**
- * Created by root on 12/3/16.
- */
+import java.util.List;
+
+import com.capitalone.dashboard.model.ApplicationDeploymentHistoryItem;
+import com.capitalone.dashboard.model.Environment;
+import com.capitalone.dashboard.model.OctopusApplication;
+
 public interface OctopusClient {
+
+
+    List<OctopusApplication> getApplications();
+
+
+    List<Environment> getEnvironments();
+
+    List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application);
+
+    List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application,String environments);
+
+    void setContext(int sc);
+    int getContext();
+
+
 }

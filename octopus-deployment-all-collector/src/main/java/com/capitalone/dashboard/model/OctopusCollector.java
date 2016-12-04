@@ -1,7 +1,15 @@
 package com.capitalone.dashboard.model;
 
-/**
- * Created by vinod on 12/3/16.
- */
-public class OctopusCollector {
+
+
+public class OctopusCollector extends Collector{
+    public static OctopusCollector prototype() {
+        OctopusCollector protoType = new OctopusCollector();
+        protoType.setName("Octopus");
+        protoType.setCollectorType(CollectorType.Deployment);
+        protoType.setOnline(true);
+        protoType.setEnabled(true);
+        return protoType;
+    }
+
 }
