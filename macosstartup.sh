@@ -13,16 +13,7 @@ cd api
 echo "Installing Nginx"
 #apt-get install nginx -y
 echo "Stopping all java services"
-#killall java
-kill -9 $(ps -aux | grep java | grep api.jar | grep spring | awk '{print $2}')
-kill -9 $(ps -aux | grep java | grep octopus-deployment-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
-kill -9 $(ps -aux | grep java | grep jenkins-build-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
-kill -9 $(ps -aux | grep java | grep bitbucket-scm-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
-kill -9 $(ps -aux | grep java | grep sbux-functional-test-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
-kill -9 $(ps -aux | grep java | grep jira-project-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
-kill -9 $(ps -aux | grep java | grep sonar-codequality-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
-kill -9 $(ps -aux | grep java | grep catalyst-deployment-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
-kill -9 $(ps -aux | grep java | grep testrail-results-collector.jar | awk '{print $2}')
+pkill java
 
 echo "Configuring API"
 cp -f dashboard.template target/dashboard.properties
@@ -108,14 +99,14 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 #nohup java -jar testrail-results-collector.jar &
 
- 
+
 echo "Starting UI"
 cd ../../UI
-cp -r dist/* /usr/share/nginx/html/
-mkdir -p /etc/nginx/sites-enabled
-chmod 777 /etc/nginx/sites-enabled
-cat ../nginx.default > /etc/nginx/sites-enabled/default
-service nginx stop 
-service nginx start
+cp -r dist/* /usr/local/etc/nginx/html/
+mkdir -p /usr/local/etc/nginx/sites-enabled
+chmod 777 /usr/local/etc/nginx/sites-enabled
+cat ../nginx_mac.default > /usr/local/etc/nginx/sites-enabled/default
+sudo nginx -s stop
+sudo nginx
 #nohup node/node node_modules/gulp/bin/gulp.js serve &
 echo "Done..."
