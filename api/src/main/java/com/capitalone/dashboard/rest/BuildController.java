@@ -8,11 +8,14 @@ import com.capitalone.dashboard.model.DataResponse;
 import com.capitalone.dashboard.request.BuildDataCreateRequest;
 import com.capitalone.dashboard.request.BuildSearchRequest;
 import com.capitalone.dashboard.service.BuildService;
+
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +44,11 @@ public class BuildController {
     @RequestMapping(value = "/build", method = GET, produces = APPLICATION_JSON_VALUE)
     public DataResponse<Iterable<Build>> builds(@Valid BuildSearchRequest request) {
         return buildService.search(request);
+    }
+    
+    @RequestMapping(value = "/job/run/{componentId}", method = GET, produces = APPLICATION_JSON_VALUE)
+    public Boolean runJob(@PathVariable ObjectId componentId) {
+        return buildService.runJob(componentId);
     }
 
     @RequestMapping(value = "/build", method = POST,
