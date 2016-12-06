@@ -45,9 +45,10 @@ public class ChefDataServiceImpl implements ChefDataService {
 		CollectorItem item = component.getCollectorItems().get(CollectorType.Chef).get(0);
 		item = collectorItemRepository.findOne(item.getId());
 		
-		List<ChefNode> chefNodes = chefNodeRepository.findByCollectorItemId(item.getId());
+		List<ChefNode> chefNodes = (List<ChefNode>) chefNodeRepository.findByCollectorItemId(item.getId());
 		
 		Collector collector = collectorRepository.findOne(item.getCollectorId());
+		
 
 		return new DataResponse<>(chefNodes, collector.getLastExecuted());
 		

@@ -64,7 +64,7 @@ public class ChefCollectorTask extends CollectorTask<Collector> {
 		return chefSettings.getCron();
 	}
 
-	@Override
+	/*@Override
 	public void collect(Collector collector) {
 
 		List<CookbookCollectorItem> fethedCookbook = chefClient.getRunlist();
@@ -98,13 +98,48 @@ public class ChefCollectorTask extends CollectorTask<Collector> {
 				LOG.info("nodes size ==>"+nodes.size());
 				chefNodeRepository.deleteAll();
 				LOG.info("nodes deleted");
-				
+
 				chefNodeRepository.save(nodes);
 				LOG.info("total nodes saved ==>"+nodes.size());
 			}
 		}
 
 
+
+
+	}*/
+
+	@Override
+	public void collect(Collector collector) {
+		List<CookbookCollectorItem> cookbooksList = new ArrayList<CookbookCollectorItem>();
+		
+		CookbookCollectorItem item = new CookbookCollectorItem();
+		item.setCookbookName("nodes");
+		
+		CookbookCollectorItem fetchedItem = chefCookbookRepository.findCookbookCollectorItem(collector.getId(), item.getCookbookName());
+		if(fetchedItem == null){
+			item.setCollectorId(collector.getId());
+			item.setEnabled(false);
+			cookbooksList.add(item);
+		}
+		
+		chefCookbookRepository.save(cookbooksList);
+		
+		List<CookbookCollectorItem> cookbookItems = enabledCollectorItems(collector);
+		if(cookbookItems != null && cookbookItems.size()>0) {
+			CookbookCollectorItem enabledItem = cookbookItems.get(0);
+			List<ChefNode> nodes= chefClient.getNodes(enabledItem);
+			LOG.info("nodes ==>"+nodes);
+			if(nodes != null && nodes.size()!=0){
+				LOG.info("nodes size ==>"+nodes.size());
+				chefNodeRepository.deleteAll();
+				LOG.info("nodes deleted");
+				chefNodeRepository.save(nodes);
+				LOG.info("total nodes saved ==>"+nodes.size());
+			}
+		}
+
+		
 
 
 	}

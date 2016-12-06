@@ -9,14 +9,18 @@
         <thead>
        		<tr>
        		<th style="text-align:center">Environment</th>
-       			<th style="text-align:center">Name</th>
+       			<th style="text-align:center">Product</th>
+       			<th style="text-align:center">Version</th>
+       			<th style="text-align:center">Build</th>
        			<th style="text-align:center">IP</th>
        			
        		</tr>
        	</thead>
        		<tr class="issue-datarow pointer" ng-repeat="node in chefView.nodes">
        			<td style="text-align:center">{{node.envName}}</td>
-       			<td style="text-align:center">{{node.nodeName}}</td>
+       			<td style="text-align:center">{{node.productName}}</td>
+       			<td style="text-align:center">{{node.version}}</td>
+       			<td style="text-align:center">{{node.build}}</td>
        			<td style="text-align:center">{{node.ipAddress}}</td>
        		</tr>
           <tr>
