@@ -17,8 +17,6 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 import com.capitalone.dashboard.model.OctopusEnvironmentCollector;
 
-import com.capitalone.dashboard.model.Application;
-
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.EnvironmentComponentRepository;
@@ -26,7 +24,6 @@ import com.capitalone.dashboard.repository.EnvironmentStatusRepository;
 
 
 //This reference needs to be removed.
-import com.capitalone.dashboard.repository.OctopusApplicationRepository;
 
 import com.capitalone.dashboard.repository.OctopusEnvironmentRepository;
 
@@ -47,12 +44,12 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
     private final OctopusEnvironmentRepository octopusEnvironmentRepository;
     private final OctopusClient octopusClient;
 
-    private final EnvironmentComponentRepository envComponentRepository;
-    private final EnvironmentStatusRepository environmentStatusRepository;
+//    private final EnvironmentComponentRepository envComponentRepository;
+//    private final EnvironmentStatusRepository environmentStatusRepository;
 
     private final ComponentRepository dbComponentRepository;
 
-    private final EnvironmentComponentsAllRepository environmentComponentsAllRepository;
+//    private final EnvironmentComponentsAllRepository environmentComponentsAllRepository;
 
     private int contextOserver;
 
@@ -73,10 +70,10 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
 
         this.octopusEnvironmentRepository = octopusEnvironmentRepository;
 
-        this.envComponentRepository = envComponentRepository;
-        this.environmentStatusRepository = environmentStatusRepository;
-
-        this.environmentComponentsAllRepository = environmentComponentsAllRepository;
+//        this.envComponentRepository = envComponentRepository;
+//        this.environmentStatusRepository = environmentStatusRepository;
+//
+//        this.environmentComponentsAllRepository = environmentComponentsAllRepository;
 
         this.octopusClient = octopusClient;
 
@@ -92,7 +89,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
 
     @Override
     public BaseCollectorRepository<OctopusEnvironmentCollector> getCollectorRepository() {
-        return octopusEnvironmentRepository ;
+        return octopusCollectorRepository;
     }
 
     @Override
@@ -101,7 +98,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
     }
 
     @Override
-    public void collect(OctopusCollector collector) {
+    public void collect(OctopusEnvironmentCollector collector) {
 
 
 
@@ -152,7 +149,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
 
 
     @SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
-    private void clean(OctopusCollector collector) {
+    private void clean(OctopusEnvironmentCollector collector) {
         deleteUnwantedJobs(collector);
         Set<ObjectId> uniqueIDs = new HashSet<>();
         for (com.capitalone.dashboard.model.Component comp : dbComponentRepository
@@ -166,21 +163,21 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
                 uniqueIDs.add(ci.getId());
             }
         }
-        List<OctopusApplication> appList = new ArrayList<>();
+        List<OctopusEnvironment> envList = new ArrayList<>();
         Set<ObjectId> udId = new HashSet< >();
         udId.add(collector.getId());
-        for (OctopusApplication app : octopusApplicationRepository.findByCollectorIdIn(udId)) {
-            if (app != null) {
-                app.setEnabled(uniqueIDs.contains(app.getId()));
-                appList.add(app);
+        for (OctopusEnvironment env : octopusEnvironmentRepository.findByCollectorIdIn(udId)) {
+            if (env != null) {
+                env.setEnabled(uniqueIDs.contains(env.getId()));
+                envList.add(env);
             }
         }
-        octopusApplicationRepository.save(appList);
+        octopusEnvironmentRepository.save(envList);
     }
 
-    private void deleteUnwantedJobs(OctopusCollector collector) {
+    private void deleteUnwantedJobs(OctopusEnvironmentCollector collector) {
 
-        List<OctopusApplication> deleteAppList = new ArrayList<>();
+        List<OctopusEnvironment> deleteEnvList = new ArrayList<>();
         Set<ObjectId> udId = new HashSet<>();
         udId.add(collector.getId());
         //		for (OctopusApplication app : octopusApplicationRepository.findByCollectorIdIn(udId)) {
@@ -190,11 +187,11 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
         //			//            }
         //		}
 
-        octopusApplicationRepository.delete(deleteAppList);
+        octopusEnvironmentRepository.delete(deleteEnvList);
 
     }
 
-    private void addNewEnvironments(List<OctopusEnvironment> environments,OctopusCollector collector){
+    private void addNewEnvironments(List<OctopusEnvironment> environments,OctopusEnvironmentCollector collector){
         long start = System.currentTimeMillis();
         int count = 0;
 
@@ -216,56 +213,14 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
         }
     }
 
-    private boolean isNewEnvironment(OctopusCollector collector,
+    private boolean isNewEnvironment(OctopusEnvironmentCollector collector,
                                      OctopusEnvironment environment) {
         return octopusEnvironmentRepository.findOctopusEnvironment(
                 collector.getId(),
                 environment.getEnvId(),environment.getEnvName()) == null;
     }
 
-    private void addNewApplications(List<OctopusApplication> applications,
-                                    OctopusCollector collector) {
-        long start = System.currentTimeMillis();
-        int count = 0;
 
-        //log("All apps", start, applications.size());
-        for (OctopusApplication application : applications) {
-
-            if (isNewApplication(collector, application)) {
-                application.setCollectorId(collector.getId());
-                application.setEnabled(false);
-                application.setDescription(application.getApplicationName());
-                try {
-                    octopusApplicationRepository.save(application);
-                } catch (org.springframework.dao.DuplicateKeyException ce) {
-                    //	log("Duplicates items not allowed", 0);
-
-                }
-                count++;
-            }
-
-        }
-        //log("New apps", start, count);
-    }
-
-    private boolean isNewApplication(OctopusCollector collector,
-                                     OctopusApplication application) {
-        return octopusApplicationRepository.findUDeployApplication(
-                collector.getId(), octopusSettings.getUrl()[this.contextOserver],
-                application.getApplicationId()) == null;
-    }
-
-    private List<OctopusApplication> enabledApplications(
-            OctopusCollector collector, String instanceUrl) {
-        return octopusApplicationRepository.findEnabledApplications(
-                collector.getId(), instanceUrl);
-    }
-
-    private List<OctopusApplication> allApplications(
-            OctopusCollector collector, String instanceUrl) {
-        return octopusApplicationRepository.findApplications(
-                collector.getId());
-    }
 
     private List<EnvironmentComponent> getEnvironmentComponent(List<ApplicationDeploymentHistoryItem> dataList) {
         List<EnvironmentComponent> returnList = new ArrayList<>();
@@ -336,70 +291,6 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
         return returnList;
     }
 
-    private void saveAllComponents(List<OctopusApplication> octopusApplications,OctopusCollector collector) {
-        for (OctopusApplication application : octopusApplications) {
-            List<EnvironmentComponent> compList = new ArrayList<>();
-            List<EnvironmentComponentsAll> compListAll = new ArrayList<>();
-
-
-            long startApp = System.currentTimeMillis();
-
-            List<ApplicationDeploymentHistoryItem> applicationDeploymentHistoryItems = octopusClient.getApplicationDeploymentHistory(application,octopusSettings.getEnvironments()[this.contextOserver]);
-
-            LOGGER.info("history ==>"+applicationDeploymentHistoryItems.size());
-
-            compList.addAll(getEnvironmentComponent(applicationDeploymentHistoryItems));
-
-            //statusList.addAll(getEnvironmentStatus(applicationDeploymentHistoryItems));
-
-            //Converting to envcomponentall
-            LOGGER.info("CompList Size:" + compList.size());
-            for(EnvironmentComponent ec : compList){
-                EnvironmentComponentsAll eca = new EnvironmentComponentsAll();
-                eca.setAsOfDate(ec.getAsOfDate());
-                eca.setcollectorId(collector.getId());
-                eca.setComponentID(ec.getComponentID());
-                eca.setComponentName(ec.getComponentName());
-                eca.setComponentID(ec.getComponentID());
-                eca.setComponentVersion(ec.getComponentVersion());
-                eca.setDeployed(ec.isDeployed());
-                eca.setDeployTime(ec.getDeployTime());
-                eca.setEnvironmentID(ec.getEnvironmentID());
-                eca.setEnvironmentName(ec.getEnvironmentName());
-                eca.setEnvironmentUrl(ec.getEnvironmentUrl());
-                //Check if the same componentId and environemntID added then compare deploytime
-
-                if(isLatestDeploy(compListAll,ec))
-                    compListAll.add(eca);
-            }
-
-            LOGGER.info("compListAll ==>"+compListAll.size());
-
-            //LOGGER.info("statusList ==>"+statusList.size());
-
-//			if (!compList.isEmpty()) {
-//				List<EnvironmentComponent> existingComponents = envComponentRepository
-//						.findByCollectorItemId(application.getId());
-//				envComponentRepository.delete(existingComponents);
-//				envComponentRepository.save(compList);
-//			}
-            if (!compListAll.isEmpty()) {
-                LOGGER.info("Applicaiton ID searched for:" + application.getApplicationId());
-                List<EnvironmentComponentsAll> existingComponents = environmentComponentsAllRepository.findComponentForProject(collector.getId(),application.getApplicationId());
-
-                environmentComponentsAllRepository.delete(existingComponents);
-                environmentComponentsAllRepository.save(compListAll);
-            }
-//			if (!statusList.isEmpty()) {
-//				List<EnvironmentStatus> existingStatuses = environmentStatusRepository
-//						.findByCollectorItemId(application.getId());
-//				environmentStatusRepository.delete(existingStatuses);
-//				environmentStatusRepository.save(statusList);
-//			}
-
-            log(" " + application.getApplicationName(), startApp);
-        }
-    }
 
     private boolean isLatestDeploy(List<EnvironmentComponentsAll> compListAll,EnvironmentComponent ec){
         boolean canAdd = true;
@@ -418,42 +309,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
         return canAdd;
     }
 
-    private void updateData(List<OctopusApplication> octopusApplications) {
-        for (OctopusApplication application : octopusApplications) {
-            List<EnvironmentComponent> compList = new ArrayList<>();
-            List<EnvironmentStatus> statusList = new ArrayList<>();
-            long startApp = System.currentTimeMillis();
 
-            List<ApplicationDeploymentHistoryItem> applicationDeploymentHistoryItems = octopusClient.getApplicationDeploymentHistory(application);
-
-            //	LOGGER.info("history ==>"+applicationDeploymentHistoryItems.size());
-
-            compList.addAll(getEnvironmentComponent(applicationDeploymentHistoryItems));
-
-            statusList.addAll(getEnvironmentStatus(applicationDeploymentHistoryItems));
-
-
-
-            //	LOGGER.info("compList ==>"+compList.size());
-
-            //	LOGGER.info("statusList ==>"+statusList.size());
-
-            if (!compList.isEmpty()) {
-                List<EnvironmentComponent> existingComponents = envComponentRepository
-                        .findByCollectorItemId(application.getId());
-                envComponentRepository.delete(existingComponents);
-                envComponentRepository.save(compList);
-            }
-            if (!statusList.isEmpty()) {
-                List<EnvironmentStatus> existingStatuses = environmentStatusRepository
-                        .findByCollectorItemId(application.getId());
-                environmentStatusRepository.delete(existingStatuses);
-                environmentStatusRepository.save(statusList);
-            }
-
-            //	log(" " + application.getApplicationName(), startApp);
-        }
-    }
 
 
 

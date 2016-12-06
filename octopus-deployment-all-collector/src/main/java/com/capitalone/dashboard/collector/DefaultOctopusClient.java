@@ -43,35 +43,7 @@ public class DefaultOctopusClient implements OctopusClient{
     }
 
 
-    @Override
-    public List<OctopusApplication> getApplications() {
-        List<OctopusApplication> applications = new ArrayList<>();
-        boolean hasNext = true;
-        String urlPath = "/api/projects";
-        while(hasNext) {
 
-            JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],urlPath,octopusSettings.getApiKey()[contextOS]));
-
-            JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
-
-            for (Object item :jsonArray) {
-                JSONObject jsonObject = (JSONObject) item;
-                OctopusApplication application = new OctopusApplication();
-                application.setInstanceUrl(octopusSettings.getUrl()[contextOS]);
-                application.setApplicationName(str(jsonObject, "Name"));
-                application.setApplicationId(str(jsonObject, "Id"));
-                applications.add(application);
-            }
-            JSONObject links = (JSONObject)resJsonObject.get("Links");
-            urlPath = (String)links.get("Page.Next");
-
-            if(urlPath == null || urlPath.isEmpty()) {
-                hasNext = false;
-            }
-        }
-
-        return applications;
-    }
 
 
     @Override
@@ -103,129 +75,6 @@ public class DefaultOctopusClient implements OctopusClient{
         return environments;
     }
 
-    @Override
-    public List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application) {
-        return getApplicationDeploymentHistory(application,"");
-    }
-
-    @Override
-    public List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application,String environments) {
-        List<String> envs = new ArrayList<String>(Arrays.asList(environments.toLowerCase().split(",")));
-        List<ApplicationDeploymentHistoryItem> applicationDeployments = new ArrayList<>();
-
-        //setting envs to empty if argument is empty. Is is a fix due to the overloaded function
-        if(environments.isEmpty())
-            envs = new ArrayList<>();
-
-        boolean hasNext = true;
-        String urlPath = "/api/deployments?projects="+application.getApplicationId();
-        while(hasNext) {
-
-            JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
-                    urlPath,octopusSettings.getApiKey()[contextOS]));
-
-            JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
-
-            //	LOGGER.info("applicationID ==>"+application.getApplicationId());
-            //	LOGGER.info("Deployment History size ==>"+jsonArray.size());
-            //	LOGGER.info("environments ==>" + envs.toString());
-
-            for (Object item :jsonArray) {
-                JSONObject jsonObject = (JSONObject) item;
-                //LOGGER.info("Project Id ==>"+str(jsonObject, "ProjectId"));
-
-                ApplicationDeploymentHistoryItem historyItem = new ApplicationDeploymentHistoryItem();
-                historyItem.setApplicationId(application.getApplicationId());
-                historyItem.setApplicationName(application.getApplicationName());
-                historyItem.setEnvironmentId(str(jsonObject, "EnvironmentId"));
-                historyItem.setDeploymentId(str(jsonObject, "Id"));
-                JSONObject links = (JSONObject)jsonObject.get("Links");
-
-                historyItem.setDeployedWebUrl((String)links.get("Web"));
-                historyItem.setCollectorItemId(application.getId());
-
-                Environment env = getEnvironmentById(historyItem.getEnvironmentId());
-                historyItem.setEnvironmentName(env.getName());
-
-                //Skip saving if not in the list of environments
-
-                //			LOGGER.info("Envs : " + envs.isEmpty() + " Size " + envs.size() + " contains " + env.getName().toLowerCase() + " " + envs.contains(env.getName().toLowerCase()));
-                if(envs.size() > 0 && envs.contains(env.getName().toLowerCase()) == false){
-                    //LOGGER.info("Skipping saving history item..No env match found " + env.getName());
-                    continue;
-                }
-
-                Release rel = getReleaseById(str(jsonObject, "ReleaseId"));
-
-                historyItem.setVersion(rel.getVersion());
-
-                //LOGGER.info("Env Match found proceeding");
-
-
-                //historyItem.setAsOfDate(System.currentTimeMillis());// for testing
-
-                String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-                DateTimeFormatter dtf = DateTimeFormat.forPattern(pattern);
-                DateTime dateTime = dtf.parseDateTime(str(jsonObject, "Created"));
-
-                historyItem.setAsOfDate(dateTime.getMillis());
-
-                Task task = getTaskById(str(jsonObject, "TaskId"));
-                //LOGGER.info("Task ==>"+ jsonObject.toString());
-                historyItem.setDeployed(task.isState());
-
-
-                // getting list of machines
-                JSONArray specificMachineIds = (JSONArray) jsonObject.get("SpecificMachineIds");
-                if(specificMachineIds.size() == 0) {
-                    String deploymentProcessId =  (String)jsonObject.get("DeploymentProcessId");
-                    if(deploymentProcessId == null || deploymentProcessId.isEmpty()) {
-                        // version 2 of octopus.. trying to get id from release
-                        deploymentProcessId = rel.getDeploymentProcessSnapShotId();
-                    }
-                    Set<String> roleSet = getRolesFromDeploymentProcess(deploymentProcessId);
-                    List<Machine> machines;
-                    try {
-
-                        machines = getMachinesByEnvId(historyItem.getEnvironmentId(),roleSet);
-                        //					LOGGER.info("Machines by env ID: " + historyItem.getEnvironmentId() + " roleset:" + roleSet.toString());
-                    } catch (MalformedURLException e) {
-                        // TODO Auto-generated catch block
-                        //					LOGGER.error(e.getMessage());
-                        machines = new ArrayList<>();
-                    }
-                    historyItem.setMachines(machines);
-                } else {
-                    List<Machine> machines = new ArrayList<Machine>();
-                    for (Object obj :specificMachineIds) {
-                        String machineId = (String)obj;
-                        Machine m =null;
-                        try {
-                            m = getMachineById(machineId, historyItem.getEnvironmentId());
-                            //						LOGGER.info("Machines by ID : " + machineId +  " env id:" + historyItem.getEnvironmentId());
-                        } catch (MalformedURLException e) {
-                            // TODO Auto-generated catch block
-                            //						LOGGER.error(e.getMessage());
-                        }
-                        machines.add(m);
-                    }
-                    historyItem.setMachines(machines);
-                }
-                applicationDeployments.add(historyItem);
-                //		LOGGER.info("."); //including a running indicator
-            }
-
-            JSONObject links = (JSONObject)resJsonObject.get("Links");
-            urlPath = (String)links.get("Page.Next");
-
-            if(urlPath == null || urlPath.isEmpty()) {
-                hasNext = false;
-            }
-
-        }
-
-        return applicationDeployments;
-    }
 
     @Override
     public void setContext(int sc) {
@@ -388,11 +237,14 @@ public class DefaultOctopusClient implements OctopusClient{
         return rel;
     }
 
-    private Environment getEnvironmentById(String envId){
+    private OctopusEnvironment getEnvironmentById(String envId){
 
         JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
                 "/api/environments/"+envId,octopusSettings.getApiKey()[contextOS]));
-        Environment env = new Environment(envId, (String)resJsonObject.get("Name"));
+        OctopusEnvironment env = new OctopusEnvironment();
+        env.setEnvName((String)resJsonObject.get("Name"));
+        env.setEnvId((String)resJsonObject.get("Id"));
+       
 
         return env;
 
