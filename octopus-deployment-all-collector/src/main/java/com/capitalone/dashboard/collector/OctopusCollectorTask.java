@@ -8,22 +8,16 @@ import java.util.Map;
 import java.util.Set;
 
 
+import com.capitalone.dashboard.model.*;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
+import com.capitalone.dashboard.model.OctopusEnvironmentCollector;
 
-import com.capitalone.dashboard.model.ApplicationDeploymentHistoryItem;
-import com.capitalone.dashboard.model.CollectorItem;
-import com.capitalone.dashboard.model.CollectorType;
-
-import com.capitalone.dashboard.model.EnvironmentComponent;
-import com.capitalone.dashboard.model.EnvironmentStatus;
-import com.capitalone.dashboard.model.Machine;
-import com.capitalone.dashboard.model.OctopusApplication;
-import com.capitalone.dashboard.model.OctopusCollector;
+import com.capitalone.dashboard.model.Application;
 
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
@@ -31,23 +25,26 @@ import com.capitalone.dashboard.repository.EnvironmentComponentRepository;
 import com.capitalone.dashboard.repository.EnvironmentStatusRepository;
 
 
-
+//This reference needs to be removed.
 import com.capitalone.dashboard.repository.OctopusApplicationRepository;
+
+import com.capitalone.dashboard.repository.OctopusEnvironmentRepository;
+
 import com.capitalone.dashboard.repository.OctopusCollectorRepository;
 
 import com.capitalone.dashboard.repository.EnvironmentComponentsAllRepository;
-import com.capitalone.dashboard.model.EnvironmentComponentsAll;
 
 
 @Component
-public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
+public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollector>{
     private static final Logger LOGGER = LoggerFactory.getLogger(OctopusCollectorTask.class);
     private final OctopusCollectorRepository octopusCollectorRepository;
     private final OctopusSettings octopusSettings;
 
     private int contextOctopusIndex = 0;
 
-    private final OctopusApplicationRepository octopusApplicationRepository;
+
+    private final OctopusEnvironmentRepository octopusEnvironmentRepository;
     private final OctopusClient octopusClient;
 
     private final EnvironmentComponentRepository envComponentRepository;
@@ -63,7 +60,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
     @Autowired
     public OctopusCollectorTask(TaskScheduler taskScheduler,OctopusCollectorRepository octopusCollectorRepository
             ,OctopusSettings octopusSettings,
-                                OctopusApplicationRepository octopusApplicationRepository,
+                                OctopusEnvironmentRepository octopusEnvironmentRepository,
                                 EnvironmentComponentRepository envComponentRepository,
                                 EnvironmentStatusRepository environmentStatusRepository,
                                 OctopusClient octopusClient,
@@ -72,7 +69,9 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 
         this.octopusCollectorRepository = octopusCollectorRepository;
         this.octopusSettings = octopusSettings;
-        this.octopusApplicationRepository = octopusApplicationRepository;
+
+
+        this.octopusEnvironmentRepository = octopusEnvironmentRepository;
 
         this.envComponentRepository = envComponentRepository;
         this.environmentStatusRepository = environmentStatusRepository;
@@ -87,13 +86,13 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
     }
 
     @Override
-    public OctopusCollector getCollector() {
-        return OctopusCollector.prototype();
+    public OctopusEnvironmentCollector getCollector() {
+        return OctopusEnvironmentCollector.prototype();
     }
 
     @Override
-    public BaseCollectorRepository<OctopusCollector> getCollectorRepository() {
-        return octopusCollectorRepository;
+    public BaseCollectorRepository<OctopusEnvironmentCollector> getCollectorRepository() {
+        return octopusEnvironmentRepository ;
     }
 
     @Override
@@ -112,22 +111,39 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 
         String[] os = octopusSettings.getUrl();
         LOGGER.info("Only errors would be displayed..wait for finshed message");
+        /*
+        Design: Get list of env's, Get enabled envs, fetch apps for enabled envs, get deployment status, release version and date for apps.
+         */
+
+
+
         for(int co = 0; co < os.length; co++) {
 
             this.contextOserver=co;
             octopusClient.setContext(co);
             LOGGER.info("Octopus Server " + (octopusClient.getContext() + 1) + " " + octopusSettings.getUrl()[this.contextOserver]);
-            addNewApplications(octopusClient.getApplications(),
-                    collector);
 
-            List<OctopusApplication> applications = enabledApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
-            LOGGER.info("Enabled Applications ==>" + applications.size());
-            updateData(applications);
+            //Getting all envs
+//            List<OctopusEnvironment> envs = octopusClient.getEnvironments();
+//
+//            for(OctopusEnvironment env : envs){
+//                LOGGER.info("Environemnt: " + env.getEnvName() + " [" + env.getEnvId() + "]" );
+//
+//            }
 
-            List<OctopusApplication> allApplications = allApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
-            LOGGER.info("------------------------------------------");
-            LOGGER.info("All Applications ==>" + allApplications.size());
-            saveAllComponents(allApplications, collector);
+            addNewEnvironments(octopusClient.getEnvironments(),collector);
+
+//            addNewApplications(octopusClient.getApplications(),
+//                    collector);
+//
+//            List<OctopusApplication> applications = enabledApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
+//            LOGGER.info("Enabled Applications ==>" + applications.size());
+//            updateData(applications);
+//
+//            List<OctopusApplication> allApplications = allApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
+//            LOGGER.info("------------------------------------------");
+//            LOGGER.info("All Applications ==>" + allApplications.size());
+//            saveAllComponents(allApplications, collector);
         }
         log("Finished", start);
         LOGGER.info("Finished -------------------------------------");
@@ -176,6 +192,35 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 
         octopusApplicationRepository.delete(deleteAppList);
 
+    }
+
+    private void addNewEnvironments(List<OctopusEnvironment> environments,OctopusCollector collector){
+        long start = System.currentTimeMillis();
+        int count = 0;
+
+        for(OctopusEnvironment env : environments){
+            if(isNewEnvironment(collector,env)){
+                //Add this environment to the list
+                env.setCollectorId(collector.getId());
+                env.setEnabled(false);
+                try{
+                    octopusEnvironmentRepository.save(env);
+                    LOGGER.info("Added New Env " +  env.getEnvName());
+                }catch (org.springframework.dao.DuplicateKeyException ce){
+
+                }
+                //TO Do: Logic to clean up older environments, That is not used.
+            }else{
+                LOGGER.info("Skipped Adding Env, already in. " + env.getEnvName());
+            }
+        }
+    }
+
+    private boolean isNewEnvironment(OctopusCollector collector,
+                                     OctopusEnvironment environment) {
+        return octopusEnvironmentRepository.findOctopusEnvironment(
+                collector.getId(),
+                environment.getEnvId(),environment.getEnvName()) == null;
     }
 
     private void addNewApplications(List<OctopusApplication> applications,

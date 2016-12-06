@@ -3,7 +3,7 @@ package com.capitalone.dashboard.collector;
 import java.util.List;
 
 import com.capitalone.dashboard.model.ApplicationDeploymentHistoryItem;
-import com.capitalone.dashboard.model.Environment;
+import com.capitalone.dashboard.model.OctopusEnvironment;
 import com.capitalone.dashboard.model.OctopusApplication;
 
 public interface OctopusClient {
@@ -12,7 +12,7 @@ public interface OctopusClient {
     List<OctopusApplication> getApplications();
 
 
-    List<Environment> getEnvironments();
+    List<OctopusEnvironment> getEnvironments();
 
     List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application);
 

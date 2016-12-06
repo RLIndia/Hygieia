@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import com.capitalone.dashboard.model.*;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -22,12 +23,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
-import com.capitalone.dashboard.model.ApplicationDeploymentHistoryItem;
-import com.capitalone.dashboard.model.Environment;
-import com.capitalone.dashboard.model.Machine;
-import com.capitalone.dashboard.model.OctopusApplication;
-import com.capitalone.dashboard.model.Release;
-import com.capitalone.dashboard.model.Task;
 import com.capitalone.dashboard.util.Supplier;
 
 @Component
@@ -80,8 +75,8 @@ public class DefaultOctopusClient implements OctopusClient{
 
 
     @Override
-    public List<Environment> getEnvironments() {
-        List<Environment> environments = new ArrayList<>();
+    public List<OctopusEnvironment> getEnvironments() {
+        List<OctopusEnvironment> environments = new ArrayList<>();
         boolean hasNext = true;
         String urlPath = "/api/environments";
         while(hasNext) {
@@ -90,8 +85,11 @@ public class DefaultOctopusClient implements OctopusClient{
             JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
             for (Object item : jsonArray) {
                 JSONObject jsonObject = (JSONObject) item;
-                environments.add(new Environment(str(jsonObject, "Id"), str(
-                        jsonObject, "Name")));
+
+                OctopusEnvironment newEnv = new OctopusEnvironment();
+                newEnv.setEnvId(str(jsonObject,"Id"));
+                newEnv.setEnvName(str(jsonObject,"Name"));
+                environments.add(newEnv);
             }
 
             JSONObject links = (JSONObject)resJsonObject.get("Links");
