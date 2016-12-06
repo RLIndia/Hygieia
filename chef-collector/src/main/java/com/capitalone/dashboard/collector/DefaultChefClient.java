@@ -115,7 +115,7 @@ public class DefaultChefClient implements ChefClient {
 	}
 
 	@Override
-	public List<ChefNode> getNodes(CookbookCollectorItem enabledItem) {
+	public List<ChefNode> getNodes() {
 		List<ChefNode> nodes = null;
 		String sintlUrl = chefSettings.getSintlUrl();
 		URI uri = URI.create(sintlUrl);
@@ -134,7 +134,7 @@ public class DefaultChefClient implements ChefClient {
 				node.setVersion((String)n.get("version"));
 				node.setBuild((String)n.get("build"));
 				node.setDate((String)n.get("date"));
-				node.setCollectorItemId(enabledItem.getId());
+				//node.setCollectorItemId(enabledItem.getId());
 				nodes.add(node);
 			}
 			

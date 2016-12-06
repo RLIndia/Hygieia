@@ -111,35 +111,58 @@ public class ChefCollectorTask extends CollectorTask<Collector> {
 
 	@Override
 	public void collect(Collector collector) {
-		List<CookbookCollectorItem> cookbooksList = new ArrayList<CookbookCollectorItem>();
 		
-		CookbookCollectorItem item = new CookbookCollectorItem();
-		item.setCookbookName("nodes");
-		
-		CookbookCollectorItem fetchedItem = chefCookbookRepository.findCookbookCollectorItem(collector.getId(), item.getCookbookName());
-		if(fetchedItem == null){
-			item.setCollectorId(collector.getId());
-			item.setEnabled(false);
-			cookbooksList.add(item);
+		List<ChefNode> nodes= chefClient.getNodes();
+		if(nodes !=null) {
+			for(int i=0;i<nodes.size();i++) {
+				CookbookCollectorItem fetchedItem = chefCookbookRepository.findCookbookCollectorItem(collector.getId(), nodes.get(i).getProductName());
+				if(fetchedItem == null) {
+					CookbookCollectorItem item = new CookbookCollectorItem();
+					item.setCookbookName(nodes.get(i).getProductName());
+					item.setEnabled(false);
+					item.setCollectorId(collector.getId());
+					LOG.info("saving");
+					chefCookbookRepository.save(item);
+				}
+			}
 		}
 		
-		chefCookbookRepository.save(cookbooksList);
-		
+
 		List<CookbookCollectorItem> cookbookItems = enabledCollectorItems(collector);
 		if(cookbookItems != null && cookbookItems.size()>0) {
 			CookbookCollectorItem enabledItem = cookbookItems.get(0);
-			List<ChefNode> nodes= chefClient.getNodes(enabledItem);
 			LOG.info("nodes ==>"+nodes);
 			if(nodes != null && nodes.size()!=0){
-				LOG.info("nodes size ==>"+nodes.size());
+				List<ChefNode> saveNodes = new ArrayList<>();
+				
+				for(int i=0;i<nodes.size();i++) {
+					String productName = nodes.get(i).getProductName();
+					boolean found = false;
+					CookbookCollectorItem item = null;
+					for(int j=0;j<cookbookItems.size();j++) {
+						if(productName.equals(cookbookItems.get(j).getCookbookName())) {
+							found = true;
+							item = cookbookItems.get(j);
+							break;
+						}
+					}
+					if(found) {
+						ChefNode node = nodes.get(i);
+						node.setCollectorItemId(item.getId());
+						saveNodes.add(node);
+					}
+					
+				}
+				
+				LOG.info("nodes size ==>"+saveNodes.size());
 				chefNodeRepository.deleteAll();
 				LOG.info("nodes deleted");
-				chefNodeRepository.save(nodes);
-				LOG.info("total nodes saved ==>"+nodes.size());
+				chefNodeRepository.save(saveNodes);
+				LOG.info("total nodes saved ==>"+saveNodes.size());
 			}
 		}
 
-		
+
 
 
 	}
