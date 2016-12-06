@@ -1,0 +1,31 @@
+<widget-modal widget-modal-title="Configure Deploy Environment Widget">
+    <form class="deploy-config" name="configForm" ng-submit="deployAllConfigController.submit(configForm.$valid)" novalidate="novalidate">
+        <form-group input="deployJob" errors="{required:'Please select your Environment'}">
+            <label class="modal-label">
+                Environments:
+            </label>
+            <select name="deployJob"
+                    class="form-control"
+                    ng-model="deployConfig.deployJob"
+                    ng-options="job.name for job in deployConfig.deployJobs | orderBy: 'name' track by job.value"
+                    ng-disabled="deployConfig.jobDropdownDisabled"
+                    required>
+                <option value="">{{deployConfig.jobDropdownPlaceholder}}</option>
+            </select>
+        </form-group>
+
+        <hr/>
+
+        <div class="form-group text-center hidden">
+            <label class="modal-label">
+                Alert takeover criteria:
+            </label>
+            <br/>
+            If any environment is down
+        </div>
+
+        <div class="button-row row text-center">
+            <button type="submit" class="btn btn-primary btn-wide">Save</button>
+        </div>
+    </form>
+</widget-modal>

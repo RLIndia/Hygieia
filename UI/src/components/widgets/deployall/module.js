@@ -7,10 +7,15 @@
                 defaults: {
                     title: 'Deploy' // widget title
                 },
-                controller: 'deployallViewController',
+                controller: 'deployAllConfigController',
                 controllerAs: 'deployallView',
                 templateUrl: 'components/widgets/deployall/view.html'
             },
+            config: {
+                 controller: 'deployAllConfigController',
+                 controllerAs: 'deployAllConfigController',
+                 templateUrl: 'components/widgets/deployall/config.html'
+             },
             getState: getState
         };
 
@@ -25,10 +30,10 @@
     }
 
     function getState(widgetConfig) {
-//        return HygieiaConfig.local || widgetConfig.id ?
-//            widget_state.READY :
-//            widget_state.CONFIGURE;
-//Modified to always be ready
-        return widget_state.READY;
+        return HygieiaConfig.local || widgetConfig.id ?
+            widget_state.READY :
+            widget_state.CONFIGURE;
+        //Modified to always be ready
+        //return widget_state.READY;
     }
 })();

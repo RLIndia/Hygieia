@@ -244,7 +244,7 @@ public class DefaultOctopusClient implements OctopusClient{
         OctopusEnvironment env = new OctopusEnvironment();
         env.setEnvName((String)resJsonObject.get("Name"));
         env.setEnvId((String)resJsonObject.get("Id"));
-       
+
 
         return env;
 

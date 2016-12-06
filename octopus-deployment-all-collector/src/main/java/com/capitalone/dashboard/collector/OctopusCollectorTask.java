@@ -62,7 +62,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
                                 EnvironmentStatusRepository environmentStatusRepository,
                                 OctopusClient octopusClient,
                                 ComponentRepository dbComponentRepository, EnvironmentComponentsAllRepository environmentComponentsAllRepository) {
-        super(taskScheduler, "Octopus");
+        super(taskScheduler, "OctopusEnvironment");
 
         this.octopusCollectorRepository = octopusCollectorRepository;
         this.octopusSettings = octopusSettings;
