@@ -1,6 +1,7 @@
-<widget-modal widget-modal-title="Configure Build Widget" class="build-config">
+<widget-modal widget-modal-title="Configure Jenkins Widget" class="build-config">
     <form name="buildConfigForm" role="form" ng-submit="buildConfig.submit(buildConfigForm.$valid)" novalidate="novalidate">
         <form-group class="text-center" input="collectorItemId" errors="{required: 'Please select a collector'}">
+            <label class="modal-label">Select Job</label>
             <select name="collectorItemId"
                     class="form-control"
                     ng-model="buildConfig.collectorItemId"
@@ -11,7 +12,7 @@
             </select>
         </form-group>
 
-        <form-group class="text-center" input="buildDurationThreshold" errors="{required:'Build threshold is required', pattern: 'Please enter a number'}">
+        <form-group class="text-center hidden" input="buildDurationThreshold" errors="{required:'Build threshold is required', pattern: 'Please enter a number'}">
             <label class="modal-label">Build duration threshold</label>
             <input
                 type="text"
@@ -27,7 +28,7 @@
 
         <hr/>
 
-        <form-group input="buildConsecutiveFailureThreshold" class="text-center" errors="{required:'Takeover criteria is required', pattern:'Please enter a number'}">
+        <form-group input="buildConsecutiveFailureThreshold" class="text-center hidden" errors="{required:'Takeover criteria is required', pattern:'Please enter a number'}">
             <label class="modal-label">Alert takeover criteria:</label>
             <input
                 type="text"

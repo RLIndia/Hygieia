@@ -46,12 +46,12 @@
             function getBuildJobs(data, currentCollectorItemId, cb) {
                 var builds = [],
                     selectedIndex = null;
-
+                //Original: // name: ((obj.niceName != null) && (obj.niceName != "") ? obj.niceName + '-' + obj.description : obj.collector.name + '-' + obj.description)
                 for (var x = 0; x < data.length; x++) {
                     var obj = data[x];
                     var item = {
                         value: obj.id,
-                        name: ((obj.niceName != null) && (obj.niceName != "") ? obj.niceName + '-' + obj.description : obj.collector.name + '-' + obj.description)
+                        name: ((obj.niceName != null) && (obj.niceName != "") ? obj.niceName + '-' + obj.description : obj.description)
                     };
                     builds.push(item);
 

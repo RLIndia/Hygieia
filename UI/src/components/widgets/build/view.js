@@ -206,6 +206,7 @@
                 builds = data.result;
                 processResponse(builds);
                 deferred.resolve(data.lastUpdated);
+                ctrl.latestBuildTestResultsAvailable = false;
                 if(data.result && data.result.length) {
                 	var latestBuild;
                 	var build1 = data.result[0];
@@ -215,9 +216,10 @@
                 	} else {
                 		latestBuild = build2;
                 	}
-                	
+
                 	if(latestBuild.buildTestResult) {
                 		ctrl.latestBuildTestResult = latestBuild.buildTestResult;
+                		ctrl.latestBuildTestResultsAvailable = true;
                 	}
                 	
                 }

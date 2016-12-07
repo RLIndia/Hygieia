@@ -1,18 +1,18 @@
-<div class="widget average-build-duration">
+<div class="widget average-build-duration" ng-if="buildView.latestBuildTestResultsAvailable">
     <div class="widget-heading">
-        Latest Build Test Results
+        Last Successful Build - Unit Test Results
     </div>
     <div class="widget-body">
-   
-    <table class="table">
-   	<tbody>
-   	<tr><td class="ca-name" style="padding:0">Total</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.total}}</td></tr>
-   	<tr><td style="padding:0" class="ca-name">Executed</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.executed}}</td></tr>
-   	<tr><td style="padding:0" class="ca-name">Passed</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.passed}}</td></tr>
-   	<tr><td style="padding:0" class="ca-name">Failed</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.failed}}</td></tr>
-   	<tr><td style="padding:0" class="ca-name">Error</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.error}}</td></tr>
-   	</tbody>
-   	</table>
+
+		<table class="table">
+			<tbody>
+				<tr><td class="ca-name" style="padding:0">Total</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.total}}</td></tr>
+				<tr><td style="padding:0" class="ca-name">Executed</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.executed}}</td></tr>
+				<tr><td style="padding:0" class="ca-name">Passed</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.passed}}</td></tr>
+				<tr><td style="padding:0" class="ca-name">Failed</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.failed}}</td></tr>
+				<tr><td style="padding:0" class="ca-name">Error</td><td style="padding:0" class="ca-value">{{buildView.latestBuildTestResult.error}}</td></tr>
+			</tbody>
+		</table>
         
     </div>
     
