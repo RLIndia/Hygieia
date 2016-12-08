@@ -5,7 +5,7 @@
         config = {
             view: {
                 defaults: {
-                    title: 'Catalyst Deploy' // widget title
+                    title: 'Deploy' // widget title
                 },
                 controller: 'catalystDeployViewController',
                 controllerAs: 'catalystDeployView',
