@@ -79,7 +79,10 @@ public class DefaultTestrailClient implements TestrailClient {
             //Get the run detail
 
             JSONObject runDetail = (JSONObject) client.sendGet("get_run/" + runObj.get("id"));
+
             LOG.info("Reading Details for project : " + projectId + " run : " + runObj.get("id"));
+            if(runDetail.get("milestone_id") == null)
+                continue;
             LOG.info(runDetail.get("milestone_id").toString() + " " + milestoneId);
             LOG.info("Finding match " + (runDetail.get("milestone_id").toString().contentEquals(milestoneId)) );
             if(runDetail.get("milestone_id").toString().contentEquals(milestoneId)) {

@@ -1,6 +1,6 @@
 <widget-modal widget-modal-close="true">
 	<div class="widget-detail build-detail">
-		<div class="widget-detail-heading">
+		<div class="widget-detail-heading" style="border-bottom:0px !important">
 			<div class="row">
 				<div class="col-md-3 build-desc">
 					<span class="dash-status-lg" dash-status="{{detail.buildPassed()}}"></span>
@@ -27,7 +27,7 @@
 		</div>
 		<div class="widget-detail-body">
 			<span class="no-changesets" ng-hide="detail.build.sourceChangeSet.length">No Changes</span>
-			<table class="table" ng-show="detail.build.sourceChangeSet.length">
+			<table class="table detailsTableMargin" ng-show="detail.build.sourceChangeSet.length">
 				<thead>
 					<tr>
 						<th>Revision</th>
@@ -36,10 +36,10 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="changeSet in detail.build.sourceChangeSet">
-						<td>{{::changeSet.scmRevisionNumber | limitTo:8}}</td>
-						<td>{{::changeSet.scmAuthor}}</td>
-						<td>{{::changeSet.scmCommitLog}}</td>
+					<tr class="detailsFont" ng-repeat="changeSet in detail.build.sourceChangeSet">
+						<td class="borderbottom">{{::changeSet.scmRevisionNumber | limitTo:8}}</td>
+						<td  class="borderbottom">{{::changeSet.scmAuthor}}</td>
+						<td  class="borderbottom">{{::changeSet.scmCommitLog}}</td>
 					</tr>
 				</tbody>
 			</table>

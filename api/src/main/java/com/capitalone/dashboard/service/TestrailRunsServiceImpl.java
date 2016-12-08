@@ -71,6 +71,8 @@ public class TestrailRunsServiceImpl implements TestrailRunsService {
             testrailRunObj.put("passedCount",testRailRun.getPassedCount());
             testrailRunObj.put("retestCount",testRailRun.getRetestCount());
             testrailRunObj.put("untestedCount",testRailRun.getUntestedCount());
+//            testrailRunObj.put("projectId",(String) item.getOptions().get("projectId"));
+//            testrailRunObj.put("milestoneId",(String) item.getOptions().get("milestoneId"));
             testrailRunObj.put("url",testRailRun.getUrl());
             testrailRunObj.put("name",testRailRun.getName());
             testRailRuns.add(testrailRunObj);

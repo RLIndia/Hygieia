@@ -20,16 +20,17 @@
 		ctrl.milestoneName = $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.milestoneName;
 		function load() {
 			var deferred = $q.defer();
-			console.log("*********************");
+			console.log("*********Test Rail************");
 			console.log($scope.widgetConfig.componentId);
 			console.log($scope.dashboard.application.components[0].collectorItems.Testrail[0].options.milestoneName);
 			ctrl.title = $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.projectName;
 			$scope.subtitle = '[' + ctrl.title + ']';
 			$scope.fdsortType = 'date';
 			$scope.sortReverse = true;
-			console.log("***********************");
+
 			testrailRunData.details($scope.widgetConfig.componentId).then(function(data) {
 				processResponse(data.result);
+
 				deferred.resolve(data.lastUpdated);
 			});
 			return deferred.promise;
@@ -44,9 +45,11 @@
 			// 	datatemp.passPercent = ()
 
 			// }
+			console.log(data.runs);
 			ctrl.testrailRuns = data.runs;
 			ctrl.projectId = $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.projectId;
 			ctrl.milestoneId = $scope.dashboard.application.components[0].collectorItems.Testrail[0].options.milestoneId;
+			console.log("**********Test Rail End*************");
 		}
 
 		function showDetail(runId1,runName){

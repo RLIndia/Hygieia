@@ -33,6 +33,29 @@
         function (data) {
             
             var projects = [];
+            console.log("**************** Scope start ***************");
+//            console.log(TestrailCollector[0].options.milestoneId);
+//            console.log(TestrailCollector[0].options.projectId);
+            if(TestrailCollector[0].options.milestoneId && TestrailCollector[0].options.projectId){
+                ctrl.selectedproject =  {
+                                        "name": TestrailCollector[0].options.projectName,
+                                        "value":TestrailCollector[0].options.projectId,
+                                        "milestone":
+                                            {
+                                                "name": TestrailCollector[0].options.milestoneName,
+                                                "value":TestrailCollector[0].options.milestoneId
+                                            }
+                                    };
+
+             }
+             else{
+                ctrl.selectedproject =  {};
+             }
+              console.log(ctrl.selectedproject);
+//            console.log(TestrailCollector[0].options.projectId);
+            //console.log(TestrailCollector);
+            console.log("**************** Scope end ***************");
+
             for(var i = 0; i < data.length;i++){
                 //var project = data[i].options;
                 //check if a project entry with the id exists
@@ -64,20 +87,14 @@
                     projects.push(project);
 
                 }
-                if(data[i].enabled){
-                    console.log('in enabled');
-                    ctrl.selectedproject =  {
-                        "name": data[i].options.projectName,
-                        "value":data[i].options.projectId,
-                        "milestone":
-                            {
-                                "name": data[i].options.milestoneName,
-                                "value":data[i].id
-                            }
-                    }
-                    console.log(ctrl.selectedproject);
-                }
-                console.log(data[i]);
+                console.log(data);
+//                if(data[i].enabled){
+//                    console.log('in enabled');
+//                    //
+//
+//                    console.log(ctrl.selectedproject);
+//                }
+//                console.log(data[i]);
             }
             ctrl.testrailprojects = projects;
             ctrl.projectChange = projectChange;
@@ -90,27 +107,30 @@
                         }
                         //populate the milestones dropdown
                         
-                        for(var k = 0; k < projects.length;k++){
-                            console.log("in loop " + projects[k].value + " " + ctrl.selectedproject.value);
-                            if(projects[k].value == ctrl.selectedproject.value){
-                                $scope.TestRailConfig.testrailmilestones = projects[k].milestones;
-                                $scope.TestRailConfig.selectmilestone = ctrl.selectedproject.milestone;
-                            }
-                        }
+//                        for(var k = 0; k < projects.length;k++){
+//                            console.log("in loop " + projects[k].value + " " + ctrl.selectedproject.value);
+//                            if(projects[k].value == ctrl.selectedproject.value){
+//                                $scope.TestRailConfig.testrailmilestones = projects[k].milestones;
+//                                $scope.TestRailConfig.selectedmilestone = ctrl.selectedproject.milestone;
+//                                console.log('in selected project');
+//                            }
+//                        }
 
+
+                        $scope.TestRailConfig.selectedmilestone = ctrl.selectedproject.milestone;
                         
-                           console.log('in selected project');
+
                             console.log($scope.TestRailConfig.selectedProject);
                            //ctrl.projectChange(ctrl,$scope.TestRailConfig.selectedProject);
                 }
                 else
                     ctrl.testrailmilestones = [];
             
-            console.log(data);
+            //console.log(data);
         	});
 
         function projectChange(TestRailConfig,selectedProject){
-             //   console.log('in change');
+                console.log('in change');
               //  console.log(catalystRepoConfig, selectprojects);
                 console.log(ctrl.selectedproject);
                // console.log($scope.selectedProjectabcd);
@@ -125,7 +145,7 @@
                             if(TestRailConfig.selectedproject)
                              {
 
-                                TestRailConfig.selectmilestone = TestRailConfig.selectedproject.milestone;
+                                TestRailConfig.selectedmilestone = TestRailConfig.selectedproject.milestone;
                                 console.log('in selected milestone');
                             }
                        }

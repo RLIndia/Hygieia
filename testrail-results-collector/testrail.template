@@ -13,8 +13,8 @@ dbpassword=
 
 #Collector schedule (required)
 testrail.cron=0 * * * * *
-testrail.baseurl=https://relevancelab.testrail.net/
+testrail.baseurl=https://scholastic.testrail.net/
 testrail.api=index.php?/api/v2/
-testrail.username=vinod.nair@relevancelab.com
-testrail.password=pass@123
+testrail.username=ckottakota-consultant@scholastic.com
+testrail.password=Apple@123
 
