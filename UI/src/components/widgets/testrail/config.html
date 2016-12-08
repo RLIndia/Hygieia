@@ -4,7 +4,7 @@
         <form-group input="TestRailConfigProjects" errors="{required:'Please select all fields'}">
            
              <div class="dash-modal-row clearfix">
-                    <label>Project:{{TestRailConfig.selectedproject}}</label>
+                    <label>Project:</label>
 
                      <select name="selectprojects"
                             class="form-control"
@@ -22,7 +22,7 @@
 
                      <select name="selectmilestone"
                             class="form-control"
-                            ng-model="TestRailConfig.selectedmilestone"
+                            ng-model="TestRailConfig.selectedMilestone"
                             ng-options="obj.name for obj in TestRailConfig.testrailmilestones track by obj.value"
                             
                             required>

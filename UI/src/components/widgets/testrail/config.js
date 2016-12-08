@@ -88,13 +88,6 @@
 
                 }
                 console.log(data);
-//                if(data[i].enabled){
-//                    console.log('in enabled');
-//                    //
-//
-//                    console.log(ctrl.selectedproject);
-//                }
-//                console.log(data[i]);
             }
             ctrl.testrailprojects = projects;
             ctrl.projectChange = projectChange;
@@ -105,16 +98,27 @@
                             "name": ctrl.selectedproject.name,
                             "value": ctrl.selectedproject.value
                         }
+
                         //populate the milestones dropdown
                         
-//                        for(var k = 0; k < projects.length;k++){
-//                            console.log("in loop " + projects[k].value + " " + ctrl.selectedproject.value);
-//                            if(projects[k].value == ctrl.selectedproject.value){
-//                                $scope.TestRailConfig.testrailmilestones = projects[k].milestones;
-//                                $scope.TestRailConfig.selectedmilestone = ctrl.selectedproject.milestone;
-//                                console.log('in selected project');
-//                            }
-//                        }
+                        for(var k = 0; k < projects.length;k++){
+                            console.log("in loop " + projects[k].value + " " + ctrl.selectedproject.value);
+                            if(projects[k].value == ctrl.selectedproject.value){
+                                $scope.TestRailConfig.testrailmilestones = projects[k].milestones;
+                                for(var l =0; l < projects[k].milestones.length; l++){
+                                    if(projects[k].milestones[l].name == ctrl.selectedproject.milestone.name){
+                                        console.log('in selected milestone');
+                                        $scope.TestRailConfig.selectedMilestone = {
+                                                "name": ctrl.selectedproject.milestone.name,
+                                                "value":projects[k].milestones[l].value
+                                        }
+                                    }
+                                }
+
+                                console.log($scope.TestRailConfig.selectedMilestone)
+                                console.log('in selected project');
+                            }
+                        }
 
 
                         $scope.TestRailConfig.selectedmilestone = ctrl.selectedproject.milestone;
