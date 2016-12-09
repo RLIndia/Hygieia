@@ -27,22 +27,22 @@
             console.log(data);
             function getEnvs(data, currentCollectorId, cb) {
 
-//                var selectedIndex = null;
-//
-//                var deploys = _(data).map(function(deploy, idx) {
-//                    if(deploy.id == currentCollectorId) {
-//                        selectedIndex = idx;
-//                    }
-//                    return {
-//                        value: deploy.id,
-//                        name: deploy.options.applicationName
-//                    };
-//                }).value();
-//
-//                cb({
-//                    deploys: deploys,
-//                    selectedIndex: selectedIndex
-//                });
+                var selectedIndex = null;
+
+                var deployenvs = _(data).map(function(deployenv, idx) {
+                    if(deployenv.id == currentCollectorId) {
+                        selectedIndex = idx;
+                    }
+                    return {
+                        value: deployenv.options.envId,
+                        name: deployenv.options.envName
+                    };
+                }).value();
+
+                cb({
+                    deployenvs: deployenvs,
+                    selectedIndex: selectedIndex
+                });
             }
 
             var deployCollector = modalData.dashboard.application.components[0].collectorItems.Deployment;
@@ -53,12 +53,13 @@
         }
 
         function getDeploysCallback(data) {
-                 ctrl.jobDropdownDisabled = false;
-                ctrl.jobDropdownPlaceholder = 'Select your application';
-                ctrl.deployJobs = data.deploys;
-
+                 ctrl.envsDropdownDisabled = false;
+                ctrl.envDropdownPlaceholder = 'Select your environments';
+                ctrl.deployAllEnvs = data.deployenvs;
+                console.log("In Call back");
+                console.log(ctrl.deployAllEnvs);
                 if(data.selectedIndex !== null) {
-                    ctrl.deployJob = data.deploys[data.selectedIndex];
+                    ctrl.deployEnv = data.deployenvs[data.selectedIndex];
                 }
         }
 
@@ -68,12 +69,12 @@
             if (valid) {
                 var form = document.configForm;
                 var postObj = {
-                    name: 'deploy',
+                    name: 'deployenv',
                     options: {
                         id: widgetConfig.options.id
                     },
                     componentId: modalData.dashboard.application.components[0].id,
-                    collectorItemId: form.deployJob.value
+                    collectorItemId: form.deployEnv.value
                 };
 
                 $modalInstance.close(postObj);

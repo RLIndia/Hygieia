@@ -1,14 +1,14 @@
 <widget-modal widget-modal-title="Configure Deploy Environment Widget">
     <form class="deploy-config" name="configForm" ng-submit="deployAllConfigController.submit(configForm.$valid)" novalidate="novalidate">
-        <form-group input="deployJob" errors="{required:'Please select your Environment'}">
+        <form-group input="deployEnv" errors="{required:'Please select your Environment'}">
             <label class="modal-label">
-                Environments:
+                Environments:... {{deployConfig}}
             </label>
-            <select name="deployJob"
+            <select name="deployEnv"
                     class="form-control"
-                    ng-model="deployConfig.deployJob"
-                    ng-options="job.name for job in deployConfig.deployJobs | orderBy: 'name' track by job.value"
-                    ng-disabled="deployConfig.jobDropdownDisabled"
+                    ng-model="deployConfig.deployAllEnv"
+                    ng-options="env.name for env in deployConfig.deployAllEnvs | orderBy: 'name' track by env.value"
+                    ng-disabled="deployConfig.envsDropdownDisabled"
                     required>
                 <option value="">{{deployConfig.jobDropdownPlaceholder}}</option>
             </select>
