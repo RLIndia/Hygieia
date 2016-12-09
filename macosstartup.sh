@@ -37,7 +37,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/20 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-#nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Bitbucket collector"
 cd ../../bitbucket-scm-collector/
@@ -46,7 +46,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-#nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar  &
+nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar  &
 
 echo "Configuring Functional Test collector"
 cd ../../sbux-functional-test-collector/
@@ -97,7 +97,7 @@ cd ../../testrail-results-collector/
 cp -f testrail.template target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar testrail-results-collector.jar &
+#nohup java -jar testrail-results-collector.jar &
 
 
 echo "Starting UI"

@@ -14,119 +14,6 @@
     	var ctrl = this;
         var builds = [];
 
-        
-       
-        //region Chart Configuration
-        // line chart config
-
-        // ctrl.lineOptions = {
-        //     plugins: [
-        //         Chartist.plugins.gridBoundaries(),
-        //         Chartist.plugins.lineAboveArea(),
-        //         Chartist.plugins.tooltip(),
-        //         Chartist.plugins.pointHalo(),
-        //         Chartist.plugins.ctPointClick({
-        //             onClick: pointDetail
-        //         }),
-        //         Chartist.plugins.ctPointLabels({
-        //             textAnchor: 'middle'
-        //         })
-        //     ],
-        //     showArea: true,
-        //     lineSmooth: false,
-        //     fullWidth: true,
-        //     chartPadding: 7,
-        //     height: '165px',
-        //     axisX: {
-        //         showLabel: true,
-        //     },
-        //     axisY: {
-        //         labelInterpolationFnc: function(value) {
-        //             return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
-        //         },
-        //         showLabel: true
-        //     }
-        // };
-
-        // ctrl.lineOptions = {
-        //     plugins: [
-        //         Chartist.plugins.gridBoundaries(),
-        //         Chartist.plugins.lineAboveArea(),
-        //         Chartist.plugins.tooltip(),
-        //         Chartist.plugins.pointHalo(),
-        //         Chartist.plugins.ctPointClick({
-        //             onClick: pointDetail
-        //         }),
-        //         Chartist.plugins.ctPointLabels({
-        //             textAnchor: 'middle'
-        //         }),
-        //         Chartist.plugins.axisLabels({
-        //             stretchFactor: 1.4,
-        //             axisX: {
-        //                 labels: [
-        //                     moment().subtract(14, 'days').format('MMM DD'),
-        //                     moment().subtract(7, 'days').format('MMM DD'),
-        //                     moment().format('MMM DD')
-        //                 ]
-        //             }
-        //         }),
-        //     ],
-        //     showArea: true,
-        //     lineSmooth: false,
-        //     fullWidth: true,
-        //     chartPadding: 7,
-        //     height: '165px',
-        //     axisX: {
-        //         showLabel: true,
-        //     },
-        //     axisY: {
-        //         labelInterpolationFnc: function(value) {
-        //             return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
-        //         },
-        //         showLabel: true
-        //     }
-        // };
-
-        //  ctrl.lineOptions = {
-        //     plugins: [
-        //         Chartist.plugins.gridBoundaries(),
-        //         Chartist.plugins.lineAboveArea(),
-        //         Chartist.plugins.pointHalo(),
-        //         Chartist.plugins.ctPointClick({
-        //             onClick: pointDetail
-        //         }),
-        //         Chartist.plugins.axisLabels({
-        //             stretchFactor: 1.4,
-        //             axisX: {
-        //                 labels: [
-        //                     moment().subtract(14, 'days').format('MMM DD'),
-        //                     moment().subtract(7, 'days').format('MMM DD'),
-        //                     moment().format('MMM DD')
-        //                 ]
-        //             }
-        //         }),
-        //         Chartist.plugins.ctPointLabels({
-        //             textAnchor: 'middle'
-        //         })
-        //     ],
-        //     showArea: true,
-        //     lineSmooth: false,
-        //     fullWidth: true,
-        //     axisX: {
-        //         showLabel: true,
-        //     },
-        //     axisY: {
-        //         offset: 30,
-        //         showGrid: true,
-        //         labelInterpolationFnc: function(value) {
-        //             return value === 0 ? 0 : ((Math.round(value * 100) / 100) + '');
-        //         },
-        //         showLabel: true
-        //     }
-        // };
-
-        // bar chart config
-
         ctrl.lineOptions = {
                 plugins: [
                 Chartist.plugins.gridBoundaries(),
@@ -225,12 +112,12 @@
                 }
                 
             });
-            console.log("*********************");
-            console.log($scope.widgetConfig.componentId);
-            console.log($scope.dashboard.application.components[0].collectorItems);
+//            console.log("*********************");
+//            console.log($scope.widgetConfig.componentId);
+//            console.log($scope.dashboard.application.components[0].collectorItems);
             ctrl.title = $scope.dashboard.application.components[0].collectorItems.Build[0].options.jobName;
             $scope.subtitle = '[' + ctrl.title + ']';
-            console.log("***********************");
+//            console.log("***********************");
 
             return deferred.promise;
         };
@@ -240,17 +127,17 @@
         };
 
         function pointDetail(evt){
-            console.log('************** in pointDetail ******************');
+//            console.log('************** in pointDetail ******************');
             var target = evt.target,
             pointIndex = target.getAttribute('ct:point-index');
-            console.log(target);
-            console.log(pointIndex);
+//            console.log(target);
+//            console.log(pointIndex);
 
             var build = {
                 number:pointIndex
             };
             ctrl.detail(build);
-            console.log('************** end in pointDetail ******************');
+//            console.log('************** end in pointDetail ******************');
         }
 
         ctrl.detail = function(build) {
@@ -503,17 +390,6 @@
                 //$scope.$apply(function () {
 
                 var labels = [];
-                //var date = moment(new Date()).subtract(x, 'days').format('L');
-                // var dayCount = -1;
-                // _(data.passed).forEach(function() {
-                //     dayCount = dayCount + 1;
-                // });
-
-                // _(data.passed).forEach(function() {
-                //     var dateC = moment(new Date()).subtract(dayCount, 'days').format('D');
-                //     labels.push(dateC);
-                //     dayCount = dayCount - 1;
-                // });
 
                 _(data.passed).forEach(function() {
                     labels.push("");
@@ -529,39 +405,39 @@
                         data: data.failed
                     }]
                 };
-                //});
+
             });
 
             worker.latestBuilds(data, function (buildsToDisplay) {
-                //$scope.$apply(function () {
+
                     ctrl.recentBuilds = buildsToDisplay;
-                //});
+
             });
 
             worker.averageBuildDuration(data, $scope.widgetConfig.options.buildDurationThreshold, function (buildDurationData) {
-                //$scope.$apply(function () {
+
                 var labels = [];
                 _(buildDurationData.series[0]).forEach(function() {
                     labels.push('');
                 });
                 buildDurationData.labels = labels;
-                //_(buildDurationData.series).forEach
+
                 ctrl.buildDurationData = buildDurationData;
-                //});
+
             });
 
             worker.setDisplayToErrorState(data, $scope.widgetConfig.options.consecutiveFailureThreshold, function (displayAsErrorState) {
-                //$scope.$apply(function () {
+
                     $scope.display = displayAsErrorState ? DisplayState.ERROR : DisplayState.DEFAULT;
-                //});
+
             });
 
             worker.totalBuilds(data, function (data) {
-                //$scope.$apply(function () {
+
                     ctrl.totalBuildsYesterday = data.today;
                     ctrl.totalBuildsLastWeek = data.sevenDays;
                     ctrl.totalBuildsLastMonth = data.fourteenDays;
-                //});
+
             });
             //endregion
         }

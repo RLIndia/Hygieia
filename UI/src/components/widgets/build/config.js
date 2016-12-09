@@ -72,7 +72,7 @@
         }
 
         function getBuildsCallback(data) {
-            //$scope.$apply(function () {
+
                 ctrl.buildJobs = data.builds;
                 ctrl.toolsDropdownPlaceholder = 'Select a Build Job';
                 ctrl.toolsDropdownDisabled = false;
@@ -80,7 +80,7 @@
                 if (data.selectedIndex !== null) {
                     ctrl.collectorItemId = ctrl.buildJobs[data.selectedIndex];
                 }
-            //});
+
         }
 
         function submitForm(valid) {
