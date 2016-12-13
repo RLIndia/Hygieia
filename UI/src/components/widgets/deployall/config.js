@@ -18,6 +18,8 @@
         // public methods
         ctrl.submit = submit;
 
+        ctrl.copyEnv = copyEnv;
+
         collectorData.itemsByType('deploymentenvironment').then(processResponse);
 
         function processResponse(data) {
@@ -45,22 +47,51 @@
                 });
             }
 
-            var deployCollector = modalData.dashboard.application.components[0].collectorItems.Deployment;
-            var deployCollectorId = deployCollector ? deployCollector[0].id : null;
+            var deployAllCollector = modalData.dashboard.application.components[0].collectorItems.Deployment;
+            var deployAllCollectorId = deployAllCollector ? deployAllCollector[0].id : null;
             console.log(modalData.dashboard.application.components);
-            console.log(deployCollectorId);
-            worker.getEnvs(data, deployCollectorId, getDeploysCallback);
+            console.log(deployAllCollectorId);
+            worker.getEnvs(data, deployAllCollectorId, getDeploysCallback);
         }
 
         function getDeploysCallback(data) {
                  ctrl.envsDropdownDisabled = false;
-                ctrl.envDropdownPlaceholder = 'Select your environments';
+                ctrl.jobDropdownPlaceholder = 'Select your environments';
                 ctrl.deployAllEnvs = data.deployenvs;
                 console.log("In Call back");
                 console.log(ctrl.deployAllEnvs);
                 if(data.selectedIndex !== null) {
                     ctrl.deployEnv = data.deployenvs[data.selectedIndex];
                 }
+        }
+
+        function copyEnv(){
+            var envs = [];
+            //envs.push(ctrl.envs);
+            console.log(ctrl.envs);
+            //Get all selected environments
+            ctrl.deployAllEnv.forEach(function(obj,value){
+                var _env = {
+                    value:obj.value,
+                    name:obj.name
+                }
+                envs.push(_env);
+                console.log(obj);
+                console.log(value);
+            });
+            //append all selected environment. Remove repeated envs
+            if(ctrl.envs){
+                ctrl.envs.forEach(function(obj,value){
+                    var _env = {
+                        value:obj.value,
+                        name:obj.name
+                    }
+                    envs.push(_env);
+                });
+            }
+           ctrl.envs = envs;
+           console.log("in copy");
+           console.log(ctrl.envs);
         }
 
 

@@ -2,15 +2,27 @@
     <form class="deploy-config" name="configForm" ng-submit="deployAllConfigController.submit(configForm.$valid)" novalidate="novalidate">
         <form-group input="deployEnv" errors="{required:'Please select your Environment'}">
             <label class="modal-label">
-                Environments:... {{deployConfig}}
+                Select Environments:
             </label>
             <select name="deployEnv"
                     class="form-control"
                     ng-model="deployConfig.deployAllEnv"
                     ng-options="env.name for env in deployConfig.deployAllEnvs | orderBy: 'name' track by env.value"
                     ng-disabled="deployConfig.envsDropdownDisabled"
-                    required>
+                     multiple>
                 <option value="">{{deployConfig.jobDropdownPlaceholder}}</option>
+            </select>
+            <br/>
+                <button type="button" class="btn btn-primary btn-wide" ng-click="deployConfig.copyEnv()"> Add </button>
+            <br/>
+            <label class="modal-label">
+                Selected Environments:
+            </label>
+            <!--<input type="label" class="form-control" name="envs" ng-model="deployConfig.envs"></input>-->
+            <select name="selectedEnvs" class="form-control" ng-model="deployConfig.deploySelectedEnvs"
+                    ng-options="env.name for env in deployConfig.envs track by env.value"
+                    multiple>
+
             </select>
         </form-group>
 

@@ -13,7 +13,7 @@
             },
             config: {
                  controller: 'deployAllConfigController',
-                 controllerAs: 'deployAllConfigController',
+                 controllerAs: 'deployConfig',
                  templateUrl: 'components/widgets/deployall/config.html'
              },
             getState: getState
