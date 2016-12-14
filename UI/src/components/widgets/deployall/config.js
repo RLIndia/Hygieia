@@ -20,6 +20,8 @@
 
         ctrl.copyEnv = copyEnv;
 
+        ctrl.removeEnv = removeEnv;
+
         collectorData.itemsByType('deploymentenvironment').then(processResponse);
 
         function processResponse(data) {
@@ -89,9 +91,32 @@
                     envs.push(_env);
                 });
             }
+            console.log(envs);
            ctrl.envs = envs;
-           console.log("in copy");
+          // console.log("in copy");
            console.log(ctrl.envs);
+        }
+
+        function removeEnv(){
+            var envs = ctrl.envs; //make a copy
+            //console.log("in remove env");
+            ctrl.deploySelectedEnvs.forEach(function(obj1,value1){
+                    //console.log(obj1.value);
+                    var removeIndex = -1;
+                    for(var i = 0; i < envs.length;i++){
+                        if(envs[i].value == obj1.value)
+                          {
+                            removeIndex = i;
+                                break;
+                          }
+                    }
+
+                    if(removeIndex > -1){
+                        envs.splice(removeIndex,1);
+                    }
+
+            });
+            ctrl.envs = envs;
         }
 
 

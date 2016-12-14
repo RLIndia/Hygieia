@@ -9,22 +9,26 @@
                     ng-model="deployConfig.deployAllEnv"
                     ng-options="env.name for env in deployConfig.deployAllEnvs | orderBy: 'name' track by env.value"
                     ng-disabled="deployConfig.envsDropdownDisabled"
+                    ng-dblclick="deployConfig.copyEnv()"
                      multiple>
                 <option value="">{{deployConfig.jobDropdownPlaceholder}}</option>
             </select>
-            <br/>
-                <button type="button" class="btn btn-primary btn-wide" ng-click="deployConfig.copyEnv()"> Add </button>
-            <br/>
+
+            <div class="button-row row text-center">
+                <button type="button" class="btn btn-primary btn-wide pull-left" ng-click="deployConfig.copyEnv()"> Add </button>
+                <button type="button" class="btn btn-primary btn-wide pull-right" ng-click="deployConfig.removeEnv()"> Remove </button>
+            </div>
+
             <label class="modal-label">
                 Selected Environments:
             </label>
             <!--<input type="label" class="form-control" name="envs" ng-model="deployConfig.envs"></input>-->
             <select name="selectedEnvs" class="form-control" ng-model="deployConfig.deploySelectedEnvs"
                     ng-options="env.name for env in deployConfig.envs track by env.value"
-                    multiple>
+                    multiple required ng-dblclick="deployConfig.removeEnv()">
 
             </select>
-        </form-group>
+
 
         <hr/>
 
@@ -39,5 +43,6 @@
         <div class="button-row row text-center">
             <button type="submit" class="btn btn-primary btn-wide">Save</button>
         </div>
+        </form-group>
     </form>
 </widget-modal>
