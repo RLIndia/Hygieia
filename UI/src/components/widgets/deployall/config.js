@@ -38,7 +38,7 @@
                         selectedIndex = idx;
                     }
                     return {
-                        value: deployenv.options.envId,
+                        value: deployenv.id,
                         name: deployenv.options.envName
                     };
                 }).value();
@@ -122,17 +122,20 @@
 
         function submit(valid) {
             ctrl.submitted = true;
+
+            console.log('in submit');
             if (valid) {
                 var form = document.configForm;
                 var postObj = {
                     name: 'deployenv',
                     options: {
-                        id: widgetConfig.options.id
+                        id: widgetConfig.options.id,
+                        environments: ctrl.envs
                     },
                     componentId: modalData.dashboard.application.components[0].id,
-                    collectorItemId: form.deployEnv.value
+                    collectorItemId: ctrl.envs
                 };
-
+                console.log(postObj);
                 $modalInstance.close(postObj);
             }
         }
