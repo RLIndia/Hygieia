@@ -52,9 +52,12 @@ public class TestrailRunsResultsServiceImpl implements TestrailRunsResultsServic
 
     @Override
     public DataResponse<JSONObject> getTestrailRunsResults(String runId,String milestoneId,String projectId){
-        JSONObject responseObj = new JSONObject();
+    	LOGGER.info("runId==>"+runId);
+    	LOGGER.info("milestoneId==>"+milestoneId);
+    	LOGGER.info("projectId==>"+projectId);
+    	JSONObject responseObj = new JSONObject();
         JSONArray testRailRunsResult = new JSONArray();
-        List<TestRailRunsResults> trrr = testRailRunResultRepository.findByRunIdAndProjectIdAndMilestoneId(runId,milestoneId,projectId);
+        List<TestRailRunsResults> trrr = testRailRunResultRepository.findByRunIdAndProjectIdAndMilestoneId(runId,projectId,milestoneId);
         for(TestRailRunsResults testRailRunResult : trrr){
             JSONObject testrailRunResultObj = new JSONObject();
             testrailRunResultObj.put("milestoneId",testRailRunResult.getMilestoneId());

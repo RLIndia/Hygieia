@@ -61,7 +61,8 @@ public class TestrailRunsServiceImpl implements TestrailRunsService {
         String milestoneId = (String) item.getOptions().get("milestoneId");
         JSONObject responseObj = new JSONObject();
         JSONArray testRailRuns = new JSONArray();
-        List<TestRailRuns> trr = testRailRunRepository.findByCollectorItemId(item.getCollectorId());
+        List<TestRailRuns> trr = testRailRunRepository.findByCollectorItemId(item.getId());
+        
         for(TestRailRuns testRailRun : trr){
             JSONObject testrailRunObj = new JSONObject();
             testrailRunObj.put("runId",testRailRun.getRunid());

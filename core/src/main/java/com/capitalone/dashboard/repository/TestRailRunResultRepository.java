@@ -18,6 +18,6 @@ public interface TestRailRunResultRepository extends CrudRepository<TestRailRuns
     TestRailRunsResults findByTestIdAndRunId(String runId, String testId);
 
     @Query(value="{ 'runId': ?0,'projectId':?1,'milestoneId':?2}")
-    List<TestRailRunsResults> findByRunIdAndProjectIdAndMilestoneId(String id, String milestoneId, String runId);
+    List<TestRailRunsResults> findByRunIdAndProjectIdAndMilestoneId(String id,String projectId, String milestoneId);
 
 }
