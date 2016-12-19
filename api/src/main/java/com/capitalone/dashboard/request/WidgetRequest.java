@@ -12,6 +12,16 @@ public class WidgetRequest {
     private List<ObjectId> collectorItemIds;
     private Map<String, Object> options;
 
+    public List<String> getEnvs() {
+        return envs;
+    }
+
+    public void setEnvs(List<String> envs) {
+        this.envs = envs;
+    }
+
+    private List<String> envs;
+
     public String getName() {
         return name;
     }

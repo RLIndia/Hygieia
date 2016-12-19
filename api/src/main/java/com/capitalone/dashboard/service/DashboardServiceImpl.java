@@ -5,11 +5,14 @@ import com.capitalone.dashboard.repository.*;
 import com.capitalone.dashboard.util.UnsafeDeleteException;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.mongodb.util.JSON;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -23,7 +26,7 @@ public class DashboardServiceImpl implements DashboardService {
 	@SuppressWarnings("unused")
 	private final PipelineRepository pipelineRepository; //NOPMD
     private final ServiceRepository serviceRepository;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServiceImpl.class);
     @Autowired
     public DashboardServiceImpl(DashboardRepository dashboardRepository,
                                 ComponentRepository componentRepository,
@@ -134,6 +137,19 @@ public class DashboardServiceImpl implements DashboardService {
             // Not all widgets gather data from collectors
             return null;
         }
+        LOGGER.info("Collectoritemids received for save");
+        LOGGER.info(collectorItemIds.toString());
+        if(collectorItemIds.contains(",")){
+            //seems to be an array of collectorids
+            //collectorItemIds = Arrays.asList((List<ObjectId>) collectorItemIds.toString().split(","));
+            LOGGER.info("In conversion..found multiple");
+            List<String> _cid = Arrays.asList(collectorItemIds.toString().split("\\s*,\\s*"));
+            collectorItemIds.clear();
+            for(String cid : _cid){
+                LOGGER.info("CItem:" + cid);
+                collectorItemIds.add(new ObjectId(cid));
+            }
+        }
 
         com.capitalone.dashboard.model.Component component = componentRepository.findOne(componentId); //NOPMD - using fully qualified name for clarity
         //we can not assume what collector item is added, what is removed etc so, we will
@@ -164,17 +180,38 @@ public class DashboardServiceImpl implements DashboardService {
             CollectorItem collectorItem = collectorItemRepository.findOne(collectorItemId);
             Collector collector = collectorRepository.findOne(collectorItem.getCollectorId());
             component.addCollectorItem(collector.getCollectorType(), collectorItem);
+            LOGGER.info("In reading collectoritem id:");
 
             if (!collectorItem.isEnabled()) {
                 toSaveCollectorItemList.remove(collectorItem);
                 collectorItem.setEnabled(true);
                 toSaveCollectorItemList.add(collectorItem);
+                LOGGER.info(String.valueOf(collectorItem.isEnabled()));
             }
 
             // set transient collector property
             collectorItem.setCollector(collector);
         }
-        collectorItemRepository.save(toSaveCollectorItemList);
+        int i = 0;
+        for(CollectorItem ci : toSaveCollectorItemList){
+
+            LOGGER.info(ci.getOptions().toString());
+            LOGGER.info(ci.getCollectorId().toString());
+            LOGGER.info(ci.getDescription());
+            LOGGER.info(ci.getNiceName());
+
+            if(ci.isEnabled())
+                LOGGER.info("Enabled");
+
+            LOGGER.info("Iteration " + i);
+            i++;
+        }
+        try{
+            collectorItemRepository.save(toSaveCollectorItemList);
+        }catch (Exception e){
+            LOGGER.info("Exception");
+        }
+        //collectorItemRepository.save(toSaveCollectorItemList);
         componentRepository.save(component);
         return component;
     }

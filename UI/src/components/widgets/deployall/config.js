@@ -124,17 +124,30 @@
             ctrl.submitted = true;
 
             console.log('in submit');
+            //Rebuilding env list
+            var envs = [];
+            for(var i = 0; i < ctrl.envs.length;i++){
+//                console.log(ctrl.envs[i].value);
+//                envs += ctrl.envs[i].value;
+//                if(i < ctrl.envs.length - 2)
+//                    envs += ",";
+                envs.push(ctrl.envs[i].value);
+            }
+            console.log(document.configForm.selectedEnvs.value);
+            console.log(envs);
+
             if (valid) {
                 var form = document.configForm;
                 var postObj = {
-                    name: 'deployenv',
+                    name: 'deploymentEnvironment',
                     options: {
-                        id: widgetConfig.options.id,
-                        environments: ctrl.envs
+                        id: widgetConfig.options.id
                     },
                     componentId: modalData.dashboard.application.components[0].id,
-                    collectorItemId: ctrl.envs
+                    collectorItemId: form.selectedEnvs.value,
+                    envs: envs
                 };
+               // postObj.collectorItemId.push(envs);
                 console.log(postObj);
                 $modalInstance.close(postObj);
             }

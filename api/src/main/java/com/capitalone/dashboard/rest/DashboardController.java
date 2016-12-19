@@ -15,12 +15,15 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @RestController
 public class DashboardController {
 
     private final DashboardService dashboardService;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
     @Autowired
     public DashboardController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
@@ -77,6 +80,9 @@ public class DashboardController {
     public ResponseEntity<WidgetResponse> updateWidget(@PathVariable ObjectId id,
                                                        @PathVariable ObjectId widgetId,
                                                        @RequestBody WidgetRequest request) {
+        LOGGER.info("In request");
+        LOGGER.info(request.getEnvs().toString());
+
         Component component = dashboardService.associateCollectorToComponent(
                 request.getComponentId(), request.getCollectorItemIds());
 
