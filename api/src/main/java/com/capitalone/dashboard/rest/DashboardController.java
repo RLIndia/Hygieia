@@ -82,9 +82,16 @@ public class DashboardController {
                                                        @RequestBody WidgetRequest request) {
         LOGGER.info("In request");
         LOGGER.info(request.getEnvs().toString());
-
-        Component component = dashboardService.associateCollectorToComponent(
-                request.getComponentId(), request.getCollectorItemIds());
+        Component component = new Component();
+        if(request.getEnvs().toString().isEmpty()) {
+             component = dashboardService.associateCollectorToComponent(
+                    request.getComponentId(), request.getCollectorItemIds());
+        }else{
+            //envs present
+            LOGGER.info("Envs present...");
+            component = dashboardService.associateCollectorToComponent(
+                    request.getComponentId(), request.getEnvObjectIds());
+        }
 
         Dashboard dashboard = dashboardService.get(id);
         Widget widget = request.updateWidget(dashboardService.getWidget(dashboard, widgetId));

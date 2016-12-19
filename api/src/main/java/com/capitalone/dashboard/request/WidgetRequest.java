@@ -3,6 +3,7 @@ package com.capitalone.dashboard.request;
 import com.capitalone.dashboard.model.Widget;
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,15 @@ public class WidgetRequest {
 
     public List<String> getEnvs() {
         return envs;
+    }
+
+    public List<ObjectId> getEnvObjectIds(){
+        List<ObjectId> _envs = new ArrayList<>();
+        for(String env : this.envs){
+            ObjectId _id = new ObjectId(env.toString());
+            _envs.add(_id);
+        }
+        return(_envs);
     }
 
     public void setEnvs(List<String> envs) {

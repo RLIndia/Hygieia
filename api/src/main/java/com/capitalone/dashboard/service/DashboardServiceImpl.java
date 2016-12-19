@@ -137,19 +137,7 @@ public class DashboardServiceImpl implements DashboardService {
             // Not all widgets gather data from collectors
             return null;
         }
-        LOGGER.info("Collectoritemids received for save");
-        LOGGER.info(collectorItemIds.toString());
-        if(collectorItemIds.contains(",")){
-            //seems to be an array of collectorids
-            //collectorItemIds = Arrays.asList((List<ObjectId>) collectorItemIds.toString().split(","));
-            LOGGER.info("In conversion..found multiple");
-            List<String> _cid = Arrays.asList(collectorItemIds.toString().split("\\s*,\\s*"));
-            collectorItemIds.clear();
-            for(String cid : _cid){
-                LOGGER.info("CItem:" + cid);
-                collectorItemIds.add(new ObjectId(cid));
-            }
-        }
+
 
         com.capitalone.dashboard.model.Component component = componentRepository.findOne(componentId); //NOPMD - using fully qualified name for clarity
         //we can not assume what collector item is added, what is removed etc so, we will
@@ -208,6 +196,7 @@ public class DashboardServiceImpl implements DashboardService {
         }
         try{
             collectorItemRepository.save(toSaveCollectorItemList);
+            
         }catch (Exception e){
             LOGGER.info("Exception");
         }
