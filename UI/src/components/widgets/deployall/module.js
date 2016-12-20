@@ -7,7 +7,7 @@
                 defaults: {
                     title: 'Deploy' // widget title
                 },
-                controller: 'deployAllConfigController',
+                controller: 'deployallViewController',
                 controllerAs: 'deployallView',
                 templateUrl: 'components/widgets/deployall/view.html'
             },

@@ -28,43 +28,56 @@
             var worker = {
                 getEnvs: getEnvs
             };
-            console.log(data);
-            function getEnvs(data, currentCollectorId, cb) {
+            //console.log(data);
+            function getEnvs(data, currentCollectorId,selectedenvs, cb) {
 
                 var selectedIndex = null;
 
                 var deployenvs = _(data).map(function(deployenv, idx) {
-                    if(deployenv.id == currentCollectorId) {
-                        selectedIndex = idx;
-                    }
+//                    if(deployenv.id == currentCollectorId) {
+//                        selectedIndex = idx;
+//                    }
                     return {
                         value: deployenv.id,
                         name: deployenv.options.envName
                     };
                 }).value();
 
+                var selectedEnvs = _(selectedenvs).map(function(selectedenv,ide){
+                    return{
+                        value: selectedenv.id,
+                        name: selectedenv.options.envName
+                    }
+                }).value();
+
                 cb({
                     deployenvs: deployenvs,
-                    selectedIndex: selectedIndex
+                    selectedEnvs: selectedEnvs
                 });
             }
 
             var deployAllCollector = modalData.dashboard.application.components[0].collectorItems.Deployment;
             var deployAllCollectorId = deployAllCollector ? deployAllCollector[0].id : null;
-            console.log(modalData.dashboard.application.components);
-            console.log(deployAllCollectorId);
-            worker.getEnvs(data, deployAllCollectorId, getDeploysCallback);
+            var selectedEnvs = modalData.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
+              //Converting to dropdown
+
+            console.log("Components:");
+            console.log(modalData.dashboard.application.components); //all options
+            console.log("deployAllCollectorId");
+            console.log(deployAllCollectorId); //enabled options
+            worker.getEnvs(data, deployAllCollectorId,selectedEnvs, getDeploysCallback);
         }
 
         function getDeploysCallback(data) {
-                 ctrl.envsDropdownDisabled = false;
+                ctrl.envsDropdownDisabled = false;
                 ctrl.jobDropdownPlaceholder = 'Select your environments';
                 ctrl.deployAllEnvs = data.deployenvs;
+                ctrl.envs = data.selectedEnvs
                 console.log("In Call back");
-                console.log(ctrl.deployAllEnvs);
-                if(data.selectedIndex !== null) {
-                    ctrl.deployEnv = data.deployenvs[data.selectedIndex];
-                }
+               console.log(ctrl.envs);
+//                if(data.selectedIndex !== null) {
+//                    ctrl.deployEnv = data.deployenvs[data.selectedIndex];
+//                }
         }
 
         function copyEnv(){

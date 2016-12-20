@@ -196,7 +196,7 @@ public class DashboardServiceImpl implements DashboardService {
         }
         try{
             collectorItemRepository.save(toSaveCollectorItemList);
-            
+
         }catch (Exception e){
             LOGGER.info("Exception");
         }
