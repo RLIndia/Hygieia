@@ -75,6 +75,12 @@ public class DefaultOctopusClient implements OctopusClient{
         return environments;
     }
 
+    @Override
+    public OctopusDashboard getDashboard() {
+        String urlPath = "/api/environments";
+        //hit the dashboard url and store in the dashboard model then push to core repo
+    }
+
 
     @Override
     public void setContext(int sc) {
