@@ -7,19 +7,48 @@ import com.capitalone.dashboard.model.OctopusProjectGroup;
 import com.capitalone.dashboard.model.OctopusEnvironment;
 import com.capitalone.dashboard.model.OctopusProject;
 import com.capitalone.dashboard.model.EnvironmentProjectsAll;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 public class OctopusDashboard {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OctopusDashboard.class);
     private List<OctopusProject> octopusProjects;
+
+    public List<OctopusProject> getOctopusProjects() {
+        return octopusProjects;
+    }
+
+    public void setOctopusProjects(List<OctopusProject> octopusProjects) {
+        this.octopusProjects = octopusProjects;
+    }
+
+    public List<OctopusEnvironment> getOctopusEnvironments() {
+        return octopusEnvironments;
+    }
+
+    public void setOctopusEnvironments(List<OctopusEnvironment> octopusEnvironments) {
+        this.octopusEnvironments = octopusEnvironments;
+    }
+
+    public List<OctopusProjectGroup> getOctopusProjectGroups() {
+        return octopusProjectGroups;
+    }
+
+    public void setOctopusProjectGroups(List<OctopusProjectGroup> octopusProjectGroups) {
+        this.octopusProjectGroups = octopusProjectGroups;
+    }
+
     private  List<OctopusEnvironment> octopusEnvironments;
     private List<OctopusProjectGroup> octopusProjectGroups;
 
-    public List<EnvironmentProjectsAll> getEnvironmentProjectsAlls() {
+    public List<EnvironmentProjectsAll> getEnvironmentProjectsAll() {
         return environmentProjectsAll;
     }
 
-    public void setEnvironmentProjectsAlls(List<EnvironmentProjectsAll> environmentProjectsAlls) {
-        this.environmentProjectsAll = environmentProjectsAlls;
+    public void setEnvironmentProjectsAll(List<EnvironmentProjectsAll> environmentProjectsAll) {
+        this.environmentProjectsAll = environmentProjectsAll;
     }
 
     private List<EnvironmentProjectsAll> environmentProjectsAll;
@@ -27,8 +56,19 @@ public class OctopusDashboard {
 
     public String getProjectGroupNameByID(String projectGroupId){
         for(OctopusProjectGroup opg : octopusProjectGroups){
-            if(opg.getProjectGroupId() == projectGroupId) {
+           // LOGGER.info("IN group " + opg.getProjectGroupId() + " " +  projectGroupId);
+            if(opg.getProjectGroupId().equals(projectGroupId)) {
                 return opg.getProjectGroupName();
+            }
+        }
+        return null;
+    }
+
+    public String getProjectGroupNameByProjectID(String projectId){
+        for(OctopusProject op : octopusProjects){
+
+            if(op.getProjectId().equals(projectId)) {
+                return op.getProjectGroupName();
             }
         }
         return null;
@@ -36,7 +76,7 @@ public class OctopusDashboard {
 
     public String getProjectNameByID(String projectId){
         for(OctopusProject op : octopusProjects){
-            if(op.getProjectId() == projectId) {
+            if(op.getProjectId().equals(projectId)) {
                 return op.getProjectName();
             }
         }
@@ -45,7 +85,7 @@ public class OctopusDashboard {
 
     public String getEnvironmentNameByID(String environmentId){
         for(OctopusEnvironment env : octopusEnvironments){
-            if(env.getEnvId() == environmentId) {
+            if(env.getEnvId().equals(environmentId)) {
                 return env.getEnvName();
             }
         }

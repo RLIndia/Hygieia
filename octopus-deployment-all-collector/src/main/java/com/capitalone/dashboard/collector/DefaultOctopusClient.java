@@ -23,6 +23,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
+import com.capitalone.dashboard.model.EnvironmentProjectsAll;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 import com.capitalone.dashboard.util.Supplier;
 
 @Component
@@ -33,9 +39,14 @@ public class DefaultOctopusClient implements OctopusClient{
     private final Locale locale;
     private int contextOS;
 
+
+
+
     @Autowired
     public DefaultOctopusClient(OctopusSettings octopusSettings,
                                 Supplier<RestOperations> restOperationsSupplier) {
+
+
         this.octopusSettings = octopusSettings;
         this.restOperations = restOperationsSupplier.get();
         this.locale = new Locale("en", "US");
@@ -77,8 +88,96 @@ public class DefaultOctopusClient implements OctopusClient{
 
     @Override
     public OctopusDashboard getDashboard() {
-        String urlPath = "/api/environments";
+        String urlPath = "/api/dashboard/dynamic";
         //hit the dashboard url and store in the dashboard model then push to core repo
+
+        OctopusDashboard od = new OctopusDashboard();
+
+        JSONObject resDashboardObject = paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
+                urlPath,octopusSettings.getApiKey()[contextOS]));
+
+        //Reading the project groups
+        JSONArray jsonProjectGroupsArray = (JSONArray)resDashboardObject.get("ProjectGroups");
+        List<OctopusProjectGroup> lnpg = new ArrayList<>();
+        for(Object pg : jsonProjectGroupsArray){
+            OctopusProjectGroup npg = new OctopusProjectGroup();
+            JSONObject jobj = (JSONObject) pg;
+            npg.setProjectGroupId(str(jobj,"Id"));
+            npg.setProjectGroupName(str(jobj,"Name"));
+            lnpg.add(npg);
+        }
+        od.setOctopusProjectGroups(lnpg);
+        LOGGER.info("Finished reading Project Groups");
+        //reading the projects
+        JSONArray jsonProjectsArray = (JSONArray)resDashboardObject.get("Projects");
+        List<OctopusProject> lnp = new ArrayList<>();
+        for(Object prj : jsonProjectsArray){
+            OctopusProject np = new OctopusProject();
+            JSONObject jobj = (JSONObject) prj;
+            np.setProjectId(str(jobj,"Id"));
+            np.setProjectName(str(jobj,"Name"));
+           // LOGGER.info("-----" + str(jobj,"ProjectGroupId"));
+            np.setProjectGroupName(od.getProjectGroupNameByID(str(jobj,"ProjectGroupId")));
+            lnp.add(np);
+        }
+        od.setOctopusProjects(lnp);
+        LOGGER.info("Finished reading Projects");
+
+        //reading environments
+        JSONArray jsonEnvironmentsArray = (JSONArray)resDashboardObject.get("Environments");
+        List<OctopusEnvironment> lne = new ArrayList<>();
+        for(Object env : jsonEnvironmentsArray){
+            OctopusEnvironment en = new OctopusEnvironment();
+            JSONObject jobj = (JSONObject) env;
+            en.setEnvId(str(jobj,"Id"));
+            en.setEnvName(str(jobj,"Name"));
+          //  LOGGER.info("-----" + en.getEnvName());
+
+            lne.add(en);
+        }
+        od.setOctopusEnvironments(lne);
+        LOGGER.info("Finished reading Envs");
+
+        //reading items
+
+        JSONArray jsonItemsArray = (JSONArray)resDashboardObject.get("Items");
+        List<EnvironmentProjectsAll> itms = new ArrayList<>();
+        for(Object item : jsonItemsArray){
+            EnvironmentProjectsAll envProject = new EnvironmentProjectsAll();
+            JSONObject jobj = (JSONObject) item;
+            envProject.setProjectId(str(jobj,"ProjectId"));
+            envProject.setProjectName(od.getProjectNameByID(envProject.getProjectId()));
+            envProject.setProjectGroupName(od.getProjectGroupNameByProjectID(envProject.getProjectId()));
+            envProject.setEnvironmentId(str(jobj,"EnvironmentId"));
+            envProject.setEnvironmentName(od.getEnvironmentNameByID(envProject.getEnvironmentId()));
+
+            String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+            DateTimeFormatter dtf = DateTimeFormat.forPattern(pattern);
+
+            try {
+                DateTime dateTime = dtf.parseDateTime(str(jobj, "CompletedTime"));
+                envProject.setCompletedDate(dateTime.getMillis());
+            }catch (Exception e){
+                LOGGER.info("Exception " + e);
+            }
+
+            if(str(jobj,"State").equals("Success"))
+                envProject.setStatus(true);
+            else
+                envProject.setStatus(false);
+
+            envProject.setReleaseVersion(str(jobj,"ReleaseVersion"));
+            itms.add(envProject);
+            //  LOGGER.info("-----" + en.getEnvName());
+
+
+        }
+        od.setEnvironmentProjectsAll(itms);
+        LOGGER.info("Finished reading Items");
+
+        //clear all EnvironmentProjectsAll and reload
+
+        return od;
     }
 
 
@@ -92,156 +191,7 @@ public class DefaultOctopusClient implements OctopusClient{
         return this.contextOS;
     }
 
-    private Task getTaskById(String taskId) {
-        JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
-                "/api/tasks/"+taskId,octopusSettings.getApiKey()[contextOS]));
-        Task task = new Task();
 
-        task.setTaskId(taskId);
-        task.setTaskName((String)resJsonObject.get("Name"));
-        String state = (String)resJsonObject.get("State");
-        if(state.equals("Failed")) {
-            task.setState(false);
-        } else {
-            task.setState(true);
-        }
-
-
-        return task;
-    }
-
-    private Set<String> getRolesFromDeploymentProcess(String deploymentProcessId) {
-        JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
-                "/api/deploymentprocesses/"+deploymentProcessId, octopusSettings.getApiKey()[contextOS]));
-        JSONArray steps = (JSONArray)resJsonObject.get("Steps");
-
-        //LOGGER.info("steps size ==>"+steps.size());
-
-        Set<String> roleSet = new HashSet<>();
-
-        for(Object object : steps) {
-            JSONObject obj = (JSONObject)object;
-            JSONObject propertiesObj = (JSONObject)obj.get("Properties");
-            if(propertiesObj != null) {
-                String roles = (String)propertiesObj.get("Octopus.Action.TargetRoles");
-                //LOGGER.info("deployment step role ==>"+roles);
-                if(roles != null && !roles.isEmpty()) {
-                    String[] rolesArray = roles.split(",");
-                    for(int i=0;i<rolesArray.length;i++) {
-                        roleSet.add(rolesArray[i].toLowerCase(locale));
-                    }
-                }
-
-            }
-        }
-        return roleSet;
-    }
-
-    private Machine getMachineById(String machineId,String envId) throws MalformedURLException {
-        JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
-                "/api/machines/"+machineId,octopusSettings.getApiKey()[contextOS]));
-        Machine machine = new Machine();
-        //checking for 404
-        if(resJsonObject.isEmpty() == false){
-            machine.setEnviromentId(envId);
-            machine.setMachineName((String) resJsonObject.get("Name"));
-            machine.setMachineId((String) resJsonObject.get("Id"));
-            String status = (String) resJsonObject.get("Status");
-            if (status.equals("Online")) {
-                machine.setStatus(true);
-            } else {
-                machine.setStatus(false);
-            }
-
-            String url = (String) resJsonObject.get("Uri");
-            //LOGGER.info("url ==>"+url);
-
-            if (url != null && !url.isEmpty()) {
-                String hostname = new URL(url).getHost();
-                //LOGGER.info("Host name ==>"+hostname);
-                machine.setHostName(hostname);
-            }
-        }
-        return machine;
-
-    }
-
-    private List<Machine> getMachinesByEnvId(String envId,Set<String> roleSet) throws MalformedURLException {
-
-        List<Machine> machines= new ArrayList<Machine>();
-
-        boolean hasNext = true;
-        String urlPath = "/api/environments/"+envId+"/machines";
-        while(hasNext) {
-
-            JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
-                    urlPath,octopusSettings.getApiKey()[contextOS]));
-
-            JSONArray jsonArray = (JSONArray)resJsonObject.get("Items");
-            for (Object item :jsonArray) {
-                JSONObject jsonObject = (JSONObject) item;
-                Machine machine = new Machine();
-                machine.setEnviromentId(envId);
-                machine.setMachineName((String)jsonObject.get("Name"));
-                machine.setMachineId((String)jsonObject.get("Id"));
-                String status = (String)jsonObject.get("Status");
-                if(status.equals("Online")) {
-                    machine.setStatus(true);
-                } else {
-                    machine.setStatus(false);
-                }
-
-                String url = (String)jsonObject.get("Uri");
-                //LOGGER.info("url ==>"+url);
-
-                if(url != null && !url.isEmpty()) {
-                    String hostname = new URL(url).getHost();
-                    //LOGGER.info("Host name ==>"+hostname);
-                    machine.setHostName(hostname);
-                }
-
-
-
-                if(roleSet.isEmpty()) {
-                    machines.add(machine);
-                } else {
-                    //LOGGER.info("roleset ==> "+roleSet.toString());
-                    JSONArray roles = (JSONArray)jsonObject.get("Roles");
-                    //LOGGER.info("machine roles ==>"+roles.toJSONString());
-                    for(Object obj : roles) {
-                        String role = (String)obj;
-                        if(roleSet.contains(role.toLowerCase(locale))) {
-                            //LOGGER.info("adding machine by role "+role);
-                            machines.add(machine);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            JSONObject links = (JSONObject)resJsonObject.get("Links");
-            urlPath = (String)links.get("Page.Next");
-
-            if(urlPath == null || urlPath.isEmpty()) {
-                hasNext = false;
-            }
-        }
-
-        return machines;
-    }
-
-    private Release getReleaseById(String id) {
-        JSONObject resJsonObject =  paresResponse(makeRestCall(octopusSettings.getUrl()[contextOS],
-                "/api/releases/"+id,octopusSettings.getApiKey()[contextOS]));
-        Release rel = new Release();
-
-        rel.setApplicationId((String)resJsonObject.get("ProjectId"));
-        rel.setReleaseId((String)resJsonObject.get("Id"));
-        rel.setVersion((String)resJsonObject.get("Version"));
-        rel.setDeploymentProcessSnapShotId((String)resJsonObject.get("ProjectDeploymentProcessSnapshotId"));
-
-        return rel;
-    }
 
     private OctopusEnvironment getEnvironmentById(String envId){
 

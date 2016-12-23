@@ -23,4 +23,15 @@ public class OctopusProject {
     private String projectId;
     private String projectName;
 
+
+    public String getProjectGroupName() {
+        return projectGroupName;
+    }
+
+    public void setProjectGroupName(String projectGroupName) {
+        this.projectGroupName = projectGroupName;
+    }
+
+    private String projectGroupName;
+
 }

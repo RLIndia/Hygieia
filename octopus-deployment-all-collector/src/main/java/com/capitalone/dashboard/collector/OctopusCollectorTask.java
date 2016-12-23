@@ -134,14 +134,32 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
             addNewEnvironments(serverEnvs,collector);
             List<OctopusEnvironment> enabledEnvironments = octopusEnvironmentRepository.findEnabledEnvironments(collector.getId());
             //Get the Dashboard for server
+            OctopusDashboard od = octopusClient.getDashboard();
+//            for(OctopusProjectGroup opg : od.getOctopusProjectGroups()){
+//                LOGGER.info(opg.getProjectGroupName());
+//            }
+
+            for(OctopusProject op : od.getOctopusProjects()){
+                LOGGER.info(op.getProjectGroupName() +  " " +   op.getProjectName());
+            }
 
 
 
-            for(OctopusEnvironment oe : enabledEnvironments){
-                LOGGER.info("Enabled Envs: " + oe.getEnvName());
-                //Get releases for these envs.
+
+            environmentProjectsAllRepository.deleteAll();
+            for(EnvironmentProjectsAll epa : od.getEnvironmentProjectsAll()){
+                epa.setCollectorId(collector.getId());
+                //save only the enabled environments
+                for(OctopusEnvironment oe : enabledEnvironments){
+                    if(oe.getEnvId().equals(epa.getEnvironmentId())){
+                        environmentProjectsAllRepository.save(epa);
+                    }
+
+                }
+
 
             }
+
 //            addNewApplications(octopusClient.getApplications(),
 //                    collector);
 //

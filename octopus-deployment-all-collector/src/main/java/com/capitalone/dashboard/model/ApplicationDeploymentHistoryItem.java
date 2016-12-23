@@ -13,7 +13,7 @@ public class ApplicationDeploymentHistoryItem {
     private String deploymentId;
     private String version;
     private String deployedWebUrl;
-    private List<Machine> machines;
+
 
 
     private boolean deployed;
@@ -78,12 +78,6 @@ public class ApplicationDeploymentHistoryItem {
     }
     public void setVersion(String version) {
         this.version = version;
-    }
-    public List<Machine> getMachines() {
-        return machines;
-    }
-    public void setMachines(List<Machine> machines) {
-        this.machines = machines;
     }
 
 }
