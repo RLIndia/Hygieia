@@ -2,7 +2,7 @@ package com.capitalone.dashboard.rest;
 
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.DataResponse;
-import com.capitalone.dashboard.model.EnvironmentComponentsAll;
+//import com.capitalone.dashboard.model.EnvironmentComponentsAll;
 import com.capitalone.dashboard.model.deploy.Environment;
 import com.capitalone.dashboard.request.DeployDataCreateRequest;
 import com.capitalone.dashboard.service.DeployService;
@@ -58,10 +58,10 @@ public class DeployController {
         return new ResponseEntity<String>(rdptext, responseHeaders, HttpStatus.OK);
     }*/
 
-    @RequestMapping(value = "/deploy/allcomponents", method = GET, produces = APPLICATION_JSON_VALUE)
-    public DataResponse<List<EnvironmentComponentsAll>> allcomponents() {
-        return deployService.getAllDeployments();
-    }
+//    @RequestMapping(value = "/deploy/allcomponents", method = GET, produces = APPLICATION_JSON_VALUE)
+//    public DataResponse<List<EnvironmentComponentsAll>> allcomponents() {
+//        return deployService.getAllDeployments();
+//    }
     
     @RequestMapping(value = "/deploy/rdp/{hostName}", method = GET)
     public String hostRdp(@PathVariable String hostName,HttpServletResponse response) {

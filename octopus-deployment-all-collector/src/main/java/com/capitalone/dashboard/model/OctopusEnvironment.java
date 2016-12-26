@@ -11,6 +11,8 @@ public class OctopusEnvironment extends CollectorItem{
 
     private static final String ENV_NAME = "envName";
 
+    private static final String DASHBOARD_ID = "dashboardId";
+
     public String getEnvId() {
         return (String) getOptions().get(ENV_ID);
     }
@@ -23,9 +25,18 @@ public class OctopusEnvironment extends CollectorItem{
         return (String) getOptions().get(ENV_NAME);
     }
 
+    public void setDashboardId(String dasboardId) {
+        getOptions().put(DASHBOARD_ID,dasboardId);
+    }
+
+    public String getDashboardId() {
+        return (String) getOptions().get(DASHBOARD_ID);
+    }
+
     public void setEnvName(String envName) {
         getOptions().put(ENV_NAME,envName);
     }
+
 
     @Override
     public boolean equals(Object o) {

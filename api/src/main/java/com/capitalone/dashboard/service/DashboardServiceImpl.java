@@ -14,6 +14,13 @@ import org.springframework.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+
+
 import java.util.*;
 
 @Service
@@ -180,20 +187,21 @@ public class DashboardServiceImpl implements DashboardService {
             // set transient collector property
             collectorItem.setCollector(collector);
         }
-        int i = 0;
-        for(CollectorItem ci : toSaveCollectorItemList){
-
-            LOGGER.info(ci.getOptions().toString());
-            LOGGER.info(ci.getCollectorId().toString());
-            LOGGER.info(ci.getDescription());
-            LOGGER.info(ci.getNiceName());
-
-            if(ci.isEnabled())
-                LOGGER.info("Enabled");
-
-            LOGGER.info("Iteration " + i);
-            i++;
-        }
+        //To remove its just printing
+//        int i = 0;
+//        for(CollectorItem ci : toSaveCollectorItemList){
+//
+//            LOGGER.info(ci.getOptions().toString());
+//            LOGGER.info(ci.getCollectorId().toString());
+//            LOGGER.info(ci.getDescription());
+//            LOGGER.info(ci.getNiceName());
+//
+//            if(ci.isEnabled())
+//                LOGGER.info("Enabled");
+//
+//            LOGGER.info("Iteration " + i);
+//            i++;
+//        }
         try{
             collectorItemRepository.save(toSaveCollectorItemList);
 
@@ -202,6 +210,46 @@ public class DashboardServiceImpl implements DashboardService {
         }
         //collectorItemRepository.save(toSaveCollectorItemList);
         componentRepository.save(component);
+
+        //If deployment summary type dashboard, then environments has to be reconciled with the collector
+        //items that are enabled.
+
+        for (ObjectId collectorItemId : collectorItemIds) {
+            CollectorItem collectorItem = collectorItemRepository.findOne(collectorItemId);
+            Collector collector = collectorRepository.findOne(collectorItem.getCollectorId());
+
+            if(collector.getCollectorType().toString().equals("DeploymentEnvironment")) {
+                //find all collector_items with the collectorId and disable it.
+                List<CollectorItem> collectorItems = collectorItemRepository.findByCollectorId(collector.getId());
+                for(CollectorItem ci : collectorItems){
+                    ci.setEnabled(false);
+                }
+                collectorItemRepository.save(collectorItems);
+                LOGGER.info("Finding all with collector ID : " + collector.getId());
+                List<Component> enabledEnvs = componentRepository.findByDeploymentEnvironmentsByCollectorId(collector.getId());
+                for (Component comp : enabledEnvs) {
+                    LOGGER.info("Type : " + collector.getCollectorType().toString());
+                    List<CollectorItem> cItems = comp.getCollectorItems(collector.getCollectorType());
+                    for (CollectorItem ci : cItems) {
+                        LOGGER.info("In: " + ci.getOptions().get("envName"));
+                        //Get the collectoritem with envId and collectorId and enable it.
+                        CollectorItem ciToEnable = collectorItemRepository.findByCollectorAndOptions(collector.getId(),ci.getOptions());
+                        if(ciToEnable != null){
+                            ciToEnable.setEnabled(true);
+                            LOGGER.info("About to Enable : " + ciToEnable.getOptions().get("envName"));
+                            collectorItemRepository.save(ciToEnable);
+                        }
+
+
+                    }
+
+                }
+
+                //with one collector collecting all the data, we can skip the other collectorItemIds
+                break;
+            }
+        }
+
         return component;
     }
 

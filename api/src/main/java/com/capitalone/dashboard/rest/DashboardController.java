@@ -67,9 +67,16 @@ public class DashboardController {
 
         Dashboard dashboard = dashboardService.get(id);
 
-        Component component = dashboardService.associateCollectorToComponent(
-                request.getComponentId(), request.getCollectorItemIds());
-
+        Component component = new Component();
+        if(request.getEnvs().toString().isEmpty()) {
+            component =  dashboardService.associateCollectorToComponent(
+                    request.getComponentId(), request.getCollectorItemIds());
+        }else{
+            //envs present
+            LOGGER.info("Envs present...");
+            component = dashboardService.associateCollectorToComponent(
+                    request.getComponentId(), request.getEnvObjectIds());
+        }
         Widget widget = dashboardService.addWidget(dashboard, request.widget());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new WidgetResponse(component, widget));

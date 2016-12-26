@@ -9,7 +9,7 @@ import com.capitalone.dashboard.repository.CollectorItemRepository;
 import com.capitalone.dashboard.repository.CollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.EnvironmentComponentRepository;
-import com.capitalone.dashboard.repository.EnvironmentComponentsAllRepository;
+//import com.capitalone.dashboard.repository.EnvironmentComponentsAllRepository;
 import com.capitalone.dashboard.repository.EnvironmentStatusRepository;
 import com.capitalone.dashboard.request.CollectorRequest;
 import com.capitalone.dashboard.request.DeployDataCreateRequest;
@@ -41,16 +41,16 @@ public class DeployServiceImpl implements DeployService {
     private final CollectorRepository collectorRepository;
     private final CollectorItemRepository collectorItemRepository;
     private final CollectorService collectorService;
-    private final EnvironmentComponentsAllRepository environmentComponentsAllRepository;
+   // private final EnvironmentComponentsAllRepository environmentComponentsAllRepository;
 
     @Autowired
     public DeployServiceImpl(ComponentRepository componentRepository,
                              EnvironmentComponentRepository environmentComponentRepository,
                              EnvironmentStatusRepository environmentStatusRepository,
-                             CollectorRepository collectorRepository, CollectorItemRepository collectorItemRepository,EnvironmentComponentsAllRepository environmentComponentsAllRepository, CollectorService collectorService) {
+                             CollectorRepository collectorRepository, CollectorItemRepository collectorItemRepository, CollectorService collectorService) {
         this.componentRepository = componentRepository;
         this.environmentComponentRepository = environmentComponentRepository;
-        this.environmentComponentsAllRepository = environmentComponentsAllRepository; //used for fetching all the deployments for all projects.
+      //  this.environmentComponentsAllRepository = environmentComponentsAllRepository; //used for fetching all the deployments for all projects.
         this.environmentStatusRepository = environmentStatusRepository;
         this.collectorRepository = collectorRepository;
         this.collectorItemRepository = collectorItemRepository;
@@ -219,16 +219,16 @@ public class DeployServiceImpl implements DeployService {
         return new DataResponse<>(environments, collector.getLastExecuted());
     }
 
-    @Override
-    public DataResponse<List<EnvironmentComponentsAll>> getAllDeployments(){
-
-        List<EnvironmentComponentsAll> eca = environmentComponentsAllRepository.findComponentAll();
-       // LOGGER.info(eca.toString());
-        long lastDate = 0;
-        if(eca != null)
-            lastDate = ((EnvironmentComponentsAll) eca.get(0)).getAsOfDate();
-        return new DataResponse<>(eca,lastDate);
-    }
+//    @Override
+//    public DataResponse<List<EnvironmentComponentsAll>> getAllDeployments(){
+//
+//        List<EnvironmentComponentsAll> eca = environmentComponentsAllRepository.findComponentAll();
+//       // LOGGER.info(eca.toString());
+//        long lastDate = 0;
+//        if(eca != null)
+//            lastDate = ((EnvironmentComponentsAll) eca.get(0)).getAsOfDate();
+//        return new DataResponse<>(eca,lastDate);
+//    }
 
     private Collector createCollector() {
         CollectorRequest collectorReq = new CollectorRequest();
