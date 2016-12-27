@@ -173,9 +173,8 @@ public class DefaultOctopusClient implements OctopusClient{
 
         }
         od.setEnvironmentProjectsAll(itms);
-        LOGGER.info("Finished reading Items");
+        LOGGER.info("+++++++++++++++++++++++++++++++++++++++++++++++++Finished reading Items");
 
-        //clear all EnvironmentProjectsAll and reload
 
         return od;
     }

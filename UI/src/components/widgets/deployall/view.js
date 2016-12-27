@@ -19,8 +19,26 @@
         ctrl.title = "";
         function load() {
                     var deferred = $q.defer();
-                    deployAllData.details().then(function(data) {
-                                    processResponse(data.result);
+                    var postData = {
+                        "envIds" : []
+                    }
+//var postData =  $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
+
+
+                    console.log(postData);
+                   var envs = $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
+                    for(var envi = 0; envi < postData.length;envi++){
+//                        delete postData[envi]["enabled"];
+//                        delete postData[envi]["pushed"];
+//                        delete postData[envi]["collectorId"];
+//                        delete postData[envi]["lastUpdated"];
+                        postData.envIds.push(envs[envi].id);
+
+                    }
+
+                    deployAllData.details(postData).then(function(data) {
+                                console.log(data);
+                               //     processResponse(data.result);
                                     deferred.resolve(data.lastUpdated);
                                 });
                                 document.getElementById("deployTableContainer").style.setProperty('height',(screen.height - 260) + 'px');

@@ -4,10 +4,9 @@ import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.DataResponse;
 import com.capitalone.dashboard.model.deploy.Environment;
 import com.capitalone.dashboard.request.DeployDataCreateRequest;
-//import com.capitalone.dashboard.model.EnvironmentComponentsAll;
+import com.capitalone.dashboard.model.EnvironmentProjectsAll;
 import org.bson.types.ObjectId;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 
 public interface DeployService {
@@ -25,5 +24,5 @@ public interface DeployService {
 
     DataResponse<List<Environment>> getDeployStatus(String applicationName);
 
-    //DataResponse<List<EnvironmentComponentsAll>> getAllDeployments();
+   DataResponse<List<EnvironmentProjectsAll>> getAllDeployments(List<String> envIds);
 }

@@ -219,16 +219,16 @@ public class DeployServiceImpl implements DeployService {
         return new DataResponse<>(environments, collector.getLastExecuted());
     }
 
-//    @Override
-//    public DataResponse<List<EnvironmentComponentsAll>> getAllDeployments(){
-//
-//        List<EnvironmentComponentsAll> eca = environmentComponentsAllRepository.findComponentAll();
-//       // LOGGER.info(eca.toString());
-//        long lastDate = 0;
-//        if(eca != null)
-//            lastDate = ((EnvironmentComponentsAll) eca.get(0)).getAsOfDate();
-//        return new DataResponse<>(eca,lastDate);
-//    }
+    @Override
+    public DataResponse<List<EnvironmentProjectsAll>> getAllDeployments(){
+
+        List<EnvironmentProjectsAll> eca = environmentComponentRepository.findDeployedByCollectorItemIds();
+       // LOGGER.info(eca.toString());
+        long lastDate = 0;
+        if(eca != null)
+            lastDate = ((EnvironmentComponentsAll) eca.get(0)).getAsOfDate();
+        return new DataResponse<>(eca,lastDate);
+    }
 
     private Collector createCollector() {
         CollectorRequest collectorReq = new CollectorRequest();

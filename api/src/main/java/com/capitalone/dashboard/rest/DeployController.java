@@ -2,11 +2,16 @@ package com.capitalone.dashboard.rest;
 
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.DataResponse;
-//import com.capitalone.dashboard.model.EnvironmentComponentsAll;
+import com.capitalone.dashboard.model.EnvironmentProjectsAll;
+import com.capitalone.dashboard.model.EnvironmentComponent;
 import com.capitalone.dashboard.model.deploy.Environment;
 import com.capitalone.dashboard.request.DeployDataCreateRequest;
+import com.capitalone.dashboard.request.DeployAllRequest;
 import com.capitalone.dashboard.service.DeployService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.bson.types.ObjectId;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -57,11 +63,19 @@ public class DeployController {
         //rdptext += "prompt for credentials:i:1";
         return new ResponseEntity<String>(rdptext, responseHeaders, HttpStatus.OK);
     }*/
+// DataResponse<List<EnvironmentProjectsAll>>
+    @RequestMapping(value = "/deploy/allprojects", method = POST,consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @JsonIgnoreProperties(ignoreUnknown = true)
 
-//    @RequestMapping(value = "/deploy/allcomponents", method = GET, produces = APPLICATION_JSON_VALUE)
-//    public DataResponse<List<EnvironmentComponentsAll>> allcomponents() {
-//        return deployService.getAllDeployments();
-//    }
+    public DataResponse<List<EnvironmentProjectsAll>> allcomponents(@RequestBody DeployAllRequest request) {
+
+        List<String> envIds = new ArrayList<>();
+        for(String envId : request.getEnvIds()){
+            envIds.add(envId);
+        }
+
+        return deployService.getAllDeployments()
+    }
     
     @RequestMapping(value = "/deploy/rdp/{hostName}", method = GET)
     public String hostRdp(@PathVariable String hostName,HttpServletResponse response) {

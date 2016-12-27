@@ -122,57 +122,27 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
             octopusClient.setContext(co);
             LOGGER.info("Octopus Server " + (octopusClient.getContext() + 1) + " " + octopusSettings.getUrl()[this.contextOserver]);
 
-            //Getting all envs
-//            List<OctopusEnvironment> envs = octopusClient.getEnvironments();
-//
-//            for(OctopusEnvironment env : envs){
-//                LOGGER.info("Environemnt: " + env.getEnvName() + " [" + env.getEnvId() + "]" );
-//
-//            }
+
             List<OctopusEnvironment> serverEnvs = octopusClient.getEnvironments();
             clean(serverEnvs,collector);
             addNewEnvironments(serverEnvs,collector);
             List<OctopusEnvironment> enabledEnvironments = octopusEnvironmentRepository.findEnabledEnvironments(collector.getId());
             //Get the Dashboard for server
             OctopusDashboard od = octopusClient.getDashboard();
-//            for(OctopusProjectGroup opg : od.getOctopusProjectGroups()){
-//                LOGGER.info(opg.getProjectGroupName());
-//            }
-
-            for(OctopusProject op : od.getOctopusProjects()){
-                LOGGER.info(op.getProjectGroupName() +  " " +   op.getProjectName());
-            }
-
-
-
 
             environmentProjectsAllRepository.deleteAll();
             for(EnvironmentProjectsAll epa : od.getEnvironmentProjectsAll()){
-                epa.setCollectorId(collector.getId());
-                if(enabledEnvironments.isEmpty() == false) {
-                    //save only the enabled environments
-                    for (OctopusEnvironment oe : enabledEnvironments) {
-                        if (oe.getEnvId().equals(epa.getEnvironmentId())) {
-                            environmentProjectsAllRepository.save(epa);
-                        }
-
+                LOGGER.info(epa.getEnvironmentName() + " - " + epa.getProjectName() + " - " + epa.getReleaseVersion());
+                Boolean addProject = false;
+                for(OctopusEnvironment oe : enabledEnvironments){
+                   // LOGGER.info("Enabled : " + oe.getEnvName());
+                    if(oe.getEnvId().equals(epa.getEnvironmentId())){
+                        environmentProjectsAllRepository.save(epa);
                     }
                 }
-
-
             }
 
-//            addNewApplications(octopusClient.getApplications(),
-//                    collector);
-//
-//            List<OctopusApplication> applications = enabledApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
-//            LOGGER.info("Enabled Applications ==>" + applications.size());
-//            updateData(applications);
-//
-//            List<OctopusApplication> allApplications = allApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
-//            LOGGER.info("------------------------------------------");
-//            LOGGER.info("All Applications ==>" + allApplications.size());
-//            saveAllComponents(allApplications, collector);
+
         }
         log("Finished", start);
         LOGGER.info("Finished -------------------------------------");
