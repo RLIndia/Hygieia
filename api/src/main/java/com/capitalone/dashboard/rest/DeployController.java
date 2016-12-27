@@ -74,7 +74,7 @@ public class DeployController {
             envIds.add(envId);
         }
 
-        return deployService.getAllDeployments()
+        return deployService.getAllDeployments(envIds);
     }
     
     @RequestMapping(value = "/deploy/rdp/{hostName}", method = GET)

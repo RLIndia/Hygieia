@@ -26,7 +26,8 @@
 //        }
         function details(postData){
             return $http.post(deployDetailRoute,postData).then(function (response){
-                return response;
+
+                return response.data;
             });
         }
     }
