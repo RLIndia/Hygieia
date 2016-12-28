@@ -139,6 +139,15 @@
                     }else{
                         //existing project will not hit the list based on project.
                         console.log("Existing project" + viewData[pgIdx].projects[projIdx].projectName);
+                        for(var j = 0; j < viewData[pgIdx].projects[projIdx].environments.length; j++){
+                           // console.log(tproject.environments[j].id);
+                           //   console.log(data[itmi].environmentId);
+                              if(viewData[pgIdx].projects[projIdx].environments[j].id == data[itmi].environmentId){
+                                   viewData[pgIdx].projects[projIdx].environments[j].releaseVersion = data[itmi].releaseVersion;
+                                   break;
+                              }
+                        }
+
                     }
 
                }

@@ -1,41 +1,33 @@
-<div class="deploy-view">
+<div class="deploy-all">
 
     <!--{{deployallView.deployAllData}}-->
 
     <!--{{deployallView.environments}}-->
         <!--{{deployallView.viewData}}-->
     <div style="overflow-y:scroll" id="deployTableContainer">
-        <table ng-model="test1" ng-table="deployallView.envs" class="table" style="">
-            <thead>
-            <tr style="background-color: #333333;font-size: 12pt">
-                <td width="20%"> Group </td>
-                <td width="20%"> Projects </td>
-                <td width="{{60/deployallView.envs.length}}%" ng-repeat="environment in deployallView.envs">
+
+
+        <table cellpadding="2px" class=" table-width" ng-model="test3" ng-repeat="projectGroup in deployallView.viewData">
+            <tbody>
+            <tr><td><br/></td></tr>
+            <tr >
+                <td class="pull-left project-group btn btn-info" colspan="{{deployallView.envs.length+1}}">{{projectGroup.projectGroupName}}</td>
+            </tr>
+            <tr class="table-header">
+
+                <td width="20%"> Project Name </td>
+                <td width="{{80/deployallView.envs.length}}%" ng-repeat="environment in deployallView.envs">
                     {{environment.options.envName}}
                 </td>
             </tr>
-            </thead>
-        </table>
-
-        <table class="table">
-            <tbody>
-            <tr ng-model="test3" ng-repeat="projectGroup in deployallView.viewData">
-                <td class="pull-left" width="20%">{{projectGroup.projectGroupName}}</td>
-                <td class="pull-left" width="20%">
-
-                    <table class="" width="100%">
-                        <tbody >
-                            <tr ng-model="test2" ng-repeat="projects in projectGroup.projects">
-                                <td width="30%"> {{projects.projectName}}</td>
-                                <td width="{{70/deployallView.envs.length}}%" ng-repeat="environment in projects.environments">
-                                    <span style="color:{{environment.color}}">{{environment.releaseVersion}}</span>
-                                </td>
-
-                            </tr>
-                        </tbody>
-                    </table>
+            <tr ng-model="test2" class="row-border" ng-repeat="projects in projectGroup.projects">
+                <td > {{projects.projectName}}</td>
+                <td  ng-repeat="environment in projects.environments">
+                    <span style="color:{{environment.color}}">{{environment.releaseVersion}}</span>
                 </td>
+
             </tr>
+
             </tbody>
         </table>
     </div>
