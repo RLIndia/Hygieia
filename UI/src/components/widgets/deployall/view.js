@@ -13,7 +13,7 @@
         // public variables
         ctrl.environments = [];
         ctrl.statuses = DashStatus;
-
+        $scope.events=[] ;
         ctrl.load = load;
        // ctrl.showDetail = showDetail;
         ctrl.title = "";
@@ -25,7 +25,7 @@
 //var postData =  $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
 
 
-                    console.log(postData);
+                    //console.log(postData);
                    var envs = $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
                     for(var envi = 0; envi < envs.length;envi++){
 //                        delete postData[envi]["enabled"];
@@ -49,44 +49,111 @@
 
          function processResponse(data,envs){
 
-//          //  console.log("here..");\
-//           var viewData = [];
-//            var tprojectgroup = {
-//                "projectGroupName":"",
-//                "projectGroupId":"",
-//                "projects":[]
-//            };
-//            //templates to position values
-//            var tproject = {
-//                "projectName":"",
-//                "projectId":"",
-//                "environments":[]
-//            }
+
+  console.log("here..");
+            var envs = $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
+            var viewData = [];
+
+         //   console.log(data);
+      //      console.log(envs);
 //
-//            //Add master list of environment with an empty version field
-//            for(var i = 0; i < envs.length;i++){
-//                var env = {
-//                    "name":envs[i].options.envName,
-//                    "id":envs[i].options.envId,
-//                    "releaseversion":""
-//                }
-//                tcomp.environments.push(env);
-//
-//            }
-//
-//            //Iterate through all the returned items
-//            for(var proji = 0; proji < data.length;proji++){
-//                //
-//                console.log(data[proji].projectName)
-//            }
-//
-//            ctrl.deployAllData = viewData;
+            //Add master list of environment with an empty version field
+            function addEnvs(project){
+                for(var i = 0; i < envs.length;i++){
+                var env = {
+                    "name":envs[i].options.envName,
+                    "id":envs[i].options.envId,
+                    "releaseVersion":""
+                }
+                project.environments.push(env);
+                //console.log(env);
+
+                }
+                return project;
+            }
+
+            for(var itmi = 0; itmi < data.length;itmi++){ 
+                           //find the appropriate project group 
+               var pgIdx = -1; 
+               for(var vd =0; vd < viewData.length;vd++){ 
+                  if(viewData[vd].projectGroupName == data[itmi].projectGroupName){ 
+                         pgIdx = vd; 
+                         break; 
+                  }  
+               } 
+               if(pgIdx < 0){
+
+                    var tprojectgroup = {
+                        "projectGroupName":data[itmi].projectGroupName,
+                        "projectGroupId":"",
+                        "projects":[]
+                    };
+                    //templates to position values
+                    var tproject = {
+                        "projectName":data[itmi].projectName,
+                        "projectId":data[itmi].projectId,
+                        "environments":[]
+                    }
+
+                    tproject = addEnvs(tproject);
+
+                    for(var j = 0; j < tproject.environments.length; j++){
+                       //  console.log(tproject.environments[j].id);
+                       //    console.log(data[itmi].environmentId);
+                           if(tproject.environments[j].id == data[itmi].environmentId){
+                                tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
+
+                                break;
+                           }
+                    }
+                    tprojectgroup.projects.push(tproject);
+                    viewData.push(tprojectgroup);
+               }else{
+                    //find if project found in group
+                    //project group would be viewData[pgIdx]
+                    var projIdx = -1;
+                    for(var i = 0; i < viewData[pgIdx].projects.length;i++){
+                        if(viewData[pgIdx].projects[i].projectId == data[itmi].projectId){
+                            projIdx = i;
+                            break;
+                        }
+                    }
+                    if(projIdx < 0){
+                        //new project
+                       var tproject = {
+                           "projectName":data[itmi].projectName,
+                           "projectId":data[itmi].projectId,
+                           "environments":[]
+                       }
+
+                       tproject = addEnvs(tproject);
+                       for(var j = 0; j < tproject.environments.length; j++){
+                           // console.log(tproject.environments[j].id);
+                           //   console.log(data[itmi].environmentId);
+                              if(tproject.environments[j].id == data[itmi].environmentId){
+                                   tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
+                                   break;
+                              }
+                       }
+                       viewData[pgIdx].projects.push(tproject);
+                    }else{
+                        //existing project will not hit the list based on project.
+                        console.log("Existing project" + viewData[pgIdx].projects[projIdx].projectName);
+                    }
+
+               }
+
+            }
 
 
 
+             ctrl.viewData  = viewData;
+             ctrl.envs = envs;
 
 
 
          }
+
+
     }
  })();

@@ -3,27 +3,38 @@
     <!--{{deployallView.deployAllData}}-->
 
     <!--{{deployallView.environments}}-->
-    <!--{{deployallView.components}}-->
+        <!--{{deployallView.viewData}}-->
     <div style="overflow-y:scroll" id="deployTableContainer">
-        <table ng-table="deployallView.components" class="table" style="position:fixed;max-width:93%">
-            <thead>
-            <tr style="background-color: #333333;font-size: 12pt">
-                <td width="30%"> Components </td>
-                <td width="{{70/deployallView.environments.length}}%" ng-repeat="environment in deployallView.environments">
-                    {{environment.environmentName}}
+
+        <table class="table">
+            <tbody>
+            <tr ng-model="test3" ng-repeat="projectGroup in deployallView.viewData">
+                <td class="pull-left" width="15%">{{projectGroup.projectGroupName}}</td>
+                <td>
+                    <table ng-model="test1" ng-table="deployallView.envs" class="table" style="position:fixed;max-width:93%">
+                        <thead>
+                        <tr style="background-color: #333333;font-size: 12pt">
+                            <td width="30%"> Projects </td>
+                            <td width="{{70/deployallView.envs.length}}%" ng-repeat="environment in deployallView.envs">
+                                {{environment.options.envName}}
+                            </td>
+                        </tr>
+                        </thead>
+                    </table>
+
+                    <table class="">
+                        <tbody >
+                            <tr ng-model="test2" ng-repeat="projects in projectGroup.projects">
+                                <td width="30%"> {{projects.projectName}}</td>
+                                <!--<td width="{{70/deployallView.environments.length}}%" ng-repeat="environment in component.environments">-->
+                                    <!--<span style="color:{{environment.color}}">{{environment.version}}</span>-->
+                                <!--</td>-->
+
+                            </tr>
+                        </tbody>
+                    </table>
                 </td>
             </tr>
-            </thead>
-        </table>
-        <table class="table">
-            <tbody >
-                <tr ng-repeat="component in deployallView.components">
-                    <td width="30%"> {{component.componentName}}</td>
-                    <td width="{{70/deployallView.environments.length}}%" ng-repeat="environment in component.environments">
-                        <span style="color:{{environment.color}}">{{environment.version}}</span>
-                    </td>
-
-                </tr>
             </tbody>
         </table>
     </div>
