@@ -7,7 +7,7 @@
     <div style="overflow-y:scroll" id="deployTableContainer">
 
 
-        <table cellpadding="2px" class=" table-width" ng-model="test3" ng-repeat="projectGroup in deployallView.viewData">
+        <table class=" table-width" ng-model="test3" ng-repeat="projectGroup in deployallView.viewData">
             <tbody>
             <tr><td><br/></td></tr>
             <tr >
@@ -15,15 +15,16 @@
             </tr>
             <tr class="table-header">
 
-                <td width="20%"> Project Name </td>
-                <td width="{{80/deployallView.envs.length}}%" ng-repeat="environment in deployallView.envs">
+                <td width="20%"> EndPoints </td>
+                <td  width="{{80/deployallView.envs.length}}%" ng-repeat="environment in deployallView.envs">
                     {{environment.options.envName}}
                 </td>
             </tr>
             <tr ng-model="test2" class="row-border" ng-repeat="projects in projectGroup.projects">
                 <td > {{projects.projectName}}</td>
-                <td  ng-repeat="environment in projects.environments">
+                <td style="color:{{environment.versionColor}}" ng-repeat="environment in projects.environments" title="{{environment.completedDate }} day(s) old">
                     <span style="color:{{environment.color}}">{{environment.releaseVersion}}</span>
+
                 </td>
 
             </tr>

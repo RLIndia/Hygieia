@@ -53,7 +53,7 @@
   console.log("here..");
             var envs = $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
             var viewData = [];
-
+            var now = moment();
          //   console.log(data);
       //      console.log(envs);
 //
@@ -63,7 +63,9 @@
                 var env = {
                     "name":envs[i].options.envName,
                     "id":envs[i].options.envId,
-                    "releaseVersion":""
+                    "releaseVersion":"",
+                    "completedDate":0,
+                    "versionColor":"#ff0000"
                 }
                 project.environments.push(env);
                 //console.log(env);
@@ -75,6 +77,19 @@
             for(var itmi = 0; itmi < data.length;itmi++){ 
                            //find the appropriate project group 
                var pgIdx = -1; 
+               var versionDays = parseInt(now.diff(moment(data[itmi].completedDate),'days'));
+               var versionColor = "#FF0000";
+               if(versionDays <= 5)
+                    {
+                        versionColor = "#ffffff";
+                    }
+               else if(versionDays > 5 && versionDays <= 10)
+                    {
+                        versionColor = "#FFA500"; //orange
+                    }
+               else {
+                    versionColor = "#FF0000"; //red
+               }
                for(var vd =0; vd < viewData.length;vd++){ 
                   if(viewData[vd].projectGroupName == data[itmi].projectGroupName){ 
                          pgIdx = vd; 
@@ -102,6 +117,8 @@
                        //    console.log(data[itmi].environmentId);
                            if(tproject.environments[j].id == data[itmi].environmentId){
                                 tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
+                                tproject.environments[j].completedDate = now.diff(moment(data[itmi].completedDate),'days');
+                                tproject.environments[j].versionColor = versionColor;
 
                                 break;
                            }
@@ -132,18 +149,22 @@
                            //   console.log(data[itmi].environmentId);
                               if(tproject.environments[j].id == data[itmi].environmentId){
                                    tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
+                                   tproject.environments[j].completedDate = now.diff(moment(data[itmi].completedDate),'days');
+                                   tproject.environments[j].versionColor = versionColor;
                                    break;
                               }
                        }
                        viewData[pgIdx].projects.push(tproject);
                     }else{
                         //existing project will not hit the list based on project.
-                        console.log("Existing project" + viewData[pgIdx].projects[projIdx].projectName);
+                        //console.log("Existing project" + viewData[pgIdx].projects[projIdx].projectName);
                         for(var j = 0; j < viewData[pgIdx].projects[projIdx].environments.length; j++){
                            // console.log(tproject.environments[j].id);
                            //   console.log(data[itmi].environmentId);
                               if(viewData[pgIdx].projects[projIdx].environments[j].id == data[itmi].environmentId){
                                    viewData[pgIdx].projects[projIdx].environments[j].releaseVersion = data[itmi].releaseVersion;
+                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = now.diff(moment(data[itmi].completedDate),'days');
+                                   tproject.environments[j].versionColor = versionColor;
                                    break;
                               }
                         }
