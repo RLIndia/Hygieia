@@ -8,6 +8,7 @@ public enum CollectorType {
     Build,
     Artifact,
     Deployment,
+    DeploymentEnvironment,
     Feature,
     ScopeOwner,
     Scope,

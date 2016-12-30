@@ -29,6 +29,7 @@ public class CollectorItem extends BaseModel {
     private boolean pushed;
     private ObjectId collectorId;
     private long lastUpdated;
+
     private Map<String,Object> options = new HashMap<>();
 
     @Transient

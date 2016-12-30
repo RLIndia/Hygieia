@@ -50,7 +50,7 @@
         }
 
         function getDeploysCallback(data) {
-                 ctrl.jobDropdownDisabled = false;
+                ctrl.jobDropdownDisabled = false;
                 ctrl.jobDropdownPlaceholder = 'Select your application';
                 ctrl.deployJobs = data.deploys;
 

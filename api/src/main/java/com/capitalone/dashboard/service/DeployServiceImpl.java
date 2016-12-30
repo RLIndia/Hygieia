@@ -5,12 +5,8 @@ import com.capitalone.dashboard.model.*;
 import com.capitalone.dashboard.model.deploy.DeployableUnit;
 import com.capitalone.dashboard.model.deploy.Environment;
 import com.capitalone.dashboard.model.deploy.Server;
-import com.capitalone.dashboard.repository.CollectorItemRepository;
-import com.capitalone.dashboard.repository.CollectorRepository;
-import com.capitalone.dashboard.repository.ComponentRepository;
-import com.capitalone.dashboard.repository.EnvironmentComponentRepository;
-import com.capitalone.dashboard.repository.EnvironmentComponentsAllRepository;
-import com.capitalone.dashboard.repository.EnvironmentStatusRepository;
+import com.capitalone.dashboard.repository.*;
+//import com.capitalone.dashboard.repository.EnvironmentComponentsAllRepository;
 import com.capitalone.dashboard.request.CollectorRequest;
 import com.capitalone.dashboard.request.DeployDataCreateRequest;
 import com.google.common.base.Function;
@@ -38,23 +34,25 @@ public class DeployServiceImpl implements DeployService {
     private final ComponentRepository componentRepository;
     private final EnvironmentComponentRepository environmentComponentRepository;
     private final EnvironmentStatusRepository environmentStatusRepository;
+    private final EnvironmentProjectsAllRepository environmentProjectsAllRepository;
     private final CollectorRepository collectorRepository;
     private final CollectorItemRepository collectorItemRepository;
     private final CollectorService collectorService;
-    private final EnvironmentComponentsAllRepository environmentComponentsAllRepository;
+   // private final EnvironmentComponentsAllRepository environmentComponentsAllRepository;
 
     @Autowired
     public DeployServiceImpl(ComponentRepository componentRepository,
                              EnvironmentComponentRepository environmentComponentRepository,
                              EnvironmentStatusRepository environmentStatusRepository,
-                             CollectorRepository collectorRepository, CollectorItemRepository collectorItemRepository,EnvironmentComponentsAllRepository environmentComponentsAllRepository, CollectorService collectorService) {
+                             EnvironmentProjectsAllRepository environmentProjectsAllRepository,
+                             CollectorRepository collectorRepository, CollectorItemRepository collectorItemRepository, CollectorService collectorService) {
         this.componentRepository = componentRepository;
         this.environmentComponentRepository = environmentComponentRepository;
-        this.environmentComponentsAllRepository = environmentComponentsAllRepository; //used for fetching all the deployments for all projects.
+      //  this.environmentComponentsAllRepository = environmentComponentsAllRepository; //used for fetching all the deployments for all projects.
         this.environmentStatusRepository = environmentStatusRepository;
         this.collectorRepository = collectorRepository;
         this.collectorItemRepository = collectorItemRepository;
-
+        this.environmentProjectsAllRepository = environmentProjectsAllRepository;
         this.collectorService = collectorService;
     }
 
@@ -220,14 +218,35 @@ public class DeployServiceImpl implements DeployService {
     }
 
     @Override
-    public DataResponse<List<EnvironmentComponentsAll>> getAllDeployments(){
+    public DataResponse<List<EnvironmentProjectsAll>> getAllDeployments(List<String> envObjectIds){
 
-        List<EnvironmentComponentsAll> eca = environmentComponentsAllRepository.findComponentAll();
+        List<EnvironmentProjectsAll> epa = new ArrayList<>();
+        LOGGER.info("IN " + envObjectIds.toString());
+        for(String envObjectId : envObjectIds){
+            LOGGER.info("Envs : " + envObjectIds);
+            //Convert objectId to envid
+            CollectorItem ci = collectorItemRepository.findOne(new ObjectId(envObjectId));
+            if(ci != null){
+                try{
+                    epa.addAll(environmentProjectsAllRepository.findItemsForEnvironmentId(ci.getOptions().get("envId").toString()));
+                }catch(Exception e){
+                    LOGGER.info("Hit an exception: " + e.toString());
+                }
+            }
+
+
+        }
+
+        for(EnvironmentProjectsAll ep : epa){
+            LOGGER.info(ep.getProjectName());
+
+        }
+
        // LOGGER.info(eca.toString());
         long lastDate = 0;
-        if(eca != null)
-            lastDate = ((EnvironmentComponentsAll) eca.get(0)).getAsOfDate();
-        return new DataResponse<>(eca,lastDate);
+//        if(epa != null)
+//            lastDate = ((EnvironmentProjectsAll) epa.get(0)).getCompletedDate();
+        return new DataResponse<>(epa,lastDate);
     }
 
     private Collector createCollector() {

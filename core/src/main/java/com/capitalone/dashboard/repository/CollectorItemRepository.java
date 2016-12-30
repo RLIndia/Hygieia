@@ -3,7 +3,7 @@ package com.capitalone.dashboard.repository;
 import com.capitalone.dashboard.model.CollectorItem;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.Query;
-
+import java.util.*;
 /**
  * A {@link CollectorItem} repository
  */
@@ -20,4 +20,8 @@ public interface CollectorItemRepository extends BaseCollectorItemRepository<Col
     CollectorItem findByCollectorIdNiceNameAndJobName(ObjectId collectorId, String niceName, String jobName);
     @Query(value="{'options.projectId' : ?2, 'niceName' : ?1, 'collectorId' : ?0}")
     CollectorItem findByCollectorIdNiceNameAndProjectId(ObjectId collectorId, String niceName, String projectId);
+
+    //Used by deployment all api to get all objects with the collectorId
+    @Query(value="{'collectorId' : ?0}")
+    List<CollectorItem> findByCollectorId(ObjectId collectorId);
 }

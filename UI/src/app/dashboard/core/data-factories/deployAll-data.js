@@ -12,17 +12,23 @@
 
     function deployAllData($http) {
         var testDetailRoute = 'test-data/deploy_detail.json';
-        var deployDetailRoute = '/api/deploy/allcomponents';
+        var deployDetailRoute = '/api/deploy/allprojects';
 
         return {
             details: details
         };
 
-        function details() {
-            return $http.get(HygieiaConfig.local ? testDetailRoute : deployDetailRoute)
-                .then(function (response) {
-                    return response.data;
-                });
+//        function details() {
+//            return $http.get(HygieiaConfig.local ? testDetailRoute : deployDetailRoute)
+//                .then(function (response) {
+//                    return response.data;
+//                });
+//        }
+        function details(postData){
+            return $http.post(deployDetailRoute,postData).then(function (response){
+
+                return response.data;
+            });
         }
     }
 })();

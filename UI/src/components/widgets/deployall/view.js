@@ -13,14 +13,33 @@
         // public variables
         ctrl.environments = [];
         ctrl.statuses = DashStatus;
-
+        $scope.events=[] ;
         ctrl.load = load;
        // ctrl.showDetail = showDetail;
         ctrl.title = "";
         function load() {
                     var deferred = $q.defer();
-                    deployAllData.details().then(function(data) {
-                                    processResponse(data.result);
+                    var postData = {
+                        "envIds" : []
+                    }
+//var postData =  $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
+
+
+                    //console.log(postData);
+                   var envs = $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
+                    for(var envi = 0; envi < envs.length;envi++){
+//                        delete postData[envi]["enabled"];
+//                        delete postData[envi]["pushed"];
+//                        delete postData[envi]["collectorId"];
+//                        delete postData[envi]["lastUpdated"];
+                        postData.envIds.push(envs[envi].id);
+                        ctrl.environments.push(envs[envi].options.envName);
+
+                    }
+
+                    deployAllData.details(postData).then(function(data,envs) {
+                               // console.log(data);
+                                    processResponse(data.result,envs);
                                     deferred.resolve(data.lastUpdated);
                                 });
                                 document.getElementById("deployTableContainer").style.setProperty('height',(screen.height - 260) + 'px');
@@ -28,112 +47,143 @@
                      return deferred.promise;
         }
 
-         function processResponse(data){
-            ctrl.deployAllData = data;
-          //  console.log("here..");
-            var components = [];
-            //templates to position values
-            var tcomp = {
-                "componentName":"",
-                "componentID":"",
-                "environments":[]
+         function processResponse(data,envs){
+
+
+  console.log("here..");
+            var envs = $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
+            var viewData = [];
+            var now = moment();
+         //   console.log(data);
+      //      console.log(envs);
+//
+            //Add master list of environment with an empty version field
+            function addEnvs(project){
+                for(var i = 0; i < envs.length;i++){
+                var env = {
+                    "name":envs[i].options.envName,
+                    "id":envs[i].options.envId,
+                    "releaseVersion":"",
+                    "completedDate":0,
+                    "versionColor":"#ff0000"
+                }
+                project.environments.push(env);
+                //console.log(env);
+
+                }
+                return project;
             }
-            var masterenv = []; //master list of environments
-            var masterversions = []; //used for coloring.
 
-            var colors = ["#FFFFFF","#FF0000","#5F9EA0","#00FFFF","#A9A9A9","#9932CC","#FFD700","#DEB887","#CD5C5C","#90EE90",
-            "#9370D8","#C71585","#4169E1","#9ACD32","#8A2BE2","#d39e5e","#D39E5E","#5ED3CE","#5E5ED3","#838397","#E5F064","#DE7C5A"];
-            var lastAllotedColorIndex = 0;
-            for(var i = 0; i < data.length; i++){
+            for(var itmi = 0; itmi < data.length;itmi++){ 
+                           //find the appropriate project group 
+               var pgIdx = -1; 
+               var versionDays = parseInt(now.diff(moment(data[itmi].completedDate),'days'));
+               var versionColor = "#FF0000";
+               if(versionDays <= 5)
+                    {
+                        versionColor = "#ffffff";
+                    }
+               else if(versionDays > 5 && versionDays <= 10)
+                    {
+                        versionColor = "#FFA500"; //orange
+                    }
+               else {
+                    versionColor = "#FF0000"; //red
+               }
+               for(var vd =0; vd < viewData.length;vd++){ 
+                  if(viewData[vd].projectGroupName == data[itmi].projectGroupName){ 
+                         pgIdx = vd; 
+                         break; 
+                  }  
+               } 
+               if(pgIdx < 0){
 
-               //if(data[i].environmentName == "Test14" || data[i].environmentName == "Load")
-             //{//to be removed
-                    var machingIndx = -1;
-                    for(var j =0; j < masterenv.length;j++){
-                        if(masterenv[j].environmentID == data[i].environmentID){
-                            machingIndx = j;
+                    var tprojectgroup = {
+                        "projectGroupName":data[itmi].projectGroupName,
+                        "projectGroupId":"",
+                        "projects":[]
+                    };
+                    //templates to position values
+                    var tproject = {
+                        "projectName":data[itmi].projectName,
+                        "projectId":data[itmi].projectId,
+                        "environments":[]
+                    }
+
+                    tproject = addEnvs(tproject);
+
+                    for(var j = 0; j < tproject.environments.length; j++){
+                       //  console.log(tproject.environments[j].id);
+                       //    console.log(data[itmi].environmentId);
+                           if(tproject.environments[j].id == data[itmi].environmentId){
+                                tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
+                                tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
+                                tproject.environments[j].versionColor = versionColor;
+
+                                break;
+                           }
+                    }
+                    tprojectgroup.projects.push(tproject);
+                    viewData.push(tprojectgroup);
+               }else{
+                    //find if project found in group
+                    //project group would be viewData[pgIdx]
+                    var projIdx = -1;
+                    for(var i = 0; i < viewData[pgIdx].projects.length;i++){
+                        if(viewData[pgIdx].projects[i].projectId == data[itmi].projectId){
+                            projIdx = i;
                             break;
                         }
                     }
-                    if(machingIndx < 0){
-                        var env = {
-                            "environmentName":data[i].environmentName,
-                            "environmentID":data[i].environmentID
+                    if(projIdx < 0){
+                        //new project
+                       var tproject = {
+                           "projectName":data[itmi].projectName,
+                           "projectId":data[itmi].projectId,
+                           "environments":[]
+                       }
+
+                       tproject = addEnvs(tproject);
+                       for(var j = 0; j < tproject.environments.length; j++){
+                           // console.log(tproject.environments[j].id);
+                           //   console.log(data[itmi].environmentId);
+                              if(tproject.environments[j].id == data[itmi].environmentId){
+                                   tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
+                                   tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
+                                   tproject.environments[j].versionColor = versionColor;
+                                   break;
+                              }
+                       }
+                       viewData[pgIdx].projects.push(tproject);
+                    }else{
+                        //existing project will not hit the list based on project.
+                        //console.log("Existing project" + viewData[pgIdx].projects[projIdx].projectName);
+                        for(var j = 0; j < viewData[pgIdx].projects[projIdx].environments.length; j++){
+                           // console.log(tproject.environments[j].id);
+                           //   console.log(data[itmi].environmentId);
+                              if(viewData[pgIdx].projects[projIdx].environments[j].id == data[itmi].environmentId){
+                                   viewData[pgIdx].projects[projIdx].environments[j].releaseVersion = data[itmi].releaseVersion;
+                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
+                                   tproject.environments[j].versionColor = versionColor;
+                                   break;
+                              }
                         }
-              //          console.log("hit here...");
-               //         console.log(env);
-                        masterenv.push(env);
-                    }
-             //   }
 
+                    }
+
+               }
 
             }
 
 
 
-           // console.log(masterenv);
-
-            for(var i = 0; i < data.length; i++){
-                var machingIndx = -1;
-                for(var j =0; j < components.length;j++){
-                    if(components[j].componentID == data[i].componentID){
-                        machingIndx = j;
-                        break;
-                        //To do add version to the matching env.
-                    }
-                }
-                if(machingIndx < 0){
-                    var comp = {
-                        "componentID": data[i].componentID,
-                        "componentName": data[i].componentName,
-                        "environments": []
-                    }
-                    comp.environments = masterenv;
-                    components.push(comp);
-                }
-                for(var j =0; j < components.length;j++){
-                    if(components[j].componentID == data[i].componentID){
-                        //find the env and update the version
-                        for(var k =0; k < components[j].environments.length;k++){
-                            if(components[j].environments[k].environmentID == data[i].environmentID){
-                                components[j].environments[k].version = data[i].componentVersion;
-                                components[j].environments[k].color = getColorCodeForVersion(components[j].environments[k].version);
-                           //     console.log("Color:" + components[j].environments[k].color);
-                          //      console.log("Version:" + components[j].environments[k].version);
-                                break;
-                            }
-                        }
-                        components[j].environments = JSON.parse(JSON.stringify(components[j].environments));
-                    }
-                }
-            }
+             ctrl.viewData  = viewData;
+             ctrl.envs = envs;
 
 
-            ctrl.environments = masterenv;
-            ctrl.components = components;
-
-            function getColorCodeForVersion(version){
-                var found = false;
-                for(var x = 0; x < masterversions.length; x++){
-                    if(masterversions[x].version == version){
-                        found = true;
-                     //   console.log(masterversions);
-                        return masterversions[x].color;
-                    }
-                }
-                if(!found){
-                    if(lastAllotedColorIndex > 21)
-                        lastAllotedColorIndex = 0;
-                    var v = {"version":version,"color":JSON.parse(JSON.stringify(colors[lastAllotedColorIndex]))};
-                    masterversions.push(v);
-                   //onsole.log(masterversions);
-                     //now it should find it.
-                    lastAllotedColorIndex++;
-                    return(v.color);
-
-                }
-            }
 
          }
+
+
     }
  })();

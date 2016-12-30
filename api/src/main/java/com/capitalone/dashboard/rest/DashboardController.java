@@ -15,12 +15,15 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @RestController
 public class DashboardController {
 
     private final DashboardService dashboardService;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
     @Autowired
     public DashboardController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
@@ -64,9 +67,16 @@ public class DashboardController {
 
         Dashboard dashboard = dashboardService.get(id);
 
-        Component component = dashboardService.associateCollectorToComponent(
-                request.getComponentId(), request.getCollectorItemIds());
-
+        Component component = new Component();
+        if(request.getEnvs().toString().isEmpty()) {
+            component =  dashboardService.associateCollectorToComponent(
+                    request.getComponentId(), request.getCollectorItemIds());
+        }else{
+            //envs present
+            LOGGER.info("Envs present...");
+            component = dashboardService.associateCollectorToComponent(
+                    request.getComponentId(), request.getEnvObjectIds());
+        }
         Widget widget = dashboardService.addWidget(dashboard, request.widget());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new WidgetResponse(component, widget));
@@ -77,8 +87,18 @@ public class DashboardController {
     public ResponseEntity<WidgetResponse> updateWidget(@PathVariable ObjectId id,
                                                        @PathVariable ObjectId widgetId,
                                                        @RequestBody WidgetRequest request) {
-        Component component = dashboardService.associateCollectorToComponent(
-                request.getComponentId(), request.getCollectorItemIds());
+        LOGGER.info("In request");
+        LOGGER.info(request.getEnvs().toString());
+        Component component = new Component();
+        if(request.getEnvs().toString().isEmpty()) {
+             component = dashboardService.associateCollectorToComponent(
+                    request.getComponentId(), request.getCollectorItemIds());
+        }else{
+            //envs present
+            LOGGER.info("Envs present...");
+            component = dashboardService.associateCollectorToComponent(
+                    request.getComponentId(), request.getEnvObjectIds());
+        }
 
         Dashboard dashboard = dashboardService.get(id);
         Widget widget = request.updateWidget(dashboardService.getWidget(dashboard, widgetId));

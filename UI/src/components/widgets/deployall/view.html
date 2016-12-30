@@ -1,29 +1,34 @@
-<div class="deploy-view">
+<div class="deploy-all">
 
     <!--{{deployallView.deployAllData}}-->
 
     <!--{{deployallView.environments}}-->
-    <!--{{deployallView.components}}-->
+        <!--{{deployallView.viewData}}-->
     <div style="overflow-y:scroll" id="deployTableContainer">
-        <table ng-table="deployallView.components" class="table" style="position:fixed;max-width:93%">
-            <thead>
-            <tr style="background-color: #333333;font-size: 12pt">
-                <td width="30%"> Components </td>
-                <td width="{{70/deployallView.environments.length}}%" ng-repeat="environment in deployallView.environments">
-                    {{environment.environmentName}}
+
+
+        <table class=" table-width" ng-model="test3" ng-repeat="projectGroup in deployallView.viewData">
+            <tbody>
+            <tr><td><br/></td></tr>
+            <tr >
+                <td class="pull-left project-group btn btn-info" colspan="{{deployallView.envs.length+1}}">{{projectGroup.projectGroupName}}</td>
+            </tr>
+            <tr class="table-header">
+
+                <td width="20%"> EndPoints </td>
+                <td  width="{{80/deployallView.envs.length}}%" ng-repeat="environment in deployallView.envs">
+                    {{environment.options.envName}}
                 </td>
             </tr>
-            </thead>
-        </table>
-        <table class="table">
-            <tbody >
-                <tr ng-repeat="component in deployallView.components">
-                    <td width="30%"> {{component.componentName}}</td>
-                    <td width="{{70/deployallView.environments.length}}%" ng-repeat="environment in component.environments">
-                        <span style="color:{{environment.color}}">{{environment.version}}</span>
-                    </td>
+            <tr ng-model="test2" class="row-border" ng-repeat="projects in projectGroup.projects">
+                <td > {{projects.projectName}}</td>
+                <td style="color:{{environment.versionColor}}" ng-repeat="environment in projects.environments" title="{{environment.completedDate }}">
+                    <span style="color:{{environment.color}}">{{environment.releaseVersion}}</span>
 
-                </tr>
+                </td>
+
+            </tr>
+
             </tbody>
         </table>
     </div>

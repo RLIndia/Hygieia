@@ -5,11 +5,21 @@ import com.capitalone.dashboard.repository.*;
 import com.capitalone.dashboard.util.UnsafeDeleteException;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.mongodb.util.JSON;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+
 
 import java.util.*;
 
@@ -23,7 +33,7 @@ public class DashboardServiceImpl implements DashboardService {
 	@SuppressWarnings("unused")
 	private final PipelineRepository pipelineRepository; //NOPMD
     private final ServiceRepository serviceRepository;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServiceImpl.class);
     @Autowired
     public DashboardServiceImpl(DashboardRepository dashboardRepository,
                                 ComponentRepository componentRepository,
@@ -135,6 +145,7 @@ public class DashboardServiceImpl implements DashboardService {
             return null;
         }
 
+
         com.capitalone.dashboard.model.Component component = componentRepository.findOne(componentId); //NOPMD - using fully qualified name for clarity
         //we can not assume what collector item is added, what is removed etc so, we will
         //refresh the association. First disable all collector items, then remove all and re-add
@@ -164,18 +175,81 @@ public class DashboardServiceImpl implements DashboardService {
             CollectorItem collectorItem = collectorItemRepository.findOne(collectorItemId);
             Collector collector = collectorRepository.findOne(collectorItem.getCollectorId());
             component.addCollectorItem(collector.getCollectorType(), collectorItem);
+            LOGGER.info("In reading collectoritem id:");
 
             if (!collectorItem.isEnabled()) {
                 toSaveCollectorItemList.remove(collectorItem);
                 collectorItem.setEnabled(true);
                 toSaveCollectorItemList.add(collectorItem);
+                LOGGER.info(String.valueOf(collectorItem.isEnabled()));
             }
 
             // set transient collector property
             collectorItem.setCollector(collector);
         }
-        collectorItemRepository.save(toSaveCollectorItemList);
+        //To remove its just printing
+//        int i = 0;
+//        for(CollectorItem ci : toSaveCollectorItemList){
+//
+//            LOGGER.info(ci.getOptions().toString());
+//            LOGGER.info(ci.getCollectorId().toString());
+//            LOGGER.info(ci.getDescription());
+//            LOGGER.info(ci.getNiceName());
+//
+//            if(ci.isEnabled())
+//                LOGGER.info("Enabled");
+//
+//            LOGGER.info("Iteration " + i);
+//            i++;
+//        }
+        try{
+            collectorItemRepository.save(toSaveCollectorItemList);
+
+        }catch (Exception e){
+            LOGGER.info("Exception");
+        }
+        //collectorItemRepository.save(toSaveCollectorItemList);
         componentRepository.save(component);
+
+        //If deployment summary type dashboard, then environments has to be reconciled with the collector
+        //items that are enabled.
+
+        for (ObjectId collectorItemId : collectorItemIds) {
+            CollectorItem collectorItem = collectorItemRepository.findOne(collectorItemId);
+            Collector collector = collectorRepository.findOne(collectorItem.getCollectorId());
+
+            if(collector.getCollectorType().toString().equals("DeploymentEnvironment")) {
+                //find all collector_items with the collectorId and disable it.
+                List<CollectorItem> collectorItems = collectorItemRepository.findByCollectorId(collector.getId());
+                for(CollectorItem ci : collectorItems){
+                    ci.setEnabled(false);
+                }
+                collectorItemRepository.save(collectorItems);
+                LOGGER.info("Finding all with collector ID : " + collector.getId());
+                List<Component> enabledEnvs = componentRepository.findByDeploymentEnvironmentsByCollectorId(collector.getId());
+                for (Component comp : enabledEnvs) {
+                    LOGGER.info("Type : " + collector.getCollectorType().toString());
+                    List<CollectorItem> cItems = comp.getCollectorItems(collector.getCollectorType());
+                    for (CollectorItem ci : cItems) {
+                        LOGGER.info("In: " + ci.getOptions().get("envName"));
+                        //Get the collectoritem with envId and collectorId and enable it.
+                        CollectorItem ciToEnable = collectorItemRepository.findByCollectorAndOptions(collector.getId(),ci.getOptions());
+                        if(ciToEnable != null){
+                            ciToEnable.setEnabled(true);
+                            LOGGER.info("About to Enable : " + ciToEnable.getOptions().get("envName"));
+                            collectorItemRepository.save(ciToEnable);
+                        }
+
+
+                    }
+
+                }
+
+                //with one collector collecting all the data, we can skip the other collectorItemIds
+                break;
+            }
+        }
+
         return component;
     }
 
