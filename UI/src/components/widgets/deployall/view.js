@@ -117,7 +117,7 @@
                        //    console.log(data[itmi].environmentId);
                            if(tproject.environments[j].id == data[itmi].environmentId){
                                 tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
-                                tproject.environments[j].completedDate = now.diff(moment(data[itmi].completedDate),'days');
+                                tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
                                 tproject.environments[j].versionColor = versionColor;
 
                                 break;
@@ -149,7 +149,7 @@
                            //   console.log(data[itmi].environmentId);
                               if(tproject.environments[j].id == data[itmi].environmentId){
                                    tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
-                                   tproject.environments[j].completedDate = now.diff(moment(data[itmi].completedDate),'days');
+                                   tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
                                    tproject.environments[j].versionColor = versionColor;
                                    break;
                               }
@@ -163,7 +163,7 @@
                            //   console.log(data[itmi].environmentId);
                               if(viewData[pgIdx].projects[projIdx].environments[j].id == data[itmi].environmentId){
                                    viewData[pgIdx].projects[projIdx].environments[j].releaseVersion = data[itmi].releaseVersion;
-                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = now.diff(moment(data[itmi].completedDate),'days');
+                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
                                    tproject.environments[j].versionColor = versionColor;
                                    break;
                               }

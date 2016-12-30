@@ -22,7 +22,7 @@
             </tr>
             <tr ng-model="test2" class="row-border" ng-repeat="projects in projectGroup.projects">
                 <td > {{projects.projectName}}</td>
-                <td style="color:{{environment.versionColor}}" ng-repeat="environment in projects.environments" title="{{environment.completedDate }} day(s) old">
+                <td style="color:{{environment.versionColor}}" ng-repeat="environment in projects.environments" title="{{environment.completedDate }}">
                     <span style="color:{{environment.color}}">{{environment.releaseVersion}}</span>
 
                 </td>
