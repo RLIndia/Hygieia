@@ -23,6 +23,15 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
 
+echo "Configuring Octopus Environment collector"
+cd ../../octopus-deployment-all-collector/
+cp -f octopus.template target/application.properties
+wget $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
+cat target/temp.properties >> target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+nohup java -jar octopus-deployment-all-collector-2.0.2-SNAPSHOT.jar &
+
 echo "Configuring Jenkins collector"
 cd ../../jenkins-build-collector/
 cp -f jenkins.template target/application.properties
