@@ -22,6 +22,8 @@
 
         ctrl.removeEnv = removeEnv;
 
+        ctrl.selectallEnvs = selectallEnvs;
+
         collectorData.itemsByType('deploymentenvironment').then(processResponse);
 
         function processResponse(data) {
@@ -80,6 +82,22 @@
 //                }
         }
 
+        function selectallEnvs(cb){
+            console.log("Test Button Clicked");
+            console.log(ctrl.deploySelectedEnvs);
+            if(ctrl.envs)
+                {
+                        console.log(ctrl.envs);
+                        ctrl.deploySelectedEnvs = ctrl.envs;
+                        var form = document.configForm;
+                        form.selectedEnvs.value = ctrl.envs[0].value;
+                        cb(true);
+
+                }
+             else
+                cb(false);
+        }
+
         function copyEnv(){
             var envs = [];
             //envs.push(ctrl.envs);
@@ -91,22 +109,34 @@
                     name:obj.name
                 }
                 envs.push(_env);
-                console.log(obj);
-                console.log(value);
+             //   console.log(obj);
+             //   console.log(value);
             });
             //append all selected environment. Remove repeated envs
             if(ctrl.envs){
+                var foundEnv = false;
                 ctrl.envs.forEach(function(obj,value){
                     var _env = {
                         value:obj.value,
                         name:obj.name
                     }
-                    envs.push(_env);
+                    //console.log("here 2...");
+                    foundEnv = false;
+                    for(var i = 0; i < envs.length; i++){
+
+                        if(envs[i].value == _env.value)
+                            foundEnv = true;
+                    }
+
+                    if(foundEnv == false)
+                        envs.push(_env);
+
                 });
             }
-            console.log(envs);
+           // console.log(envs);
            ctrl.envs = envs;
           // console.log("in copy");
+
            console.log(ctrl.envs);
         }
 
@@ -137,6 +167,7 @@
             ctrl.submitted = true;
 
             console.log('in submit');
+
             //Rebuilding env list
             var envs = [];
             for(var i = 0; i < ctrl.envs.length;i++){
@@ -145,11 +176,15 @@
 //                if(i < ctrl.envs.length - 2)
 //                    envs += ",";
                 envs.push(ctrl.envs[i].value);
+
             }
+
             console.log(document.configForm.selectedEnvs.value);
             console.log(envs);
 
             if (valid) {
+                // selectallEnvs();
+                console.log("valid");
                 var form = document.configForm;
                 var postObj = {
                     name: 'deploymentEnvironment',
@@ -163,6 +198,9 @@
                // postObj.collectorItemId.push(envs);
                 console.log(postObj);
                 $modalInstance.close(postObj);
+            }
+            else{
+                console.log("invalid");
             }
         }
     }

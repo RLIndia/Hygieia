@@ -219,7 +219,8 @@ public class DeployServiceImpl implements DeployService {
 
     @Override
     public DataResponse<List<EnvironmentProjectsAll>> getAllDeployments(List<String> envObjectIds){
-
+        //Get collector for last executed date
+        List<Collector> collectorList = collectorRepository.findByCollectorTypeAndName(CollectorType.DeploymentEnvironment, "OctopusEnvironment");
         List<EnvironmentProjectsAll> epa = new ArrayList<>();
         LOGGER.info("IN " + envObjectIds.toString());
         for(String envObjectId : envObjectIds){
@@ -244,8 +245,9 @@ public class DeployServiceImpl implements DeployService {
 
        // LOGGER.info(eca.toString());
         long lastDate = 0;
-//        if(epa != null)
-//            lastDate = ((EnvironmentProjectsAll) epa.get(0)).getCompletedDate();
+        if(collectorList != null){
+            lastDate = collectorList.get(0).getLastExecuted();
+        }
         return new DataResponse<>(epa,lastDate);
     }
 

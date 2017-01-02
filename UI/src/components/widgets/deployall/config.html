@@ -1,5 +1,5 @@
 <widget-modal widget-modal-title="Configure Deploy Environment Widget">
-    <form class="deploy-config" name="configForm" ng-submit="deployConfig.submit(configForm.$valid)" novalidate="novalidate">
+    <form class="deploy-config" name="configForm" ng-submit="deployConfig.selectallEnvs(deployConfig.submit)" novalidate="novalidate">
         <form-group input="selectedEnvs" errors="{required:'Please select your Environments'}">
             <label class="modal-label">
                 Available Environments:
@@ -42,6 +42,8 @@
 
         <div class="button-row row text-center">
             <button type="submit" class="btn btn-primary btn-wide">Save</button>
+            <button type="button" class="btn btn-info btn-wide" ng-click="deployConfig.selectallEnvs()">Test</button>
+
         </div>
         </form-group>
     </form>

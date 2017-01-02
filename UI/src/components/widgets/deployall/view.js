@@ -53,19 +53,22 @@
   console.log("here..");
             var envs = $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
             var viewData = [];
-            var now = moment();
+            var now = moment().startOf('day');
          //   console.log(data);
       //      console.log(envs);
 //
             //Add master list of environment with an empty version field
             function addEnvs(project){
+                var n1 = moment().startOf('day');
                 for(var i = 0; i < envs.length;i++){
                 var env = {
                     "name":envs[i].options.envName,
                     "id":envs[i].options.envId,
                     "releaseVersion":"",
                     "completedDate":0,
-                    "versionColor":"#ff0000"
+                    "versionColor":"#ff0000",
+                    "versionDays":"0",
+                    "today":n1
                 }
                 project.environments.push(env);
                 //console.log(env);
@@ -77,7 +80,8 @@
             for(var itmi = 0; itmi < data.length;itmi++){ 
                            //find the appropriate project group 
                var pgIdx = -1; 
-               var versionDays = parseInt(now.diff(moment(data[itmi].completedDate),'days'));
+               var now = moment().startOf('day');
+               var versionDays = now.diff(moment.utc(data[itmi].completedDate),'days');
                var versionColor = "#FF0000";
                if(versionDays <= 5)
                     {
@@ -117,8 +121,11 @@
                        //    console.log(data[itmi].environmentId);
                            if(tproject.environments[j].id == data[itmi].environmentId){
                                 tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
-                                tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
+                                tproject.environments[j].completedDate = moment(data[itmi].completedDate);
                                 tproject.environments[j].versionColor = versionColor;
+                                tproject.environments[j].versionDays = versionDays;
+                                tproject.environments[j].now = now;
+
 
                                 break;
                            }
@@ -149,8 +156,10 @@
                            //   console.log(data[itmi].environmentId);
                               if(tproject.environments[j].id == data[itmi].environmentId){
                                    tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
-                                   tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
+                                   tproject.environments[j].completedDate = moment(data[itmi].completedDate);
                                    tproject.environments[j].versionColor = versionColor;
+                                   tproject.environments[j].versionDays = versionDays;
+                                   tproject.environments[j].now = now;
                                    break;
                               }
                        }
@@ -163,8 +172,10 @@
                            //   console.log(data[itmi].environmentId);
                               if(viewData[pgIdx].projects[projIdx].environments[j].id == data[itmi].environmentId){
                                    viewData[pgIdx].projects[projIdx].environments[j].releaseVersion = data[itmi].releaseVersion;
-                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
+                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = moment(data[itmi].completedDate);
                                    tproject.environments[j].versionColor = versionColor;
+                                   tproject.environments[j].versionDays = versionDays;
+                                   tproject.environments[j].now = now;
                                    break;
                               }
                         }
