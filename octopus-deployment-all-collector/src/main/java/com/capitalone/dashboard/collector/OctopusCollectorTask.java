@@ -132,7 +132,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
 
             environmentProjectsAllRepository.deleteAll();
             for(EnvironmentProjectsAll epa : od.getEnvironmentProjectsAll()){
-                LOGGER.info(epa.getEnvironmentName() + " - " + epa.getProjectName() + " - " + epa.getReleaseVersion());
+              //  LOGGER.info(epa.getEnvironmentName() + " - " + epa.getProjectName() + " - " + epa.getReleaseVersion());
                 Boolean addProject = false;
                 for(OctopusEnvironment oe : enabledEnvironments){
                    // LOGGER.info("Enabled : " + oe.getEnvName());
@@ -145,7 +145,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
 
         }
         log("Finished", start);
-        LOGGER.info("Finished -------------------------------------");
+       // LOGGER.info("Finished -------------------------------------");
 
     }
 
@@ -213,13 +213,13 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
                 env.setEnabled(false);
                 try{
                     octopusEnvironmentRepository.save(env);
-                    LOGGER.info("Added New Env " +  env.getEnvName());
+              //      LOGGER.info("Added New Env " +  env.getEnvName());
                 }catch (org.springframework.dao.DuplicateKeyException ce){
 
                 }
                 //TO Do: Logic to clean up older environments, That is not used.
             }else{
-                LOGGER.info("Skipped Adding Env, already in. " + env.getEnvName());
+           //     LOGGER.info("Skipped Adding Env, already in. " + env.getEnvName());
             }
         }
     }

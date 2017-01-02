@@ -222,9 +222,9 @@ public class DeployServiceImpl implements DeployService {
         //Get collector for last executed date
         List<Collector> collectorList = collectorRepository.findByCollectorTypeAndName(CollectorType.DeploymentEnvironment, "OctopusEnvironment");
         List<EnvironmentProjectsAll> epa = new ArrayList<>();
-        LOGGER.info("IN " + envObjectIds.toString());
+       // LOGGER.info("IN " + envObjectIds.toString());
         for(String envObjectId : envObjectIds){
-            LOGGER.info("Envs : " + envObjectIds);
+          //  LOGGER.info("Envs : " + envObjectIds);
             //Convert objectId to envid
             CollectorItem ci = collectorItemRepository.findOne(new ObjectId(envObjectId));
             if(ci != null){
@@ -238,10 +238,10 @@ public class DeployServiceImpl implements DeployService {
 
         }
 
-        for(EnvironmentProjectsAll ep : epa){
-            LOGGER.info(ep.getProjectName());
-
-        }
+//        for(EnvironmentProjectsAll ep : epa){
+//            LOGGER.info(ep.getProjectName());
+//
+//        }
 
        // LOGGER.info(eca.toString());
         long lastDate = 0;

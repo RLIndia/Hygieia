@@ -50,7 +50,7 @@
          function processResponse(data,envs){
 
 
-  console.log("here..");
+  // console.log("here..");
             var envs = $scope.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
             var viewData = [];
             var now = moment().startOf('day');
@@ -121,7 +121,7 @@
                        //    console.log(data[itmi].environmentId);
                            if(tproject.environments[j].id == data[itmi].environmentId){
                                 tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
-                                tproject.environments[j].completedDate = moment(data[itmi].completedDate);
+                                tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
                                 tproject.environments[j].versionColor = versionColor;
                                 tproject.environments[j].versionDays = versionDays;
                                 tproject.environments[j].now = now;
@@ -156,7 +156,7 @@
                            //   console.log(data[itmi].environmentId);
                               if(tproject.environments[j].id == data[itmi].environmentId){
                                    tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
-                                   tproject.environments[j].completedDate = moment(data[itmi].completedDate);
+                                   tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
                                    tproject.environments[j].versionColor = versionColor;
                                    tproject.environments[j].versionDays = versionDays;
                                    tproject.environments[j].now = now;
@@ -172,7 +172,7 @@
                            //   console.log(data[itmi].environmentId);
                               if(viewData[pgIdx].projects[projIdx].environments[j].id == data[itmi].environmentId){
                                    viewData[pgIdx].projects[projIdx].environments[j].releaseVersion = data[itmi].releaseVersion;
-                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = moment(data[itmi].completedDate);
+                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
                                    tproject.environments[j].versionColor = versionColor;
                                    tproject.environments[j].versionDays = versionDays;
                                    tproject.environments[j].now = now;

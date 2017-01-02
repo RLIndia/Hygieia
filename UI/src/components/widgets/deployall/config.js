@@ -63,10 +63,10 @@
             var selectedEnvs = modalData.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
               //Converting to dropdown
 
-            console.log("Components:");
-            console.log(modalData.dashboard.application.components); //all options
-            console.log("deployAllCollectorId");
-            console.log(deployAllCollectorId); //enabled options
+ //           console.log("Components:");
+  //          console.log(modalData.dashboard.application.components); //all options
+  //          console.log("deployAllCollectorId");
+  //          console.log(deployAllCollectorId); //enabled options
             worker.getEnvs(data, deployAllCollectorId,selectedEnvs, getDeploysCallback);
         }
 
@@ -75,16 +75,16 @@
                 ctrl.jobDropdownPlaceholder = 'Select your environments';
                 ctrl.deployAllEnvs = data.deployenvs;
                 ctrl.envs = data.selectedEnvs
-                console.log("In Call back");
-               console.log(ctrl.envs);
+  //              console.log("In Call back");
+  //             console.log(ctrl.envs);
 //                if(data.selectedIndex !== null) {
 //                    ctrl.deployEnv = data.deployenvs[data.selectedIndex];
 //                }
         }
 
         function selectallEnvs(cb){
-            console.log("Test Button Clicked");
-            console.log(ctrl.deploySelectedEnvs);
+          //  console.log("Test Button Clicked");
+          //  console.log(ctrl.deploySelectedEnvs);
             if(ctrl.envs)
                 {
                         console.log(ctrl.envs);
@@ -137,7 +137,7 @@
            ctrl.envs = envs;
           // console.log("in copy");
 
-           console.log(ctrl.envs);
+           //console.log(ctrl.envs);
         }
 
         function removeEnv(){
@@ -166,7 +166,7 @@
         function submit(valid) {
             ctrl.submitted = true;
 
-            console.log('in submit');
+
 
             //Rebuilding env list
             var envs = [];
@@ -179,12 +179,12 @@
 
             }
 
-            console.log(document.configForm.selectedEnvs.value);
-            console.log(envs);
+     //       console.log(document.configForm.selectedEnvs.value);
+     //       console.log(envs);
 
             if (valid) {
                 // selectallEnvs();
-                console.log("valid");
+      //          console.log("valid");
                 var form = document.configForm;
                 var postObj = {
                     name: 'deploymentEnvironment',
@@ -196,7 +196,7 @@
                     envs: envs
                 };
                // postObj.collectorItemId.push(envs);
-                console.log(postObj);
+    //            console.log(postObj);
                 $modalInstance.close(postObj);
             }
             else{

@@ -150,7 +150,7 @@ public class DefaultOctopusClient implements OctopusClient{
             envProject.setProjectGroupName(od.getProjectGroupNameByProjectID(envProject.getProjectId()));
             envProject.setEnvironmentId(str(jobj,"EnvironmentId"));
             envProject.setEnvironmentName(od.getEnvironmentNameByID(envProject.getEnvironmentId()));
-            LOGGER.info(envProject.getProjectName());
+          //  LOGGER.info(envProject.getProjectName());
             String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
             DateTimeFormatter dtf = DateTimeFormat.forPattern(pattern);
 
@@ -172,8 +172,9 @@ public class DefaultOctopusClient implements OctopusClient{
 
 
         }
+        LOGGER.info("Finished reading items.");
         od.setEnvironmentProjectsAll(itms);
-        LOGGER.info("+++++++++++++++++++++++++++++++++++++++++++++++++Finished reading Items");
+        //LOGGER.info("+++++++++++++++++++++++++++++++++++++++++++++++++Finished reading Items");
 
 
         return od;
