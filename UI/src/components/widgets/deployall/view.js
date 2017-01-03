@@ -47,6 +47,10 @@
                      return deferred.promise;
         }
 
+        function daydiff(caldate){
+            return Math.round(((new Date()) - caldate)/(1000*60*60*24));
+        }
+
          function processResponse(data,envs){
 
 
@@ -121,9 +125,11 @@
                        //    console.log(data[itmi].environmentId);
                            if(tproject.environments[j].id == data[itmi].environmentId){
                                 tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
-                                tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
+                                tproject.environments[j].completedDate = moment(new Date(data[itmi].completedDate)).fromNow();
                                 tproject.environments[j].versionColor = versionColor;
+
                                 tproject.environments[j].versionDays = versionDays;
+
                                 tproject.environments[j].now = now;
 
 
@@ -156,8 +162,9 @@
                            //   console.log(data[itmi].environmentId);
                               if(tproject.environments[j].id == data[itmi].environmentId){
                                    tproject.environments[j].releaseVersion = data[itmi].releaseVersion;
-                                   tproject.environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
+                                   tproject.environments[j].completedDate = moment(new Date(data[itmi].completedDate)).fromNow();
                                    tproject.environments[j].versionColor = versionColor;
+
                                    tproject.environments[j].versionDays = versionDays;
                                    tproject.environments[j].now = now;
                                    break;
@@ -172,10 +179,11 @@
                            //   console.log(data[itmi].environmentId);
                               if(viewData[pgIdx].projects[projIdx].environments[j].id == data[itmi].environmentId){
                                    viewData[pgIdx].projects[projIdx].environments[j].releaseVersion = data[itmi].releaseVersion;
-                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = moment(data[itmi].completedDate).fromNow();
-                                   tproject.environments[j].versionColor = versionColor;
-                                   tproject.environments[j].versionDays = versionDays;
-                                   tproject.environments[j].now = now;
+                                   viewData[pgIdx].projects[projIdx].environments[j].completedDate = moment(new Date(data[itmi].completedDate)).fromNow();
+                                   viewData[pgIdx].projects[projIdx].environments[j].versionColor = versionColor;
+
+                                   viewData[pgIdx].projects[projIdx].environments[j].versionDays = versionDays;
+                                   viewData[pgIdx].projects[projIdx].environments[j].now = now;
                                    break;
                               }
                         }
