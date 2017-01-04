@@ -36,9 +36,6 @@
                 var selectedIndex = null;
 
                 var deployenvs = _(data).map(function(deployenv, idx) {
-//                    if(deployenv.id == currentCollectorId) {
-//                        selectedIndex = idx;
-//                    }
                     return {
                         value: deployenv.id,
                         name: deployenv.options.envName
@@ -61,12 +58,7 @@
             var deployAllCollector = modalData.dashboard.application.components[0].collectorItems.Deployment;
             var deployAllCollectorId = deployAllCollector ? deployAllCollector[0].id : null;
             var selectedEnvs = modalData.dashboard.application.components[0].collectorItems.DeploymentEnvironment;
-              //Converting to dropdown
-
- //           console.log("Components:");
-  //          console.log(modalData.dashboard.application.components); //all options
-  //          console.log("deployAllCollectorId");
-  //          console.log(deployAllCollectorId); //enabled options
+            //Converting to dropdown
             worker.getEnvs(data, deployAllCollectorId,selectedEnvs, getDeploysCallback);
         }
 
@@ -75,25 +67,16 @@
                 ctrl.jobDropdownPlaceholder = 'Select your environments';
                 ctrl.deployAllEnvs = data.deployenvs;
                 ctrl.envs = data.selectedEnvs
-  //              console.log("In Call back");
-  //             console.log(ctrl.envs);
-//                if(data.selectedIndex !== null) {
-//                    ctrl.deployEnv = data.deployenvs[data.selectedIndex];
-//                }
-        }
+          }
 
         function selectallEnvs(cb){
-          //  console.log("Test Button Clicked");
-          //  console.log(ctrl.deploySelectedEnvs);
-            if(ctrl.envs)
-                {
-                        console.log(ctrl.envs);
-                        ctrl.deploySelectedEnvs = ctrl.envs;
-                        var form = document.configForm;
-                        form.selectedEnvs.value = ctrl.envs[0].value;
-                        cb(true);
-
-                }
+            if(ctrl.envs){
+                console.log(ctrl.envs);
+                ctrl.deploySelectedEnvs = ctrl.envs;
+                var form = document.configForm;
+                form.selectedEnvs.value = ctrl.envs[0].value;
+                cb(true);
+            }
              else
                 cb(false);
         }
@@ -109,8 +92,6 @@
                     name:obj.name
                 }
                 envs.push(_env);
-             //   console.log(obj);
-             //   console.log(value);
             });
             //append all selected environment. Remove repeated envs
             if(ctrl.envs){
@@ -133,11 +114,7 @@
 
                 });
             }
-           // console.log(envs);
-           ctrl.envs = envs;
-          // console.log("in copy");
-
-           //console.log(ctrl.envs);
+            ctrl.envs = envs;
         }
 
         function removeEnv(){
@@ -165,26 +142,12 @@
 
         function submit(valid) {
             ctrl.submitted = true;
-
-
-
             //Rebuilding env list
             var envs = [];
             for(var i = 0; i < ctrl.envs.length;i++){
-//                console.log(ctrl.envs[i].value);
-//                envs += ctrl.envs[i].value;
-//                if(i < ctrl.envs.length - 2)
-//                    envs += ",";
                 envs.push(ctrl.envs[i].value);
-
             }
-
-     //       console.log(document.configForm.selectedEnvs.value);
-     //       console.log(envs);
-
             if (valid) {
-                // selectallEnvs();
-      //          console.log("valid");
                 var form = document.configForm;
                 var postObj = {
                     name: 'deploymentEnvironment',
@@ -195,8 +158,6 @@
                     collectorItemId: form.selectedEnvs.value,
                     envs: envs
                 };
-               // postObj.collectorItemId.push(envs);
-    //            console.log(postObj);
                 $modalInstance.close(postObj);
             }
             else{

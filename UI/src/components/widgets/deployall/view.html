@@ -1,34 +1,47 @@
 <div class="deploy-all">
-
     <!--{{deployallView.deployAllData}}-->
-
     <!--{{deployallView.environments}}-->
-        <!--{{deployallView.viewData}}-->
+    <!--{{deployallView.envs}}-->
     <div style="overflow-y:scroll" id="deployTableContainer">
-
-
+        <table  class=" table-width fix-bottom-margin">
+            <tr  class="table-header-chart"><td width="20%">
+                <table width="100%" cellpadding="2" cellspacing="2" style="font-size:8pt;font-weight:100;">
+                    <tr><td style="background-color:green" >&nbsp;</td><td>Recent Deployments (&lt; 5 Days)</td></tr>
+                    <tr><td style="background-color:orange" >&nbsp;</td><td>Newer Deployments (&lt; 10 Days)</td></tr>
+                    <tr><td style="background-color:red" >&nbsp;</td><td>Old Deployments (&gt; 10 Days)</td></tr>
+                </table>
+            </td>
+                <td ng-model="test4" width="{{80/deployallView.envs.length}}%" ng-repeat="environment in deployallView.envs">
+                    {{environment.options.envName}}
+                <chartist class="ct-chart ct-major-twelfth"
+                          chartist-chart-type="Pie"
+                          chartist-data="environment.options.chart"
+                          chartist-chart-options="deployallView.pieOptions"
+                ></chartist>
+            </td></tr>
+        </table>
         <table class=" table-width" ng-model="test3" ng-repeat="projectGroup in deployallView.viewData">
             <tbody>
-            <tr><td><br/></td></tr>
-            <tr >
-                <td class="pull-left project-group btn btn-info" colspan="{{deployallView.envs.length+1}}">{{projectGroup.projectGroupName}}</td>
-            </tr>
-            <tr class="table-header">
+                <!--<tr><td><br/></td></tr>-->
 
-                <td width="20%"> EndPoints </td>
-                <td  width="{{80/deployallView.envs.length}}%" ng-repeat="environment in deployallView.envs">
-                    {{environment.options.envName}}
-                </td>
-            </tr>
-            <tr ng-model="test2" class="row-border" ng-repeat="projects in projectGroup.projects">
-                <td > {{projects.projectName}}</td>
-                <td style="color:{{environment.versionColor}}" ng-repeat="environment in projects.environments" title="{{environment.completedDate }}">
-                    <span style="color:{{environment.color}}">{{environment.releaseVersion}}</span>
+                <tr >
+                    <td class="pull-left project-group btn btn-info" colspan="{{deployallView.envs.length+1}}">{{projectGroup.projectGroupName}}</td>
+                </tr>
+                <tr class="table-header">
 
-                </td>
+                    <td width="20%"> EndPoints </td>
+                    <td  width="{{80/deployallView.envs.length}}%" ng-repeat="environment in deployallView.envs">
+                        {{environment.options.envName}}
 
-            </tr>
 
+                    </td>
+                </tr>
+                <tr ng-model="test2" class="row-border" ng-repeat="projects in projectGroup.projects">
+                    <td > {{projects.projectName}}</td>
+                    <td style="color:{{environment.versionColor}}" ng-repeat="environment in projects.environments" title="{{environment.completedDate }}">
+                        <span style="color:{{environment.color}}">{{environment.releaseVersion}}</span>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
