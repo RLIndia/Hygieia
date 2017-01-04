@@ -10,6 +10,7 @@ public class ChefSettings {
 	private String chefServerUrl;
 	private String pemFilePath;
 	private String cron;
+	private String sintlUrl;
 
 	public String getUsername() {
 		return username;
@@ -41,6 +42,14 @@ public class ChefSettings {
 
 	public void setCron(String cron) {
 		this.cron = cron;
+	}
+
+	public String getSintlUrl() {
+		return sintlUrl;
+	}
+
+	public void setSintlUrl(String sintlUrl) {
+		this.sintlUrl = sintlUrl;
 	}
 
 }

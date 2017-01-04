@@ -6,7 +6,7 @@
         config = {
             view: {
                 defaults: {
-                    title: 'Deploy (Chef)' // widget title
+                    title: 'Deployment (Chef)' // widget title
                 },
                 controller: 'chefViewController',
                 controllerAs: 'chefView',
