@@ -13,4 +13,5 @@ spring.data.mongodb.username=
 spring.data.mongodb.password=
 
 #Collector schedule (required)
-octopus.cron=0 0/10 * * * *
+#octopus.cron=0 0/10 * * * *
+octopus.cron=0 * * * * *

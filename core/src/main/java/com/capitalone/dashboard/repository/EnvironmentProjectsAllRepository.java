@@ -18,4 +18,7 @@ public interface EnvironmentProjectsAllRepository extends CrudRepository<Environ
 
     @Query(value="{environmentId : ?0}")
     List<EnvironmentProjectsAll> findItemsForEnvironmentId(String environmentId);
+
+    @Query(value="{environmentId : ?0, projectId : ?1}")
+    List<EnvironmentProjectsAll> findItemsForEnvironmentIdandProjectId(String environmentId, String projectId);
 }

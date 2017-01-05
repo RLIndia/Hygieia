@@ -130,13 +130,14 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
             //Get the Dashboard for server
             OctopusDashboard od = octopusClient.getDashboard();
 
-            environmentProjectsAllRepository.deleteAll();
+           // environmentProjectsAllRepository.deleteAll();
             for(EnvironmentProjectsAll epa : od.getEnvironmentProjectsAll()){
               //  LOGGER.info(epa.getEnvironmentName() + " - " + epa.getProjectName() + " - " + epa.getReleaseVersion());
                 Boolean addProject = false;
                 for(OctopusEnvironment oe : enabledEnvironments){
                    // LOGGER.info("Enabled : " + oe.getEnvName());
                     if(oe.getEnvId().equals(epa.getEnvironmentId())){
+                        environmentProjectsAllRepository.delete(environmentProjectsAllRepository.findItemsForEnvironmentIdandProjectId(oe.getEnvId(),epa.getProjectId()));
                         environmentProjectsAllRepository.save(epa);
                     }
                 }
