@@ -285,5 +285,6 @@
       <module>catalyst-deployment-collector</module>
       <module>testrail-results-collector</module>
       <module>octopus-deployment-all-collector</module>
+	  <module>mashery-collector</module>
   </modules>
 </project>
