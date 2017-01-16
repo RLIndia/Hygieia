@@ -3,37 +3,46 @@ echo "Stopping all running processes"
 pkill java
 pkill gulp
 killall java
-sleep 5 
+sleep 10
+
+
+echo"Currently running java processes before starting Hygieia"
+ps aux | grep java
+
+sleep 5
+ 
 cd api/target
 echo "Starting API service"
-nohup java -jar api.jar --spring.config.location=./dashboard.properties &
+java -jar api.jar --spring.config.location=./dashboard.properties &
 
-echo "Starting Octopus collector"
-cd ../../octopus-deployment-collector/target
-nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Starting Bitbucket  collector"
 cd ../../bitbucket-scm-collector/target
-nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar &
+java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Starting Jenkins collector"
 cd ../../jenkins-build-collector/target
-nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
+ java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 
-echo "Starting Functional collector"
-cd ../../sbux-functional-test-collector/target
-nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
+echo "Starting Chef collector"
+cd ../../chef-collector/target
+java -jar chef-collector-2.0.2-SNAPSHOT.jar & 
 
 
 echo "Starting Jira collector"
-cd ../../jira-feature-collector/target
-java -jar jira-feature-collector.jar  > /dev/null 2>&1 &
+cd ../../jira-project-collector/target
+java -jar jira-project-collector-2.0.2-SNAPSHOT.jar &
 
-<<'COMMENT'
 echo "Starting Sonar collector"
 cd ../../sonar-codequality-collector/target
-java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar &
 
-COMMENT
+
+echo "Starting Testrail collector"
+cd ../../testrail-results-collector/target
+java -jar testrail-results-collector.jar &
+
+cd ../../UI
+ sudo node_modules/gulp/bin/gulp.js serve &
 
 echo "Done."
