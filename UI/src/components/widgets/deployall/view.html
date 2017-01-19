@@ -6,7 +6,7 @@
         <table  class=" table-width fix-bottom-margin">
             <tr  class="table-header-chart"><td width="20%">
                 <table width="100%" cellpadding="2" cellspacing="2" style="font-size:8pt;font-weight:100;">
-                    <tr><td style="background-color:green" >&nbsp;</td><td>Recent Deployments (&lt; 5 Days)</td></tr>
+                    <tr><td style="background-color:white" >&nbsp;</td><td>Recent Deployments (&lt; 5 Days)</td></tr>
                     <tr><td style="background-color:orange" >&nbsp;</td><td>Newer Deployments (&lt; 10 Days)</td></tr>
                     <tr><td style="background-color:red" >&nbsp;</td><td>Old Deployments (&gt; 10 Days)</td></tr>
                 </table>
@@ -36,7 +36,7 @@
 
                     </td>
                 </tr>
-                <tr ng-model="test2" class="row-border" ng-repeat="projects in projectGroup.projects">
+                <tr ng-model="test2" class="row-border" ng-class-odd="'oddrow'" ng-class-even="'evenrow'" ng-repeat="projects in projectGroup.projects">
                     <td > {{projects.projectName}}</td>
                     <td style="color:{{environment.versionColor}}" ng-repeat="environment in projects.environments" title="{{environment.completedDate }}">
                         <span style="color:{{environment.color}}">{{environment.releaseVersion}}</span>
