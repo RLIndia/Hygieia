@@ -12,6 +12,18 @@ public class OctopusEnvironment extends CollectorItem{
     private static final String ENV_NAME = "envName";
 
     private static final String DASHBOARD_ID = "dashboardId";
+    private static final String OCTOPUS_URL = "octopusUrl";
+
+
+    public String getOctopusUrl() {
+        return  (String) getOptions().get(OCTOPUS_URL);
+    }
+
+    public void setOctopusUrl(String octopusUrl) {
+        getOptions().put(OCTOPUS_URL,octopusUrl);
+    }
+
+
 
     public String getEnvId() {
         return (String) getOptions().get(ENV_ID);

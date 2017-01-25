@@ -53,10 +53,6 @@ public class DefaultOctopusClient implements OctopusClient{
         this.contextOS = 0;
     }
 
-
-
-
-
     @Override
     public List<OctopusEnvironment> getEnvironments() {
         List<OctopusEnvironment> environments = new ArrayList<>();
@@ -131,6 +127,7 @@ public class DefaultOctopusClient implements OctopusClient{
             JSONObject jobj = (JSONObject) env;
             en.setEnvId(str(jobj,"Id"));
             en.setEnvName(str(jobj,"Name"));
+            en.setOctopusUrl(octopusSettings.getUrl()[contextOS]);
           //  LOGGER.info("-----" + en.getEnvName());
 
             lne.add(en);
@@ -150,6 +147,7 @@ public class DefaultOctopusClient implements OctopusClient{
             envProject.setProjectGroupName(od.getProjectGroupNameByProjectID(envProject.getProjectId()));
             envProject.setEnvironmentId(str(jobj,"EnvironmentId"));
             envProject.setEnvironmentName(od.getEnvironmentNameByID(envProject.getEnvironmentId()));
+
             String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
             DateTimeFormatter dtf = DateTimeFormat.forPattern(pattern);
 

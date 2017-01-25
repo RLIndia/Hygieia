@@ -39,7 +39,7 @@
                 <tr ng-model="test2" class="row-border" ng-class-odd="'oddrow'" ng-class-even="'evenrow'" ng-repeat="projects in projectGroup.projects">
                     <td > {{projects.projectName}}</td>
                     <td style="color:{{environment.versionColor}}" ng-repeat="environment in projects.environments" title="{{environment.completedDate }}">
-                        <span style="color:{{environment.color}}">{{environment.releaseVersion}}</span>
+                        <span style="color:{{environment.versionColor}}">{{environment.releaseVersion}}</span>
                     </td>
                 </tr>
             </tbody>

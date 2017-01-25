@@ -77,7 +77,7 @@
                 	      	labels: ['< 5 Days','< 10  Days','> 10 Days'],
                 	      	series: [chart.Last_5_Days,chart.Last_10_Days,chart.Over_10_Days],
                 	      	//colors:['green','orange','red']
-                	      	colors:["#333", "#222", "#111"]
+                	      	colors:["#333", "#222", "#ccc"]
                 	      }
                 	      return chartData;
             }
@@ -119,8 +119,8 @@
                         addChartColor = "orange";
                     }
                else {
-                    versionColor = "#FF0000"; //red
-                    addChartColor = "red";
+                    versionColor = "grey !important"; //red
+                    addChartColor = "grey";
                }
                updateChartForEnv(data[itmi].environmentId,addChartColor);
                for(var vd =0; vd < viewData.length;vd++){ 

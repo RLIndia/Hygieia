@@ -72,9 +72,6 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
 
         this.octopusEnvironmentRepository = octopusEnvironmentRepository;
 
-//        this.envComponentRepository = envComponentRepository;
-//        this.environmentStatusRepository = environmentStatusRepository;
-//
         this.environmentProjectsAllRepository = environmentProjectsAllRepository;
 
         this.octopusClient = octopusClient;
@@ -113,10 +110,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
         /*
         Design: Get list of env's, Get enabled envs, fetch apps for enabled envs, get deployment status, release version and date for apps.
          */
-
-
-
-        for(int co = 0; co < os.length; co++) {
+      for(int co = 0; co < os.length; co++) {
 
             this.contextOserver=co;
             octopusClient.setContext(co);
@@ -125,14 +119,13 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
 
             List<OctopusEnvironment> serverEnvs = octopusClient.getEnvironments();
             clean(serverEnvs,collector);
-            addNewEnvironments(serverEnvs,collector);
+            addNewEnvironments(octopusSettings.getUrl()[this.contextOserver],serverEnvs,collector);
             List<OctopusEnvironment> enabledEnvironments = octopusEnvironmentRepository.findEnabledEnvironments(collector.getId());
             //Get the Dashboard for server
             OctopusDashboard od = octopusClient.getDashboard();
 
            // environmentProjectsAllRepository.deleteAll();
             for(EnvironmentProjectsAll epa : od.getEnvironmentProjectsAll()){
-              //  LOGGER.info(epa.getEnvironmentName() + " - " + epa.getProjectName() + " - " + epa.getReleaseVersion());
                 Boolean addProject = false;
                 for(OctopusEnvironment oe : enabledEnvironments){
                    // LOGGER.info("Enabled : " + oe.getEnvName());
@@ -146,45 +139,33 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
 
         }
         log("Finished", start);
-       // LOGGER.info("Finished -------------------------------------");
-
     }
 
 
 
 
     @SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
-    private void clean(List<OctopusEnvironment> environments,OctopusEnvironmentCollector collector) {
+    private void clean(List<OctopusEnvironment> serverEnvs,OctopusEnvironmentCollector collector) {
 
 
         //logic to remove unlisted environments to be written
-        for(OctopusEnvironment env : environments){
-
-        }
-
-//        deleteUnwantedJobs(collector);
-//        Set<ObjectId> uniqueIDs = new HashSet<>();
-//        for (com.capitalone.dashboard.model.Component comp : dbComponentRepository
-//                .findAll()) {
-//            if (comp.getCollectorItems() == null || comp.getCollectorItems().isEmpty()) continue;
-//            List<CollectorItem> itemList = comp.getCollectorItems().get(
-//                    CollectorType.Deployment);
-//            if (itemList == null) continue;
-//            for (CollectorItem ci : itemList) {
-//                if (ci == null) continue;
-//                uniqueIDs.add(ci.getId());
+//        List<OctopusEnvironment> envall = octopusEnvironmentRepository.findEnvironmentsByCollectorId(collector.getId());
+//
+//        for(OctopusEnvironment savedEnv : envall) {
+//            Boolean existingEnv  = false;
+//
+//            LOGGER.info("Saved Env : " + savedEnv.getEnvId() + " " + savedEnv.getEnvName());
+//
+//            for (OctopusEnvironment env : serverEnvs) {
+//                    if(env.getEnvName().equals(savedEnv.getEnvName()) && env.getEnvId().equals(savedEnv.getEnvId()))){
+//                        LOGGER.info("Found a saved env ");
+//                        existingEnv = true;
+//                    }
+//            }
+//            if(!existingEnv){
+//                LOGGER.info("Saved Env Missing from server ************");
 //            }
 //        }
-//        List<OctopusEnvironment> envList = new ArrayList<>();
-//        Set<ObjectId> udId = new HashSet< >();
-//        udId.add(collector.getId());
-//        for (OctopusEnvironment env : octopusEnvironmentRepository.findByCollectorIdIn(udId)) {
-//            if (env != null) {
-//                env.setEnabled(uniqueIDs.contains(env.getId()));
-//                envList.add(env);
-//            }
-//        }
-//        octopusEnvironmentRepository.save(envList);
     }
 
     private void deleteUnwantedJobs(OctopusEnvironmentCollector collector) {
@@ -203,7 +184,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
 
     }
 
-    private void addNewEnvironments(List<OctopusEnvironment> environments,OctopusEnvironmentCollector collector){
+    private void addNewEnvironments(String octoUrl,List<OctopusEnvironment> environments,OctopusEnvironmentCollector collector){
         long start = System.currentTimeMillis();
         int count = 0;
 
@@ -212,6 +193,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusEnvironmentCollec
                 //Add this environment to the list
                 env.setCollectorId(collector.getId());
                 env.setEnabled(false);
+                env.setOctopusUrl(octoUrl);
                 try{
                     octopusEnvironmentRepository.save(env);
               //      LOGGER.info("Added New Env " +  env.getEnvName());

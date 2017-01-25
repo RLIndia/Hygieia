@@ -19,6 +19,7 @@ public interface OctopusEnvironmentRepository extends BaseCollectorItemRepositor
     @Query(value="{ 'collectorId' : ?0, enabled: true}")
     List<OctopusEnvironment> findEnabledEnvironments(ObjectId collectorId);
 
-
+    @Query(value="{ 'collectorId' : ?0}")
+    List<OctopusEnvironment> findEnvironmentsByCollectorId(ObjectId collectorId);
 
 }
