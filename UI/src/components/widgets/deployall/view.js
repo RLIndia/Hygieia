@@ -87,7 +87,7 @@
                  for(var ci = 0; ci < envs.length; ci++){
                         if(envs[ci].options.envId == envId){
 
-                            if(color == "white"){
+                            if(color == "green"){
                                 envs[ci].options.chart.Last_5_Days = envs[ci].options.chart.Last_5_Days + 1;
                             }else if(color == "orange"){
                                 envs[ci].options.chart.Last_10_Days = envs[ci].options.chart.Last_10_Days + 1;
@@ -107,11 +107,11 @@
                var now = moment().startOf('day');
                var versionDays = now.diff(moment(data[itmi].completedDate),'days');
                var versionColor = "#FF0000";
-               var addChartColor = "white";
+               var addChartColor = "green";
                if(versionDays <= 5)
                     {
-                        versionColor = "#ffffff"; //white
-                        addChartColor = "white";
+                        versionColor = "#00ff00"; //white
+                        addChartColor = "green";
                     }
                else if(versionDays > 5 && versionDays <= 10)
                     {
