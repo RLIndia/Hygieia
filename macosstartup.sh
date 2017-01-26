@@ -48,7 +48,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/20 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-#nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Bitbucket collector"
 cd ../../bitbucket-scm-collector/
@@ -66,7 +66,7 @@ wget $1/d4dMastersCICD/readmasterjsonnew/29 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-#nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
 
 
 echo "Configuring Jira collector"

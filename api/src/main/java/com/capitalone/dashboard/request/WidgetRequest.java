@@ -14,7 +14,10 @@ public class WidgetRequest {
     private Map<String, Object> options;
 
     public List<String> getEnvs() {
-        return envs;
+        if(envs != null)
+            return envs;
+        else
+            return null;
     }
 
     public List<ObjectId> getEnvObjectIds(){
@@ -30,7 +33,7 @@ public class WidgetRequest {
         this.envs = envs;
     }
 
-    private List<String> envs;
+    private List<String> envs = null;
 
     public String getName() {
         return name;

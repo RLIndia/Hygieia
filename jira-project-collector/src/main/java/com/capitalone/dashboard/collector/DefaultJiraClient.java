@@ -5,6 +5,7 @@ package com.capitalone.dashboard.collector;
  */
 
 //import com.atlassian.jira.rest.client.api.JiraRestClient;
+
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;

@@ -68,7 +68,8 @@ public class DashboardController {
         Dashboard dashboard = dashboardService.get(id);
 
         Component component = new Component();
-        if(request.getEnvs().toString().isEmpty()) {
+        //request.getEnvs().toString().isEmpty()
+        if(request.getEnvs() == null) {
             component =  dashboardService.associateCollectorToComponent(
                     request.getComponentId(), request.getCollectorItemIds());
         }else{
