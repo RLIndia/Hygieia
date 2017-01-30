@@ -91,7 +91,7 @@ public class DashboardController {
         LOGGER.info("In request");
         LOGGER.info(request.getEnvs().toString());
         Component component = new Component();
-        if(request.getEnvs().toString().isEmpty()) {
+        if(request.getEnvs() == null) {
              component = dashboardService.associateCollectorToComponent(
                     request.getComponentId(), request.getCollectorItemIds());
         }else{
