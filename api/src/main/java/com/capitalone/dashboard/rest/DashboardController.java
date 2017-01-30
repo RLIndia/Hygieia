@@ -89,14 +89,14 @@ public class DashboardController {
                                                        @PathVariable ObjectId widgetId,
                                                        @RequestBody WidgetRequest request) {
         LOGGER.info("In request");
-        LOGGER.info(request.getEnvs().toString());
+
         Component component = new Component();
         if(request.getEnvs() == null) {
              component = dashboardService.associateCollectorToComponent(
                     request.getComponentId(), request.getCollectorItemIds());
         }else{
             //envs present
-            LOGGER.info("Envs present...");
+            LOGGER.info("Envs present..." + request.getEnvs().toString());
             component = dashboardService.associateCollectorToComponent(
                     request.getComponentId(), request.getEnvObjectIds());
         }
