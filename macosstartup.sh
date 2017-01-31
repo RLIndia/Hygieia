@@ -1,7 +1,7 @@
 #!/bin/bash
 echo $1
 echo $2
-if [ "$3" == "nobuild" ]
+if [ "$5" == "nobuild" ]
 then
     echo "No Build request found ... proceeding to restart of collectors"
 else
@@ -15,6 +15,13 @@ echo "Installing Nginx"
 echo "Stopping all java services"
 pkill java
 
+echo "Fetching Token"
+request="--post-data={\"username\":\"$3\",\"pass\":\"$4\",\"authType\":\"token\"} $1/auth/signin"
+wget -S --header='Accept-Charset: UTF-8' --header='Content-Type: application/json' -O response.json $request
+token=$(sed -e 's/^.*"token":"\([^"]*\)".*$/\1/' response.json)
+echo $token
+rm response.json
+
 echo "Configuring API"
 cp -f dashboard.template target/dashboard.properties
 echo "dbhost="$2 >> target/dashboard.properties
@@ -24,7 +31,7 @@ nohup java -jar api.jar --spring.config.location=./dashboard.properties  &
 echo "Configuring Octopus collector"
 cd ../../octopus-deployment-collector/
 cp -f octopus.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -34,7 +41,7 @@ cd target
 echo "Configuring Octopus Environment collector"
 cd ../../octopus-deployment-all-collector/
 cp -f octopus.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -44,7 +51,7 @@ nohup java -jar octopus-deployment-all-collector-2.0.2-SNAPSHOT.jar &
 echo "Configuring Jenkins collector"
 cd ../../jenkins-build-collector/
 cp -f jenkins.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/20 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/20 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -53,7 +60,7 @@ nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 echo "Configuring Bitbucket collector"
 cd ../../bitbucket-scm-collector/
 cp -f bitbucket.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\""  $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -62,7 +69,7 @@ cd target
 echo "Configuring Functional Test collector"
 cd ../../sbux-functional-test-collector/
 cp -f application.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/29 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/29 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -72,7 +79,7 @@ nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
 echo "Configuring Jira collector"
 cd ../../jira-feature-collector/
 cp -f jira.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\""  $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -82,7 +89,7 @@ cd target
 echo "Configuring Jira Project collector"
 cd ../../jira-project-collector/
 cp -f jira.template target/application.properties
-wget $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
