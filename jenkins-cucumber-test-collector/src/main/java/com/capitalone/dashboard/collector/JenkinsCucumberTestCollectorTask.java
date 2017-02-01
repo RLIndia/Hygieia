@@ -177,7 +177,7 @@ public class JenkinsCucumberTestCollectorTask extends
             if (jenkinsClient.buildHasCucumberResults(job.getJobUrl())
                     && isNewJob(collector, job)) {
                 job.setCollectorId(collector.getId());
-                job.setEnabled(false); // Do not enable for collection. Will be
+                job.setEnabled(true); // Do not enable for collection. Will be
                 // enabled when added to dashboard
                 job.setDescription(job.getJobName());
                 jenkinsCucumberTestJobRepository.save(job);

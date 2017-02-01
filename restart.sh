@@ -1,48 +1,62 @@
 #!/bin/bash
+
+#!/bin/bash
+
+echo "------------------------------"
+echo 'RE-STARTING HYGIEIA SERVICES'
+echo "------------------------------"
+
 echo "Stopping all running processes"
 pkill java
-pkill gulp
+#pkill gulp
 killall java
-sleep 10
 
-
-echo"Currently running java processes before starting Hygieia"
+sleep 10 
+echo 'Currently Running Java Processes'
 ps aux | grep java
 
-sleep 5
- 
 cd api/target
+
 echo "Starting API service"
-java -jar api.jar --spring.config.location=./dashboard.properties &
+nohup java -jar api.jar --spring.config.location=../dashboard.properties &
 
 
 echo "Starting Bitbucket  collector"
 cd ../../bitbucket-scm-collector/target
-java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar --spring.config.location=../application.properties &
 
-echo "Starting Jenkins collector"
+echo "Starting Jenkins build collector"
 cd ../../jenkins-build-collector/target
- java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar --spring.config.location=../application.properties &
+
+echo "Starting Jenkins cucumber collector"
+cd ../../jenkins-cucumber-test-collector/target
+nohup java -jar jenkins-cucumber-test-collector-2.0.2-SNAPSHOT.jar --spring.config.location=../application.properties &
+
 
 echo "Starting Chef collector"
 cd ../../chef-collector/target
-java -jar chef-collector-2.0.2-SNAPSHOT.jar & 
+nohup java -jar chef-collector-2.0.2-SNAPSHOT.jar  --spring.config.location=../application.properties &
 
 
 echo "Starting Jira collector"
 cd ../../jira-project-collector/target
-java -jar jira-project-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar jira-project-collector-2.0.2-SNAPSHOT.jar  --spring.config.location=../application.properties &
 
 echo "Starting Sonar collector"
 cd ../../sonar-codequality-collector/target
-java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar  --spring.config.location=../application.properties &
 
 
 echo "Starting Testrail collector"
 cd ../../testrail-results-collector/target
-java -jar testrail-results-collector.jar &
+nohup java -jar testrail-results-collector.jar  --spring.config.location=../application.properties &
 
-cd ../../UI
- sudo node_modules/gulp/bin/gulp.js serve &
+echo '>> Currently Running Java Processes'
+ps aux | grep java
+
+sleep 10
 
 echo "Done."
+
+

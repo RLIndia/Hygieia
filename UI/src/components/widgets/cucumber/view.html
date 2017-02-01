@@ -1,0 +1,46 @@
+<div class="project-view" ng-model="projectView">
+     <!-- Removed dropdown based on feedback -->
+    <div class="col-xs-9.5 text-standard-sm dash-overflow">
+        JobName: {{CucumberView.jobName}}
+    </div>
+     <div class="col-xs-9.5 text-standard-sm">
+
+       <table class="table">
+       	
+       		<tr>
+       			<td>Run ID</td>
+                        <td>Total Features</td>
+       			<td><span class=" pull-left fa fa-lg fa-check"  style="color: green;" title="Passed"></span></td>
+       			<td><span class="pull-left fa fa-lg fa-circle"  style="color: red;" title="Failed"></span></td>       			
+            <td><span class="pull-left fa fa-lg fa-exclamation-circle"  style="color: orange;" title="Skipped"></span></td>
+       			<td></td>
+       		</tr>
+       		<tr class="issue-datarow pointer" ng-repeat="run in CucumberView.cucumberResult" ng-click="CucumberView.showDetail(CucumberView.cucumberResult)" style="cursor:pointer">
+       		   <td><span class="pull-left">{{run.executionId}}</span></td>
+            <td><span class="pull-center">{{run.totalTestSuiteCount}}</span></td> 
+             <td><span class="pull-left">{{run.successTestSuiteCount}} <span style="font-size:10pt">[ {{ ((run.successTestSuiteCount /(run.successTestSuiteCount + run.failedTestSuiteCount))*100).toFixed(0)}}% ]</span></span></td>
+                    		
+                           <td><span class="pull-left">{{run.failedTestSuiteCount}}</span></td>
+                                        <td><span class="pull-left">{{run.skippedTestSuiteCount}}</span></td>
+             <td class="" style="text-align:right" >
+            
+                <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
+              </td>
+       		</tr>
+          <tr>
+            <td colspan="5"><hr/>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="5">
+                 <chartist class="ct-chart ct-major-twelfth"
+                  chartist-chart-type="Pie"
+                  chartist-data="projectVersionView.jiraDashboard.chartData"
+                  chartist-chart-options="projectVersionView.pieOptions"                
+                ></chartist>
+            </td>
+          </tr>
+       </table>
+     
+     </div>
+</div>
