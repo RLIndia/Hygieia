@@ -304,152 +304,62 @@
             .groupBy(function(item) {
                 return -1 * Math.floor(moment.duration(moment().diff(moment(item.timestamp))).asDays());
             }).value();
-console.log(groups);
-            for(var x=-1*numberOfDays+1; x <= 0; x++) {
-                if(groups[x]) {
-                    analysisData.push(groups[x].length);
-                    groupedAnalysisData.push(groups[x]);
-                }
-                else {
-                    analysisData.push(0);
-                    groupedAnalysisData.push([]);
-                }
-            }
-
-            
-            // group get total counts and contributors
-            var today = toMidnight(new Date());
-            var sevenDays = toMidnight(new Date());
-            var fourteenDays = toMidnight(new Date());
-            sevenDays.setDate(sevenDays.getDate() - 7);
-            fourteenDays.setDate(fourteenDays.getDate() - 14);
-
-            var lastDayBlockersCount = 0;
-            var lastSevenDaysBlockersCount = 0;
-            var lastFourteenDaysBlockersCount = 0;
-            var lastDayBlockersData = [];
-            var lastSevenDaysBlockersData = [];
-            var lastFourteenDaysBlockersData = [];
-
-            var lastDayCriticalCount = 0;
-            var lastSevenDaysCriticalCount = 0;
-            var lastFourteenDaysCriticalCount = 0;
-            var lastDayCriticalData = [];
-            var lastSevenDaysCriticalData = [];
-            var lastFourteenDaysCriticalData = [];
-
-            var lastDayIssuesCount = 0;
-            var lastSevenDaysIssuesCount = 0;
-            var lastFourteenDaysIssuesCount=0;
-            var lastDayIssuesData = [];
-            var lastSevenDaysIssuesData = [];
-            var lastFourteenDaysIssuesData = [];
-
+           // console.log(groups);
+            var today = toMidnight(new Date());          
+            var blockerdata=[];
+            var criticaldata=[];
+            var issuesdata=[];
+             var blockersSeries=[];
+            var issuesSeries=[];
+            var criticalSeries=[];
+            for(var x=-1*numberOfDays+1; x <= 0; x++) {                
+                 blockerdata.push(0);
+                    criticaldata.push(0);
+                    issuesdata.push(0);
+                var metadata="Blocker:" + 0 +"\n<br/>"
+                         + 'Critical:' +0 +"\n<br/>"
+                        + 'Issues:' + 0;
+                    blockersSeries.push({meta:metadata,value:0});
+                    issuesSeries.push({meta:metadata,value:0});
+                    criticalSeries.push({meta:metadata,value:0});
+            }             
+            // group get total counts and contributors            
             // loop through and add to counts
-            _(data).forEach(function (analysisResult) {
-                console.log('---- analysisResult');
-                console.log(analysisResult);
-                var blockerscnt=getMetric(analysisResult.metrics, 'Blocker').value;
-               var criticalcnt= getMetric(analysisResult.metrics, 'Critical').value;               
-                var issuesCnt=getMetric(analysisResult.metrics, 'Issues').value;
+             
+            _(data).forEach(function (analysisResult) {             
                 
-                
-                if(analysisResult.timestamp >= today.getTime()) {
-                    lastDayBlockersCount+=blockerscnt;
-                    lastDayCriticalCount+=criticalcnt;
-                    lastDayIssuesCount+=issuesCnt;
-                     lastDayCriticalData.push(criticalcnt);
-                     lastDayBlockersData.push(blockerscnt);
-                     lastDayIssuesData.push(issuesCnt);
+                var blockerscnt=(getMetric(analysisResult.metrics, 'Blocker').value)?getMetric(analysisResult.metrics, 'Blocker').value:getMetric(analysisResult.metrics, 'blocker_violations').value;
+               var criticalcnt= (getMetric(analysisResult.metrics, 'Critical').value)?getMetric(analysisResult.metrics, 'Critical').value:getMetric(analysisResult.metrics, 'critical_violations').value   ;            
+                var issuesCnt=(getMetric(analysisResult.metrics, 'Issues').value)?getMetric(analysisResult.metrics, 'Issues').value:getMetric(analysisResult.metrics, 'violations').value;
+                var daysdiff=Math.round((today.getTime()-analysisResult.timestamp)/(1000*60*60*24));
+                if (daysdiff <= numberOfDays){
                     
+                    var idx=(numberOfDays+1)-daysdiff-1;
+                    blockerdata[idx] +=blockerscnt;
+                    criticaldata[idx] +=criticalcnt;
+                    issuesdata[idx] +=issuesCnt;
+                      var metadata="Blocker:" + blockerdata[idx] +"\n<br/>"
+                         + 'Critical:' +criticaldata[idx] +"\n<br/>"
+                        + 'Issues:' + issuesdata[idx] ;
+                    blockersSeries[idx]={meta:metadata,value:blockerdata[idx]};
+                    issuesSeries[idx]={meta:metadata,value:issuesdata[idx]};
+                    criticalSeries[idx]={meta:metadata,value:criticaldata[idx]};
                 }
-
-                if(analysisResult.timestamp >= sevenDays.getTime()) {
-                    lastSevenDaysBlockersCount+=blockerscnt;
-                    lastSevenDaysCriticalCount+=criticalcnt;
-                    lastSevenDaysIssuesCount+=issuesCnt;
-                     lastSevenDaysCriticalData.push(criticalcnt);
-                     lastSevenDaysBlockersData.push(blockerscnt);
-                     lastSevenDaysIssuesData.push(issuesCnt);
-                }
-
-                if(analysisResult.timestamp >= fourteenDays.getTime()) {
-                    lastFourteenDaysBlockersCount+=blockerscnt;
-                    lastFourteenDaysCriticalCount+=criticalcnt;
-                    lastFourteenDaysIssuesCount+=issuesCnt;
-                     lastFourteenDaysCriticalData.push(criticalcnt);
-                     lastFourteenDaysBlockersData.push(blockerscnt);
-                     lastFourteenDaysIssuesData.push(issuesCnt);
-                }
-
-            });
-            var metadata="Blocker:" + lastFourteenDaysBlockersCount +"\n<br/>"
-            + 'Critical' +lastFourteenDaysCriticalCount +"\n<br/>"
-            + 'Issues' + lastFourteenDaysIssuesCount ;
-            var blockersSeries=[ {meta: metadata, value: lastFourteenDaysBlockersCount}, 
-            {meta: 'Blocker', value: lastSevenDaysBlockersCount},
-             {meta: 'Blocker', value: lastDayBlockersCount}];
-             var criticalSeries=[ {meta: metadata, value: lastFourteenDaysCriticalCount}, 
-            {meta: 'Critical', value: lastSevenDaysCriticalCount},
-             {meta: 'Critical', value: lastDayCriticalCount}]
-            var issuesSeries=[ {meta: metadata, value: lastFourteenDaysIssuesCount}, 
-                 {meta: 'Issues', value: lastSevenDaysIssuesCount},
-             {meta: 'Issues', value: lastDayIssuesCount}]
-            
-            ctrl.lastDayBlockersData =lastDayBlockersData;
-            ctrl.lastSevenDaysBlockersData =lastSevenDaysBlockersData;
-            ctrl.lastFourteenDaysBlockersData =lastFourteenDaysBlockersData;
-
-            ctrl.lastDayCriticalData =lastDayCriticalData;
-            ctrl.lastSevenDaysCriticalData = lastSevenDaysCriticalData;
-            ctrl.lastFourteenDaysCriticalData =lastFourteenDaysCriticalData;
-            ctrl.lastDayIssuesData = lastDayIssuesData
-            ctrl.lastSevenDaysIssuesData = lastSevenDaysIssuesData;
-            ctrl.lastFourteenDaysIssuesData = lastFourteenDaysIssuesData;
+            }); 
             function toMidnight(date) {
                 date.setHours(0, 0, 0, 0);
                 return date;
-            }
-            console.log('----analysisData--');
-            console.log(analysisData);
+            }           
             //update charts
-            if(analysisData.length)
-            {
-                var labels = [];
+             var labels = [];
                 _(analysisData).forEach(function(c) {
                     labels.push('');
-                });
-                 ctrl.analysisChartData = {
-                         series: 
-    [
-      {meta: 'description', value: 1 }, 
-      {meta: 'description', value: 5}, 
-      {meta: 'description', value: 3}
-    ],                       
-                        labels: [1,2,3]
-                };
+                });               
                 ctrl.analysisBlkcriticalChartData = { 
-                        series: [blockersSeries,criticalSeries],
-                        
+                        series: [blockersSeries,criticalSeries],                        
                         labels: labels                       
 
-                };
-                ctrl.analysisBlockerChartData = {
-                        series: [blockersSeries],
-                        labels: labels
-                };
-                ctrl.analysisCriticalChartData = {
-                        series: [criticalSeries],
-                        labels: labels
-                };
-                ctrl.analysisIssuesChartData = {
-                        series: [issuesSeries],
-                        labels: labels
-                };
-                //console.log(ctrl.analysisChartData);
-            }
-
-
+                };   
         }
         
     }
