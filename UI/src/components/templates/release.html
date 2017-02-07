@@ -1,0 +1,57 @@
+<div ng-controller="CapOneTemplateController as template">
+    <div id="header">
+    	<nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+
+                <!-- <a ng-href="#/" class="dashboard-logo"></a> -->
+                <a ng-href="#/" class="pull-left" title="Home"><i aria-hidden="true" class="fa fa-home"></i></a>
+                {{::ctrl.dashboard.title}}
+
+               
+            </div>
+        </nav>
+        
+    </div>
+
+    <div class="dashboard-widgets container-fluid"  style="height:1600px" widget-container dashboard="ctrl.dashboard">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-xs-12">
+
+                        <widget name="projectversion" widget-title="Project"></widget>
+                        <widget name="repo"></widget>
+                    </div>
+                </div>
+                <!--</div>-->
+            </div>
+
+            <div class="col-md-4">
+                <widget name="build"></widget>
+                <widget name="codeanalysis"></widget>
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="row margin-deploy">
+                   
+                   
+
+                    <!-- <div class="col-sm-6 col-md-12">
+                        <widget name="functional"></widget>
+                    </div> -->
+
+                    <div class="col-sm-6 col-md-12">
+                        <!-- <widget name="functional"></widget> -->
+                        <widget name="chef"></widget>
+                        <widget name="Testrail"></widget>
+						<widget name="smoketest"></widget>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
