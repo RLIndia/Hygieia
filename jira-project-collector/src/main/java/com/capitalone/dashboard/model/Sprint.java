@@ -31,5 +31,6 @@ public class Sprint {
 	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
-
+	public void setSpringStartDate(String sprintId){this.sprintName = sprintName}
+	public void getSpringStartdate(String sprintId){this.sprintName = spr}
 }

@@ -33,6 +33,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
     private String sprintId;
     private String key;
     private double storyPoint;
+    private String acceptanceCriteria;
+    private String issueType;
 
 
     private ObjectId collectorItemId;
@@ -117,53 +119,63 @@ import org.springframework.data.mongodb.core.mapping.Document;
         return this;
     }
 
-	public String getSprintId() {
-		return sprintId;
-	}
+    public String getSprintId() {
+        return sprintId;
+    }
 
-	public void setSprintId(String sprintId) {
-		this.sprintId = sprintId;
-	}
+    public void setSprintId(String sprintId) {
+        this.sprintId = sprintId;
+    }
 
-	public String getSprintName() {
-		return sprintName;
-	}
+    public String getSprintName() {
+        return sprintName;
+    }
 
-	public void setSprintName(String sprintName) {
-		this.sprintName = sprintName;
-	}
+    public void setSprintName(String sprintName) {
+        this.sprintName = sprintName;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public String getStatusName() {
-		return statusName;
-	}
+    public String getStatusName() {
+        return statusName;
+    }
 
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
-	}
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
 
-	public double getStoryPoint() {
-		return storyPoint;
-	}
+    public double getStoryPoint() {
+        return storyPoint;
+    }
 
-	public void setStoryPoint(double storyPoint) {
-		this.storyPoint = storyPoint;
-	}
+    public void setStoryPoint(double storyPoint) {
+        this.storyPoint = storyPoint;
+    }
 
-	public String getVersionId() {
-		return versionId;
-	}
+    public String getVersionId() {
+        return versionId;
+    }
 
-	public void setVersionId(String versionId) {
-		this.versionId = versionId;
-	}
-
-
+    public void setVersionId(String versionId) {
+        this.versionId = versionId;
+    }
+    public void setAcceptanceCriteria(String criteria){
+        this.acceptanceCriteria=criteria;    
+    }
+    public String getAcceptanceCriteria(){
+        return this.acceptanceCriteria;
+    }
+    public void setIssueType(String issueType){
+        this.issueType=issueType;        
+    }
+    public String getIssueType(){
+        return this.issueType;
+    }
 }

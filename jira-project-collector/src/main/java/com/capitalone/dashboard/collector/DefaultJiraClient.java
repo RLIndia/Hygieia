@@ -14,6 +14,7 @@ import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.util.concurrent.Promise;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
 import com.capitalone.dashboard.model.Sprint;
+import com.capitalone.dashboard.model.SprintVelocity;
 import com.capitalone.dashboard.model.JiraRepo;
 //import com.capitalone.dashboard.util.Encryption;
 //import com.capitalone.dashboard.util.EncryptionException;
@@ -169,7 +170,9 @@ public class DefaultJiraClient implements JiraClient {
 						pvi.setProjectName((String) jirarepo.getOptions().get("projectName"));
 						pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
 						pvi.setVersionId((String) jirarepo.getOptions().get("versionId"));
-
+						//pvi.setIssueType((String)issue.getIssueType().getName());
+						//pvi.setAcceptanceCriteria((String)issue.getField(settings.getAcceptanceCriteriaFieldName()).getValue());						
+						
 						projectversionissues.add(pvi);
 						count++;
 					}
@@ -289,6 +292,12 @@ public class DefaultJiraClient implements JiraClient {
 														pvi.setSprintName(sprintNameItems[1]);
 													}
 												}
+												if (arr[i].startsWith("rapidViewId=")) {
+													String[] rapidViewIdItems = arr[i].split("=");
+													if (rapidViewIdItems.length == 2) {														
+														jirarepo.setRAPIDVIEWID(rapidViewIdItems[1]);
+													}
+												}
 											}
 
 										}
@@ -344,9 +353,10 @@ public class DefaultJiraClient implements JiraClient {
 		List<ProjectVersionIssues> projectversionissues = new ArrayList<>();
 		List<ProjectVersionIssues> issuesV = getProjectVersionIssuesByVersion(jirarepo);
 		List<ProjectVersionIssues> issuesS = getProjectVersionIssuesBySprint(jirarepo);
-
-		projectversionissues.addAll(issuesV);
-		projectversionissues.addAll(issuesS);
+		if (issuesV != null)
+			projectversionissues.addAll(issuesV);
+		if (issuesS != null)
+			projectversionissues.addAll(issuesS);
 
 		return projectversionissues;
 	}
@@ -584,6 +594,69 @@ public class DefaultJiraClient implements JiraClient {
 
 		LOG.info(url);
 		return url;
-	}
+	}	
+	@Override
+	public List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo){
+		List<SprintVelocity> lstSprintVelocity=new ArrayList<SprintVelocity>();
+		try{
+			if (jirarepo.getRAPIDVIEWID() == null)
+			{
+				System.out.println("There is no rapidViewId for this project-" + jirarepo.getPROJECTNAME());
+				return null;
+			}
+			String url = settings.getJiraBaseUrl()
+				+ "/rest/greenhopper/1.0/rapid/charts/velocity.json?rapidViewId=" + jirarepo.getRAPIDVIEWID();
+			ResponseEntity<String> response = makeRestCall(url,
+					jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+					jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+			LOG.info(url);
+			JSONObject respObj = (JSONObject) new JSONParser().parse(response.getBody());
+			//LOG.info("Velocity json ===> " + response.getBody());
+			JSONArray sprintArray = (JSONArray) respObj.get("sprints");
 
+
+			List<String> sprints=new ArrayList<String>();
+			//List<SprintVelocity> velocities=new ArrayList<SprintVelocity>();
+			HashMap<String,SprintVelocity> mapVelocities=new HashMap<String,SprintVelocity>();
+			if (sprintArray != null) {
+				for (int i = 0; i < sprintArray.size(); i++) {
+					JSONObject obj = (JSONObject) sprintArray.get(i);
+					String sprintId=String.valueOf(obj.get("id"));
+					String name=(String) obj.get("name");	
+					String state=(String) obj.get("state");	
+					SprintVelocity v=new SprintVelocity();
+					v.setSprintId(sprintId);
+					v.setSprintName(name);
+					v.setSprintStatus(state);
+					v.setProjectId(jirarepo.getPROJECTID());
+					v.setVersionId(jirarepo.getVERSIONID());					
+					mapVelocities.put(sprintId, v);
+				}
+			}
+			JSONObject velocityEntriesObj = (JSONObject) respObj.get("velocityStatEntries");			
+			if (velocityEntriesObj != null) {
+				
+				Iterator it = mapVelocities.entrySet().iterator();
+			    while (it.hasNext()) {
+			        Map.Entry pair = (Map.Entry)it.next();
+			        String sprintId=(String)pair.getKey();
+			        SprintVelocity v=(SprintVelocity)pair.getValue();
+			        JSONObject velocityObj = (JSONObject) velocityEntriesObj.get(sprintId);
+			        JSONObject estimatedObj=(JSONObject)velocityObj.get("estimated");
+			        String estimated=(String)estimatedObj.get("text");
+			        
+			        JSONObject completedObj=(JSONObject)velocityObj.get("completed");
+			        String completed=(String)completedObj.get("text");
+			        v.setCompleted(completed);
+			        v.setCommitted(estimated);
+			        lstSprintVelocity.add(v);
+			    }
+			}			
+		}catch(Exception ex){
+			LOG.info("Error on fetching velocity");
+			ex.printStackTrace();
+			return null;
+		}
+		return lstSprintVelocity;
+	}
 }

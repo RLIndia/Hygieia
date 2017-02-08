@@ -18,7 +18,8 @@ public class JiraSettings {
     private String jiraCredentials;
     private String jiraSprintDataFieldName;
     private String storyPointDataFieldName;
-    
+    private String sprintFieldName;
+    private String acceptanceCriteriaFieldName;
     private String[] doneStatuses;
     private String[] todoStatuses;
     private String[] doingStatuses;
@@ -136,5 +137,23 @@ public class JiraSettings {
 		this.storyPointDataFieldName = storyPointDataFieldName;
 	}
 
-
+    public String getSprintFieldName() {
+        return this.sprintFieldName;
+    }
+    public void setSprintFieldName(String sprintFieldName) {
+        this.sprintFieldName = sprintFieldName;
+    }
+    public String getAcceptanceCriteriaFieldName() {
+        return this.acceptanceCriteriaFieldName;
+    }
+    public void setAcceptanceCriteriaFieldName(String criteria) {
+        this.acceptanceCriteriaFieldName = criteria;
+    }
+    private String storyPointFieldName;
+    public String getStoryPointFieldName() {
+        return this.storyPointFieldName;
+    }
+    public void setStoryPointFieldName(String storypoint) {
+        this.storyPointFieldName = storypoint;
+    }
 }

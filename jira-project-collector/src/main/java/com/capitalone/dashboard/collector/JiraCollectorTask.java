@@ -12,10 +12,12 @@ import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.JiraRepo;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
 import com.capitalone.dashboard.model.Sprint;
+import com.capitalone.dashboard.model.SprintVelocity;
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.JiraProjectRepository;
 import com.capitalone.dashboard.repository.ProjectVersionRepository;
+import com.capitalone.dashboard.repository.SprintVelocityRepository;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,6 +41,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
     private final BaseCollectorRepository<Collector> collectorRepository;
     private final JiraProjectRepository jiraprojectrepository;
     private final ProjectVersionRepository projectversionrepository;
+    private final SprintVelocityRepository sprintVelocityRepository;
     private final JiraClient jiraclient;
     private final JiraSettings jirasettings;
     private final ComponentRepository dbComponentRepository;
@@ -50,6 +53,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                              BaseCollectorRepository<Collector> collectorRepository,
                              JiraProjectRepository jiraprojectrepository,
                              ProjectVersionRepository projectversionrepository,
+                             SprintVelocityRepository sprintVelocityRepository,
                              JiraClient jiraclient,
                              JiraSettings jirasettings,
                              ComponentRepository dbComponentRepository) {
@@ -58,6 +62,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         this.jiraclient = jiraclient;
         this.jiraprojectrepository = jiraprojectrepository;
         this.projectversionrepository = projectversionrepository;
+        this.sprintVelocityRepository=sprintVelocityRepository;
         this.jirasettings = jirasettings;
         this.dbComponentRepository = dbComponentRepository;
     }
@@ -123,6 +128,8 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int issueCount = 0;
         int scannedProjects = 0;
         int newProjects = 0;
+        int updatedSprintVelocities=0;
+            int newSprintVelocities=0;
         clean(collector);
 
 
@@ -135,7 +142,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 
             if(savedRepo == null){
                 repo.setCollectorId(collector.getId());
-                repo.setEnabled(false);
+                repo.setEnabled(true);
 
               //  LOG.info("To Add:" + repo.getPROJECTNAME() + " " + repo.getVERSIONNAME());
                 repoList.add(repo);
@@ -192,12 +199,36 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                 }
             }
 
+            
+            
+            List<SprintVelocity> sprintVelocities  = jiraclient.getVelocityReportByProject(repo);
+
+            for(SprintVelocity sv : sprintVelocities){
+                SprintVelocity savedSprintVelocity = sprintVelocityRepository.findSprintVelocityByCollectorIdSprintId(collector.getId(),sv.getSprintId());
+                if(savedSprintVelocity != null){
+                    savedSprintVelocity.setCommitted(sv.getCommitted());
+                    savedSprintVelocity.setCompleted(sv.getCompleted());
+                    
+                    sprintVelocityRepository.save(savedSprintVelocity);
+                   
+                    updatedSprintVelocities++;
+                }
+                else{
+                    sv.setCollectorItemId(collector.getId());
+                    
+                    sprintVelocityRepository.save(sv);
+                    newSprintVelocities++;
+                }
+            }
+
             enabledVersions++;
             jiraprojectrepository.save(repo);
         }
         LOG.info("Enabled Projects Versions:" + enabledVersions);
         LOG.info("New Issues:" + newIssues);
         LOG.info("Updated Issues:" + updatedIssues);
+        LOG.info("New sprint velocities:" + newSprintVelocities);
+        LOG.info("Updated sprint velocities:" + updatedSprintVelocities);
         LOG.info("Total Issues:" + (newIssues + updatedIssues));
         LOG.info("Finished.");
 
@@ -205,10 +236,6 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 
 
     }
-
-
-
-
 
 
     private List<JiraRepo> enabledRepos(Collector collector) {

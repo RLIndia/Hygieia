@@ -14,7 +14,7 @@ public class JiraRepo extends CollectorItem{
     private static final String ACTIVE_SPRINT_NAME = "activeSprintName";
     private static final String ACTIVE_SPRINT_START_TIME = "activeSprintStartTime";
     private static final String ACTIVE_SPRINT_END_TIME = "activeSprintEndTime";
-    
+    private static final String RAPIDVIEW_ID="rapidViewId";
     
     public String getACTIVE_SPRINT_START_TIME() { return (String) getOptions().get(ACTIVE_SPRINT_START_TIME);}
 
@@ -75,7 +75,13 @@ public class JiraRepo extends CollectorItem{
     public void setVERSIONDESCRIPTION(String versiondescription){
         getOptions().put(VERSIONDESCRIPTION,versiondescription);
     }
+    public String getRAPIDVIEWID() {
+        return (String) getOptions().get(RAPIDVIEW_ID);
+    }
 
+    public void setRAPIDVIEWID(String rapidViewId){
+        getOptions().put(RAPIDVIEW_ID,rapidViewId);
+    }
 
     @Override
     public boolean equals(Object o) {

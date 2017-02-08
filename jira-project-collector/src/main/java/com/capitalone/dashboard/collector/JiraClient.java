@@ -4,6 +4,7 @@ import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
 import com.capitalone.dashboard.model.Sprint;
 import com.capitalone.dashboard.model.JiraRepo;
+import com.capitalone.dashboard.model.SprintVelocity;
 import java.util.List;
 /**
  * Created by vinod on 6/9/16.
@@ -22,4 +23,5 @@ public interface JiraClient {
     List<ProjectVersionIssues> getprojectversionissues(JiraRepo jirarepo,  boolean firstrun);
     List<JiraRepo> getProjects();
     Sprint getActiveSprint(JiraRepo jirarepo);
+    List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo);
 }
