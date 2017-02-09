@@ -133,6 +133,11 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			summarySprint.put("sprintId", (String) item.getOptions().get("activeSprintId"));
 			summarySprint.put("sprintStart", (String) item.getOptions().get("activeSprintStartTime"));
 			summarySprint.put("sprintEnd", (String) item.getOptions().get("activeSprintEndTime"));
+			double sprintCommitted=0;
+			double sprintCompleted=0;
+			int cntStryWoAccptCriteria=0;
+			int defectsOfStory=0;
+			int defectsCnt=0;
 			for (ProjectVersionIssues issue : pviSprints) {
 				JSONObject issueObj = new JSONObject();
 
@@ -141,12 +146,19 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				issueObj.put("statusName", issue.getStatusName());
 				issueObj.put("description", issue.getIssueDescription());
 				issueObj.put("storyPoint", issue.getStoryPoint());
-
+				sprintCommitted+=issue.getStoryPoint();			
+				if ("Story".equals(issue.getIssueType()) && issue.getAcceptanceCriteria()== null)
+					cntStryWoAccptCriteria++;
+				if ("Story".equals(issue.getIssueType()) && issue.getDefectsCnt()>0)
+					defectsOfStory++;
+				if ("Defect".equals(issue.getIssueType()) || "Bug".equals(issue.getIssueType())  )
+					defectsCnt++;
 				issuesSprint.add(issueObj);
 				String issueStatus = issue.getIssueStatus();
 				if (issueStatus != null) {
 					if (issueStatus.contentEquals("Done")) {
 						doneTotal = doneTotal + issue.getStoryPoint();
+						sprintCompleted += issue.getStoryPoint();
 					}
 					if (issueStatus.contentEquals("Backlog")) {
 						pendingTotal = pendingTotal + issue.getStoryPoint();
@@ -158,11 +170,17 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				}
 				total = total + issue.getStoryPoint();
 			}
-
+			
 			summarySprint.put("doneTotal", doneTotal);
 			summarySprint.put("total", total);
 			summarySprint.put("progressTotal", progressTotal);
 			summarySprint.put("pendingTotal", pendingTotal);
+			summarySprint.put("velocityCommitted", sprintCommitted);
+			summarySprint.put("velocityCompleted", sprintCompleted);
+			summarySprint.put("IssuesWithoutAcceptanceCriteria",cntStryWoAccptCriteria);
+			summarySprint.put("storydefect",defectsOfStory);
+			summarySprint.put("DefectsInSprint",defectsCnt);
+			summarySprint.put("storyPointsEarned",sprintCompleted);
 			summarySprint.put("issues", issuesSprint);
 
 			responseObj.put("sprint", summarySprint);
