@@ -1,0 +1,90 @@
+<div class="project-view" ng-model="projectView">
+     <!-- Removed dropdown based on feedback -->
+    <div class="col-xs-9.5 text-standard-sm dash-overflow">
+        Version: {{projectVersionView.jiraDashboard.issueSummary.versionName}}
+    </div>
+     <div class="col-xs-9.5 text-standard-sm dash-overflow">
+
+       <table class="table">
+       		<tr>
+       			<td colspan="5">
+       				
+       			</td>
+       		</tr>
+       		<tr>
+       			<td style="text-align:center">Issues</td>
+       			<td style="text-align:center;text-align:center;color: green;font-weight:bold">Done</td>
+            <td style="text-align:center;text-align:center;color: orange;font-weight:bold">In Progress</td>
+       			<td style="text-align:center;text-align:center;color: red;font-weight:bold">To Do</td>
+            
+       			<td></td>
+       		</tr>
+       		<tr class="issue-datarow pointer" ng-click="projectVersionView.showDetail(projectVersionView.jiraDashboard)" style="cursor:pointer">
+       			<td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.issueCount}}</td>
+       			
+            <td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.doneCount}}</td>
+				    <td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.inprogressCount}}</td>
+       			<td style="text-align:center">{{projectVersionView.jiraDashboard.issueSummary.pendingCount}}</td>
+
+       			 <td class="" style="text-align:right" >
+            
+                <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
+            	</td>
+       		</tr>
+          <tr>
+            <td colspan="5"><hr/>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="5">
+                 <chartist class="ct-chart ct-major-twelfth"
+                  chartist-chart-type="Pie"
+                  chartist-data="projectVersionView.jiraDashboard.chartData"
+                  chartist-chart-options="projectVersionView.pieOptions"                
+                ></chartist>
+            </td>
+          </tr>
+       </table>
+     
+     </div>
+      <div class="col-xs-9.5 text-standard-sm dash-overflow">
+        Sprint: {{projectVersionView.jiraDashboard.sprintSummary.sprintName}}
+     </div>
+
+      <div class="col-xs-9.5 text-standard-sm dash-overflow">
+     Date : ({{projectVersionView.jiraDashboard.sprintSummary.startDate}} - {{projectVersionView.jiraDashboard.sprintSummary.endDate}})
+     </div>
+     <div class="col-xs-9.5 text-standard-sm dash-overflow">
+     <table class="table">
+       		<tr>
+       			<td colspan="5">
+       				
+       			</td>
+       		</tr>
+       		<tr>
+       			<td style="text-align:center">Total Story Points</td>
+       			<td style="text-align:center">Done</td>
+				<td style="text-align:center">In Progress</td>
+       			<td style="text-align:center">To Do</td>
+
+       			<td></td>
+       		</tr>
+       		<tr class="issue-datarow pointer"  ng-click="projectVersionView.showDetailSprint(projectVersionView.jiraDashboard)" style="cursor:pointer">
+       			<td style="text-align:center">{{projectVersionView.jiraDashboard.sprintSummary.total}}</td>
+       			<td style="text-align:center">{{projectVersionView.jiraDashboard.sprintSummary.doneTotal}}</td>
+				<td style="text-align:center">{{projectVersionView.jiraDashboard.sprintSummary.progressTotal}}</td>
+       			<td style="text-align:center">{{projectVersionView.jiraDashboard.sprintSummary.pendingTotal}}</td>
+
+       			 <td class="" style="text-align:right" >
+            
+                <span class="build-chevron pull-right fa fa-lg fa-angle-right"></span>
+            	</td>
+       		</tr>
+          <tr>
+            <td colspan="5"><hr/>
+            </td>
+          </tr>
+          
+       </table>
+     </div>
+</div>
