@@ -122,6 +122,7 @@ public class DefaultChefClient implements ChefClient {
 		try{
 			nodes = new ArrayList<>();
 			ResponseEntity<String> responseEntityString  = makeRestCall(uri,null,null);
+			LOG.info("responseEntityy ==> "+ responseEntityString.getBody());
 			JSONObject jsonObj = (JSONObject) new JSONParser().parse(responseEntityString.getBody());
 			JSONArray nodesArray = (JSONArray)jsonObj.get("nodes");
 			
@@ -139,6 +140,7 @@ public class DefaultChefClient implements ChefClient {
 			}
 			
 		} catch(Exception e) {
+			e.printStackTrace();
 			LOG.error("error while fetching nodes ==>"+e.getMessage());
 			nodes=null;
 		}
