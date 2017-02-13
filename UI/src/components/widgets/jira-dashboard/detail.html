@@ -1,0 +1,57 @@
+<widget-modal widget-modal-close="true">
+    <div class="widget-detail projectVersionIssues-detail">
+        <div class="widget-detail-heading">
+            <div class="row">
+                <!-- {{detail}} -->
+                <div class="col-md-4">
+                
+                    <span class="project-version-name">{{detail.jiraDashboard.issueSummary.projectName}} - {{detail.jiraDashboard.issueSummary.versionName}}</span>
+                </div>
+
+                <div class="col-md-2 last-updated">
+                   <span class="dash-status-lg">Issues:</span>
+                    <span class="project-version-name">{{detail.jiraDashboard.issueSummary.issueCount}}</span>
+                </div>
+
+                <div class="col-md-3 server-count">
+                    <span class="green">
+                        {{detail.jiraDashboard.issueSummary.doneCount}}<span class="fa fa-arrow-up"></span>
+                    </span>
+                    <span class="red">
+                        {{detail.jiraDashboard.issueSummary.pendingCount}}<span class="fa fa-arrow-down"></span>
+                    </span>
+                </div>
+                <div class="col-md-3 view-in-tool hidden">
+                    <a ng-href="" target="_blank">
+                        View in portal <span class="fa fa-angle-right"></span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Close button -->
+        </div>
+        <div class="widget-detail-body">
+           <!-- {"issueSummary":{"inprogressCount":12,"doneCount":122,"pendingCount":48,"issueCount":182},"issues":[{"issueID":"74431","description":"Work with CI team to deploy correct config to respective environments","status":"Requirement In Progress"}, -->
+           
+            <div class="row rowformat" ng-class="(result.status != 'Done') ? 'red':'green'" ng-repeat="result in detail.jiraDashboard.issues | orderBy:['status','description'] track by $index">
+                <div class="col-md-8" style="font-size:12px;word-wrap:break-word; display:inline-block;">
+                    {{result.description}}
+                </div>
+                <div class="col-md-2" style="font-size:12px">
+                    <span>{{result.statusName}}</span>
+                </div>
+                <!-- <div class="col-md-2">
+                    {{result.result}}
+                </div> -->
+                <div class="col-md-1"  ng-show="(result.status == 'Done')" class="servers-up"><span class="fa fa-arrow-up green"></span>
+                </div>
+                <div class="col-md-1" ng-show="(result.status == 'Backlog')" class="servers-down"><span class="fa fa-arrow-down red"></span>
+                </div>
+                <div class="col-md-1" ng-show="(result.status == 'In Progress')" class="servers-up"><span class="fa fa-play green"></span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</widget-modal>

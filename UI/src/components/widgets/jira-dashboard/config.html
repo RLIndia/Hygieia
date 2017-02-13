@@ -1,0 +1,41 @@
+<widget-modal widget-modal-title="Configure Jira Project Widget" >
+    <form class="projectversion-config" name="configForm" ng-submit="jiraDashboardConfig.submit(configForm.$valid)" novalidate="novalidate">
+        <form-group input="projectVersion" errors="{required:'Please select your Project - Version'}">
+            <!-- <select name="projectVersion"
+                    class="form-control"
+                    ng-model="jiraDashboardConfig.projectVersion"
+                    ng-options="projectVersion.name for projectVersion in jiraDashboardConfig.projectVersions | orderBy: 'name' track by projectVersion.value"
+                    ng-disabled="jiraDashboardConfig.jobDropdownDisabled"
+                    required>
+                <option value="">{{jiraDashboardConfig.projectVersionDropdownPlaceholder}}</option>
+            </select> -->
+
+            <select name="project" ng-model="jiraDashboardConfig.projectVe" class="form-control">
+            	<option value="">Select</option>
+            	<option ng-repeat="(key,value) in jiraDashboardConfig.projectVersions" value="{{key}}">{{value.name}}</option>
+
+            </select>
+
+           <select name="versions" ng-model="jiraDashboardConfig.versions" class="form-control">
+            	<option value="">Select</option>
+            	<option ng-repeat="vers in  jiraDashboardConfig.projectVersions[jiraDashboardConfig.projectVe].versions" value="{{vers.id}}">{{vers.options.versionName}}</option>
+
+            </select>
+            <!-- {{jiraDashboardConfig}} -->
+        </form-group>
+
+        <hr/>
+
+        <!-- <div class="form-group text-center">
+            <label class="modal-label">
+                Alert takeover criteria:
+            </label>
+            <br/>
+            If any environment is down
+        </div> -->
+
+        <div class="button-row row text-center">
+            <button type="submit" class="btn btn-primary btn-wide">Save</button>
+        </div>
+    </form>
+</widget-modal>
