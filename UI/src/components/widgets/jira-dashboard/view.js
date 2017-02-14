@@ -22,48 +22,73 @@
 		//####
 		ctrl.barChart={
             barData : {
+                chartPadding: {
+                    top: 100,
+                    right: 0,
+                    bottom: 0,
+                    left: 0
+                },
                 labels: ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'],
                 series: [
-                    { "name": "Money A", "data":[5, 4, 3, 7, 5, 10]},
-                    { "name": "Money B", "data":[3, 2, 9, 5, 4, 6]}
+                    { "name": "Committed", "data":[5, 4, 3, 7, 5, 10]},
+                    { "name": "Completed", "data":[3, 2, 9, 5, 4, 6]}
                 ]
             },
+
             barOptions : {
-                seriesBarDistance: 15
-            },barResponsiveOptions : [
-                ['screen and (min-width: 641px) and (max-width: 1024px)', {
-                    seriesBarDistance: 10,
-                    axisX: {
-                        labelInterpolationFnc: function(value) {
-                            return value;
+                chartPadding: {
+                    right: 0,
+                    bottom: 24,
+                    left: 0
+                },
+                axisY: {
+                    onlyInteger: true
+                },
+                plugins: [
+                    Chartist.plugins.legend(),
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'Sprint',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 50
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Story points',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 0
+                            },
+                            textAnchor: 'middle',
+                            flipTitle: false
                         }
-                    }
-                }],
-                ['screen and (max-width: 640px)', {
-                    seriesBarDistance: 5,
-                    axisX: {
-                        labelInterpolationFnc: function(value) {
-                            return value[0];
-                        }
-                    }
-                }]
-            ]
+                    })
+                ]
+            }
 		};
-
-
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
-        }
 
 
 
         ctrl.PieChart={
             data : {
-                series: [60, 19],
-                labels: ['Covered','Not covered']
+                series: [75, 25],
+                labels: [' ',' ']
             },
             options : {
                 donut: true
+            }
+        };
+        ctrl.DSRPieChart={
+            data : {
+                series: [100, 15, 35]
+            },
+            options : {
+                donut: false,
+                showLabel: false
             }
         };
         function getRandomInt(min, max) {
@@ -75,36 +100,80 @@
 
         ctrl.RSChart={
             data : {
-                labels: ['D1', 'D2', 'D3', 'D4', 'D5'],
+                labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05'],
                 series: [
-                    [1, 5, 10, 0, 1],
-                    [10, 15, 0, 1, 2]
+                    [1,4,6,7,9,11]
                 ]
             },
             options : {
-                axisX: {
-                    labelInterpolationFnc: function(value) {
-                        return value;
-                    }
-                }
+                chartPadding: {
+                    right: 0,
+                    bottom: 30,
+                },
+                plugins: [
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'Days',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 50
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Story points',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 0
+                            },
+                            textAnchor: 'middle',
+                            flipTitle: false
+                        }
+                    })
+                ]
             }
         };
 
 
         ctrl.SPEChart={
             data : {
-                labels: ['D1', 'D2', 'D3', 'D4', 'D5'],
+                labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05','Jan 06'],
                 series: [
-                    [1, 5, 10, 0, 1],
-                    [10, 15, 0, 1, 2]
+                    { "name": "Actual Values", "data":[8, 7, 4, 6, 2,1]},
+                    { "name": "Estimated Values", "data":[9, 7, 5, 3, 2,1]}
                 ]
             },
-            dptions : {
-                axisX: {
-                    labelInterpolationFnc: function(value) {
-                        return value;
-                    }
-                }
+            options : {
+                chartPadding: {
+                    right: 0,
+                    bottom: 30,
+                },
+                plugins: [
+                    Chartist.plugins.legend(),
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'Days',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 50
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Values',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 0
+                            },
+                            textAnchor: 'middle',
+                            flipTitle: false
+                        }
+                    })
+                ]
             }
         };
 
@@ -112,31 +181,40 @@
 
         ctrl.DIRChart={
             data : {
-                labels: ['SP1', 'SP2', 'SP3', 'SP4', 'SP5', 'SP6'],
+                labels: ['US1', 'US2', 'US3', 'US4', 'US5', 'US6'],
                 series: [
                     { "name": "Money A", "data":[5, 4, 3, 7, 5, 10]}
                 ]
             },
-            options : {
-                seriesBarDistance: 15
-            },barResponsiveOptions : [
-                ['screen and (min-width: 641px) and (max-width: 1024px)', {
-                    seriesBarDistance: 10,
-                    axisX: {
-                        labelInterpolationFnc: function(value) {
-                            return value;
+            options :{
+                chartPadding: {
+                    right: 0,
+                    bottom: 30,
+                },
+                plugins: [
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'User story',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 50
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Defects',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 0
+                            },
+                            textAnchor: 'middle',
+                            flipTitle: false
                         }
-                    }
-                }],
-                ['screen and (max-width: 640px)', {
-                    seriesBarDistance: 5,
-                    axisX: {
-                        labelInterpolationFnc: function(value) {
-                            return value[0];
-                        }
-                    }
-                }]
-            ]
+                    })
+                ]
+            }
         };
 
         //####
@@ -161,31 +239,8 @@
 		  
 		  if(data.result.sprint && data.result.sprint.sprintStart && data.result.sprint.sprintEnd) {
 			 
-			  var str = data.result.sprint.sprintStart.substring(0,8);
-			  console.log(str);
-			  var day = parseInt(str.substring(0,2));
-			  var month = parseInt(str.substring(2,4));
-			  var year = parseInt(str.substring(4));
-			 
-			  
-			  console.log(day,month,year);
-			  
-			  data.result.sprint.startDate = day+'/'+month+'/'+year;
-			 
-			  var str = data.result.sprint.sprintEnd.substring(0,8);
-			  var day = parseInt(str.substring(0,2));
-			  var month = parseInt(str.substring(2,4));
-			  var year = parseInt(str.substring(4));
-			
-			  data.result.sprint.endDate = day+'/'+month+'/'+year;;
+
 		  }
-		  
-	      ctrl.jiraDashboard = {
-	      		"issueSummary" :data.result.version,
-	      		"issues":data.result.version.issues,
-	      		"sprintSummary":data.result.sprint
-	  	  }
-	      console.log(ctrl.jiraDashboard.issueSummary);
 
 	      //Data preparation for chart
 	      //{"summary":{"inprogressCount":9,"doneCount":126,"pendingCount":47,"projectName":"API","versionName":"Chase Pay 1.0","issueCount":182},
