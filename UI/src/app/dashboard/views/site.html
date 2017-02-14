@@ -7,20 +7,20 @@
                 Select Your Dashboard
             </div>
             <div class="widget-modal-body">
-                <div class="text-center">
-                    <div class="btn-group dashboard-type-list" role="group" aria-label="Basic example">
+                 <div class="text-center">
+                    <!--HK changed the tab click event section for filter-->
+                    <div class="btn-group dashboard-type-list" role="group" aria-label="Basic example" ng-init="ctrl.tabType='' ">
                         <button type="button"
-                                class="btn btn-secondary"
-                                ng-class="{'btn-info': ctrl.dashboardType == undefined}"
-                                ng-click="ctrl.setType()">All dashboards</button>
+                                class="btn btn-secondary col-lg-3 col-md-3 col-sm-6"
+                                ng-class="{'btn-info': ctrl.tabType === ''}"
+                                ng-click="ctrl.tabType=''">All dashboards</button>
 
                         <button type="button"
-                                class="btn btn-secondary"
+                                class="btn btn-secondary col-lg-3 col-md-3 col-sm-6"
                                 ng-repeat="item in ctrl.dashboardTypes"
-                                ng-class="{'btn-info': ctrl.dashboardType == item.id}"
-                                ng-click="ctrl.setType(item.id)">
+                                ng-class="{'btn-info': ctrl.tabType === item.name}"
+                                ng-click="ctrl.tabType=item.name">
                             <span class="fa {{item.icon}}" ng-if="item.icon"></span>
-
                             {{item.name}} dashboards
                         </button>
                     </div>
