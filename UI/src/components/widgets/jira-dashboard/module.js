@@ -5,16 +5,16 @@
         config = {
             view: {
                 defaults: {
-                    title: 'Team Velociy' // widget title
+                    title: 'Project' // widget title
                 },
-                controller: 'JiraTeamVelocityViewController',
-                controllerAs: 'JiraTeamVelocity',
-                templateUrl: 'components/widgets/jira-team-velocity/view.html'
+                controller: 'jiraDashboardViewController',
+                controllerAs: 'jiraDashboardView',
+                templateUrl: 'components/widgets/jira-dashboard/view.html'
             },
             config: {
-                controller: 'JiraTeamVelocityConfigController',
-                controllerAs: 'JiraTeamVelocityConfig',
-                templateUrl: 'components/widgets/jira-team-velocity/config.html'
+                controller: 'jiraDashboardConfigController',
+                controllerAs: 'jiraDashboardConfig',
+                templateUrl: 'components/widgets/jira-dashboard/config.html'
             },
             getState: getState
         };
@@ -26,7 +26,7 @@
     register.$inject = ['widgetManagerProvider', 'WidgetState'];
     function register(widgetManagerProvider, WidgetState) {
         widget_state = WidgetState;
-        widgetManagerProvider.register('jira-team-velocity', config);
+        widgetManagerProvider.register('jira-dashboard', config);
     }
 
     function getState(widgetConfig) {

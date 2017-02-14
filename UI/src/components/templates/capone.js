@@ -14,8 +14,9 @@
         var ctrl = this;
 
         ctrl.tabs = [
-            { name: "Widget"},
-            { name: "Pipeline"}
+            // { name: "Config",icon:'fa fa-cog fa-lg'},
+            { name: "Widget",icon:'fa fa-th'},
+            { name: "Pipeline",icon:'fa fa-task'}
            ];
 
         ctrl.widgetView = ctrl.tabs[0].name;

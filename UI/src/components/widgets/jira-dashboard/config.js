@@ -3,10 +3,10 @@
 
     angular
         .module(HygieiaConfig.module)
-        .controller('jiraReleaseConfigController', jiraReleaseConfigController);
+        .controller('jiraDashboardConfigController', projectVersionConfigController);
 
-    jiraReleaseConfigController.$inject = ['modalData', 'collectorData','$modalInstance','$timeout'];
-    function jiraReleaseConfigController(modalData, collectorData, $modalInstance,$timeout) {
+    projectVersionConfigController.$inject = ['modalData', 'collectorData','$modalInstance','$timeout'];
+    function projectVersionConfigController(modalData, collectorData, $modalInstance,$timeout) {
         /*jshint validthis:true */
         var ctrl = this;
 

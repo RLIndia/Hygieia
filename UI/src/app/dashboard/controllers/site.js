@@ -30,7 +30,7 @@
         ctrl.admin = admin;
         ctrl.setType = setType;
         ctrl.filterNotOwnedList = filterNotOwnedList;
-        ctrl.filterDashboards = filterDashboards;
+        /// ctrl.filterDashboards = filterDashboards; ## hk
 
         if (ctrl.username === 'admin') {
             ctrl.myadmin = true;
@@ -42,6 +42,9 @@
             _(types).forEach(function (item) {
                 if(item.id == DashboardType.PRODUCT) {
                     item.icon = 'fa-cubes';
+                }
+                if(item.id ===DashboardType.RELEASE ){
+                    item.icon='fa-paper-plane-o';
                 }
             });
 
@@ -58,18 +61,19 @@
             ctrl.dashboardType = type;
         }
 
-        function filterDashboards(item) {
-            var matchesSearch = (!ctrl.search || item.name.toLowerCase().indexOf(ctrl.search.toLowerCase()) !== -1);
-            if (ctrl.dashboardType == DashboardType.PRODUCT) {
-                return item.isProduct && matchesSearch;
-            }
-
-            if (ctrl.dashboardType == DashboardType.TEAM) {
-                return !item.isProduct && matchesSearch;
-            }
-
-            return matchesSearch;
-        }
+        // #### hk #########
+        // function filterDashboards(item) {
+        //     var matchesSearch = (!ctrl.search || item.name.toLowerCase().indexOf(ctrl.search.toLowerCase()) !== -1);
+        //     if (ctrl.dashboardType == DashboardType.PRODUCT) {
+        //         return item.isProduct && matchesSearch;
+        //     }
+        //
+        //     if (ctrl.dashboardType == DashboardType.TEAM) {
+        //         return !item.isProduct && matchesSearch;
+        //     }
+        //
+        //     return matchesSearch;
+        // }
 
         function admin() {
             console.log('sending to admin page');
@@ -134,6 +138,7 @@
                     type: mydata[x].type,
                     isProduct: mydata[x].type && mydata[x].type.toLowerCase() === DashboardType.PRODUCT.toLowerCase()
                 });
+
             }
 
             ctrl.mydash = dashboards;
