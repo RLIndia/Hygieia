@@ -84,10 +84,13 @@
         };
         ctrl.DSRPieChart={
             data : {
-                series: [100, 15]
+                series: [20, 10, 30, 40]
             },
             options : {
                 donut: false,
+                donutWidth: 60,
+                startAngle: 270,
+                total: 200,
                 showLabel: false
             }
         };
