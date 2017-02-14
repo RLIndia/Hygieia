@@ -5,14 +5,14 @@
 	.module(HygieiaConfig.module)
 	.controller('jiraDashboardViewController', projectVersionViewController);
 
-	projectVersionViewController.$inject = ['$scope', 'DashStatus', 'projectData', 'DisplayState', '$q', '$modal'];
-	function projectVersionViewController($scope, DashStatus, projectData, DisplayState, $q, $modal) {
+	projectVersionViewController.$inject = ['$scope', 'DashStatus', 'jiraDashboardData', 'DisplayState', '$q', '$modal'];
+	function projectVersionViewController($scope, DashStatus, jiraDashboardData, DisplayState, $q, $modal) {
 		/*jshint validthis:true */
 		var ctrl = this;
 
 		// public variables
 		ctrl.statuses = DashStatus;
-        ctrl.projectData = projectData;
+        ctrl.jiraDashboardData = jiraDashboardData;
 		ctrl.load = load;
 		ctrl.jiraDashboard = {};
 
@@ -28,7 +28,7 @@
                     bottom: 0,
                     left: 0
                 },
-                labels: ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'],
+                labels: ['PSI-SLZ-12.4', 'PSI-SLZ-13.1', 'PSI-SLZ-13.2', 'PSI-SLZ-13.3', 'PSI-SLZ-13.5', 'PSI-SLZ-13.6'],
                 series: [
                     { "name": "Committed", "data":[5, 4, 3, 7, 5, 10]},
                     { "name": "Completed", "data":[3, 2, 9, 5, 4, 6]}
@@ -84,10 +84,13 @@
         };
         ctrl.DSRPieChart={
             data : {
-                series: [100, 15, 35]
+                series: [20, 10, 30, 40]
             },
             options : {
                 donut: false,
+                donutWidth: 60,
+                startAngle: 270,
+                total: 200,
                 showLabel: false
             }
         };
@@ -221,19 +224,14 @@
 
 
 		function load() {
-			var deferred = $q.defer();
-			console.log("In Load...");
-			projectData.details($scope.widgetConfig.componentId).then(function(data){
 
-				processProjectData(data);
-				deferred.resolve(data.lastUpdated);
-			
-				console.log("Done Load");
+			jiraDashboardData.details($scope.widgetConfig.componentId).then(function(data){
+
 
 			});
 			return deferred.promise;
 		}
-		function processProjectData(data) {
+		function processjiraDashboardData(data) {
 		  console.log("In process project data");
 		  $scope.subtitle = data.result.version.projectName;
 		  
