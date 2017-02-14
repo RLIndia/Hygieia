@@ -15,7 +15,14 @@
         var projectversionissuesRoute = '/api/projectVersionIssues/';
 
         return {
-            details: details
+            details: details,
+            demoJson:demoJson
+        };
+        function demoJson() {
+            return $http.get('jira-dashboard.json')
+                .then(function (response) {
+                    return response.data;
+                });
         };
 
         function details(componentId) {
