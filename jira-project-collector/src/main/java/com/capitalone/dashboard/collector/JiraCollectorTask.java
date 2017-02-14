@@ -200,7 +200,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             }
 
             
-            
+            /*
             List<SprintVelocity> sprintVelocities  = jiraclient.getVelocityReportByProject(repo);
 
             for(SprintVelocity sv : sprintVelocities){
@@ -220,7 +220,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                     newSprintVelocities++;
                 }
             }
-
+*/
             enabledVersions++;
             jiraprojectrepository.save(repo);
         }
