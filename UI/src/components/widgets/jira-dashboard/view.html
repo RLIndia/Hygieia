@@ -1,12 +1,11 @@
 <div class="project-view" ng-model="projectView">
      <div class="col-xs-9.5 text-standard-sm dash-overflow">
-
      <div class="col-md-12 col-lg-12 col-sm-12" style="text-align: center; ">
     <h4> Project : <small>LitPro Library</small>  | Version: <small>Release 2.2.2</small></h4>
 </div>
 <div class="clearfix  margin-deploy"></div>
 <div class="clearfix  margin-deploy"></div>
-
+     
          <div class="col-md-4 col-lg-4 col-sm-12">
              <h4 class="text-center">Team Velocity</h4>
 
@@ -16,7 +15,7 @@
 
          <div class="col-md-4 col-lg-4 col-sm-12">
              <h4 class="text-center">Acceptance Coverage</h4>
-             <div class="valPer">75%</div>
+             <!-- <div class="valPer">75%</div> -->
              <chartist class="ct-chart ct-golden-section" style="height:280px"  chartist-data="jiraDashboardView.PieChart.data" chartist-chart-type="Pie" chartist-chart-options="jiraDashboardView.PieChart.options"></chartist>
          </div>
 
@@ -59,9 +58,7 @@
              <div class="col-md-5 col-lg-5 col-sm-12">
                  <div class="pull-right ">
                  <span class="subtitle">Sprint :</span>&nbsp;
-                 <select  ng-options="opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">
-                     <option>SLZ2.1Sprint4</option>
-                     <option>PSI-SLZ-11.5</option>
+                 <select  ng-options="jiraDashboardView.sprints" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">                   
                  </select>
                  </div>
              </div>
@@ -76,9 +73,9 @@
              <div class="pull-right col-md-8 col-lg-8 col-sm-12">
                  <div class="pull-right">
                  <span class="subtitle">Sprint :</span>&nbsp;
-                 <select  ng-options="opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">
-                     <option>SLZ2.1Sprint4</option>
-                     <option>PSI-SLZ-11.5</option>
+                 <select  ng-options="jiraDashboardView.sprints" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">
+                    <!--  <option>SLZ2.1Sprint4</option>
+                     <option>PSI-SLZ-11.5</option> -->
                  </select>
                  </div>
              </div>
@@ -93,9 +90,8 @@
              <div class=" col-md-5 col-lg-5 col-sm-12">
                  <div class="pull-right">
                  <span class="subtitle">Sprint :</span>&nbsp;
-                 <select  ng-options="opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">
-                     <option>SLZ2.1Sprint4</option>
-                     <option>PSI-SLZ-11.5</option>
+                 <select  ng-options="jiraDashboardView.sprints" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">
+                    
                  </select>
                  </div>
              </div>

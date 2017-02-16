@@ -19,6 +19,9 @@
 		ctrl.showDetail = showDetail;
 		ctrl.showDetailSprint= showDetailSprint;
 		ctrl.title = "";
+		ctrl.sprints = [];
+		ctrl.releaseStatusDataSet = [];
+		ctrl.burnDownDataSet = [];
 		//####
 		ctrl.barChart={
             barData : {
@@ -28,11 +31,8 @@
                     bottom: 0,
                     left: 0
                 },
-                labels: ['PSI-SLZ-12.4', 'PSI-SLZ-13.1', 'PSI-SLZ-13.2', 'PSI-SLZ-13.3', 'PSI-SLZ-13.5', 'PSI-SLZ-13.6'],
-                series: [
-                    { "name": "Committed", "data":[5, 4, 3, 7, 5, 10]},
-                    { "name": "Completed", "data":[3, 2, 9, 5, 4, 6]}
-                ]
+                labels: [],
+                series: []
             },
 
             barOptions : {
@@ -75,16 +75,17 @@
 
         ctrl.PieChart={
             data : {
-                series: [75, 25],
-                labels: [' ',' ']
+                series: [],
+                labels: []
             },
             options : {
                 donut: true
             }
         };
+        
         ctrl.DSRPieChart={
             data : {
-                series: [20, 10, 30, 40]
+               series: []
             },
             options : {
                 donut: false,
@@ -94,19 +95,20 @@
                 showLabel: false
             }
         };
+        
+        
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min)) + min;
         }
 
 
 
-
-        ctrl.RSChart={
+        ctrl.RSChart1={
             data : {
-                labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05'],
+                /*labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05'],
                 series: [
                     [1,4,6,7,9,11]
-                ]
+                ]*/
             },
             options : {
                 chartPadding: {
@@ -138,15 +140,53 @@
                 ]
             }
         };
+        
+        ctrl.RSChart2={
+                data : {
+                    /*labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05'],
+                    series: [
+                        [1,4,6,7,9,11]
+                    ]*/
+                },
+                options : {
+                    chartPadding: {
+                        right: 0,
+                        bottom: 30,
+                    },
+                    plugins: [
+                        Chartist.plugins.ctAxisTitle({
+                            axisX: {
+                                axisTitle: 'Days',
+                                axisClass: 'ct-axis-title',
+                                offset: {
+                                    x: 0,
+                                    y: 50
+                                },
+                                textAnchor: 'middle'
+                            },
+                            axisY: {
+                                axisTitle: 'Story points',
+                                axisClass: 'ct-axis-title',
+                                offset: {
+                                    x: 0,
+                                    y: 0
+                                },
+                                textAnchor: 'middle',
+                                flipTitle: false
+                            }
+                        })
+                    ]
+                }
+            };
 
 
         ctrl.SPEChart={
             data : {
-                labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05','Jan 06'],
+                /*labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05','Jan 06'],
                 series: [
                     { "name": "Actual Values", "data":[8, 7, 4, 6, 2,1]},
                     { "name": "Estimated Values", "data":[9, 7, 5, 3, 2,1]}
-                ]
+                ]*/
             },
             options : {
                 chartPadding: {
@@ -184,10 +224,10 @@
 
         ctrl.DIRChart={
             data : {
-                labels: ['US1', 'US2', 'US3', 'US4', 'US5', 'US6'],
+                /*labels: ['US1', 'US2', 'US3', 'US4', 'US5', 'US6'],
                 series: [
                     { "name": "Money A", "data":[5, 4, 3, 7, 5, 10]}
-                ]
+                ]*/
             },
             options :{
                 chartPadding: {
@@ -222,11 +262,75 @@
 
         //####
 
-		function load() {
-			jiraDashboardData.details($scope.widgetConfig.componentId).then(function(data){
-                console.log('data---',data);
 
+		function load() {
+			var deferred = $q.defer();
+			jiraDashboardData.details($scope.widgetConfig.componentId).then(function(data){				
+				/*console.log(data.result.acceptance);*/
+				console.log(data);		    
+				
+				/*Loop for team velocity*/
+				if(data.result.teamVelocity.length!==0)					
+					{
+					var teamVelocity = data.result.teamVelocity;
+					for(var i=0; i<=teamVelocity.length; i++)
+						{
+						ctrl.barChart.barData.labels.push(teamVelocity[i].SprintName);
+						var seriesObjs = {
+						      committed : teamVelocity[i].committed,
+						      completed : teamVelocity[i].completed						
+						};
+						ctrl.barChart.barData.series.push(seriesObjs);
+					}
+					ctrl.sprints = ctrl.barChart.barData.labels;
+					}
+					
+				/*Loop for acceptance coverage*/
+				if(data.result.acceptance)
+					{
+					ctrl.PieChart.data.series.push(data.result.acceptance.covered);
+					ctrl.PieChart.data.series.push(data.result.acceptance.notCovered);
+					console.log(ctrl.PieChart.data.series);
+					}
+					
+				/*Loop for defect slippage*/
+				if(data.result.defectSlippageRate.length!=0){
+					var slippageObj = data.result.defectSlippageRate[0];				
+					ctrl.DSRPieChart.data.series.push(slippageObj.Production);
+					ctrl.DSRPieChart.data.series.push(slippageObj.QA);
+				}
+				
+				/*Loop for release status*/
+			    if(data.result.releaseStatus.length!=0){
+			    	ctrl.releaseStatusDataSet = data.result.releaseStatus;
+			    }
+			    
+			    /*Loop for burn down chart*/
+			    if(data.result.burnDownChart.length!=0){
+			    	ctrl.burnDownDataSet = data.result.burnDownChart;
+			    }
+			    
+			    /*Loop for defect injection*/
+			    if(data.result.defectInjectionRate.length!=0){
+			    	ctrl.defectInjectionDataSet = data.result.defectInjectionRate;
+			    }
+			    
+			    	/*{
+			    	var relStatusObj = data.result.releaseStatus;
+			    	for(var i=0; i<=relStatusObj.length; i++)
+			    		{
+			    		var relStatusSprintData = relStatusObj[i];
+			    		for()
+			    		ctrl.RSChart.data.labels.push(relStatusSprintData.);
+			    		}
+			    	}*/
+			    	
+			    	
+					
+					
+					
 			});
+			return deferred.promise;
 		}
 		function processjiraDashboardData(data) {
 		  console.log("In process project data");
