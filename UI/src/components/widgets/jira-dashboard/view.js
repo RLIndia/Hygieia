@@ -222,14 +222,11 @@
 
         //####
 
-
 		function load() {
-
 			jiraDashboardData.details($scope.widgetConfig.componentId).then(function(data){
-
+                console.log('data---',data);
 
 			});
-			return deferred.promise;
 		}
 		function processjiraDashboardData(data) {
 		  console.log("In process project data");

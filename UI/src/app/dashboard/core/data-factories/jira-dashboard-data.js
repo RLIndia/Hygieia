@@ -12,17 +12,10 @@
         //Api to be updated to project version issues.
         //Api to be updated to project version issues.
         var testDetailRoute = 'test-data/deploy_detail.json';
-        var projectversionissuesRoute = '/api/projectVersionIssues/';
+        var projectversionissuesRoute = 'api/sprintvelocity/';
 
         return {
-            details: details,
-            demoJson:demoJson
-        };
-        function demoJson() {
-            return $http.get('jira-dashboard.json')
-                .then(function (response) {
-                    return response.data;
-                });
+            details: details
         };
 
         function details(componentId) {
