@@ -30,7 +30,7 @@ public class ProjectVersionController {
         this.projectVersionService = projectVersionService;
     }
 
-    @RequestMapping(value = "/projectVersionIssues/{componentId}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/releaseDashboardData/{componentId}", method = GET, produces = APPLICATION_JSON_VALUE)
     public DataResponse<JSONObject>  projectVersionIssues(@PathVariable ObjectId componentId) {
 
         //JSONObject responseObj = new JSONObject();
