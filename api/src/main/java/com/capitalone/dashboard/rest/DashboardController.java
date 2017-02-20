@@ -5,6 +5,8 @@ import com.capitalone.dashboard.request.DashboardRequest;
 import com.capitalone.dashboard.request.WidgetRequest;
 import com.capitalone.dashboard.service.DashboardService;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 public class DashboardController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
     private final DashboardService dashboardService;
 
     @Autowired
