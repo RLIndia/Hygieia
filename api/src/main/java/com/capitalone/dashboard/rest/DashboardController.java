@@ -41,6 +41,15 @@ public class DashboardController {
                 .body(dashboardService.create(request.toDashboard()));
     }
 
+    @RequestMapping(value = "/dashboard/collectors", method = GET,
+            produces = APPLICATION_JSON_VALUE)
+    public Iterable<Collector> getDashboardCollectors() {
+        return dashboardService.getDashboardCollectors();
+    }
+
+
+
+
     @RequestMapping(value = "/dashboard/{id}", method = GET,
             produces = APPLICATION_JSON_VALUE)
     public Dashboard getDashboard(@PathVariable ObjectId id) {

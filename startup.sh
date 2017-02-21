@@ -106,9 +106,9 @@ COMMENT
  
 echo "Starting UI"
 cd ../../UI
-#cp -r dist/* /usr/share/nginx/html/
-#cat ../nginx.default > /etc/nginx/sites-enabled/default
-#service nginx reload
-nohup node/node node_modules/gulp/bin/gulp.js serve &
+cp -r dist/* /usr/share/nginx/html/
+cat ../nginx.default > /etc/nginx/sites-enabled/default
+service nginx reload
+#nohup node/node node_modules/gulp/bin/gulp.js serve &
 echo "Done..."
 

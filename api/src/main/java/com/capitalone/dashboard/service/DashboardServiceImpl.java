@@ -183,6 +183,11 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
+    public Iterable<Collector> getDashboardCollectors() {
+        return collectorRepository.findAll();
+    }
+
+    @Override
     public Widget addWidget(Dashboard dashboard, Widget widget) {
         widget.setId(ObjectId.get());
         dashboard.getWidgets().add(widget);
