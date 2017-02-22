@@ -41,6 +41,27 @@ public class DashboardController {
                 .body(dashboardService.create(request.toDashboard()));
     }
 
+    @RequestMapping(value = "/setupdashboard/{id}", method = POST,
+            consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Dashboard> createAndConfigDashboard(@PathVariable ObjectId id, @RequestBody List<WidgetRequest> request) {
+        Dashboard dashboard = dashboardService.get(id);
+
+        //dashboard should have the dashboardID and componentID
+        List<Component> tempComponents = dashboard.getApplication().getComponents();
+        Component firstComponent = tempComponents.get(0);
+
+        //loop through each widget in the request
+        for(WidgetRequest widget : request) {
+            Component component = dashboardService.associateCollectorToComponent(
+                    firstComponent.getId(), widget.getCollectorItemIds());
+            Widget newwidget = dashboardService.addWidget(dashboard, widget.widget());
+            LOGGER.info("Widget:" + widget.getName() + " setup");
+        }
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(dashboard);
+    }
+
     @RequestMapping(value = "/dashboard/collectors", method = GET,
             produces = APPLICATION_JSON_VALUE)
     public Iterable<Collector> getDashboardCollectors() {
