@@ -10,5 +10,7 @@ public interface ChefClient {
   public List<CookbookCollectorItem> getRunlist();
   
   public List<ChefNode> getNodesByCookbookNames(List<CookbookCollectorItem> cookbookName);
+  
+  public List<ChefNode> getNodes();
 
 }

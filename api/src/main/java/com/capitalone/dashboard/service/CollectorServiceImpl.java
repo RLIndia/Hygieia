@@ -166,6 +166,11 @@ public class CollectorServiceImpl implements CollectorService {
 		return collectorRepository.save(collector);
 	}
 
+	@Override
+	public List<CollectorItem> getAllCollectorItemsByCollectorId(List<ObjectId> collectorId) {
+		return collectorItemRepository.findByCollectorIdIn(collectorId);
+	}
+
 	private Collector collectorById(ObjectId collectorId, List<Collector> collectors) {
 		for (Collector collector : collectors) {
 			if (collector.getId().equals(collectorId)) {

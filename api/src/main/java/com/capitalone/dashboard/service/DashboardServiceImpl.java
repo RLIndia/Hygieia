@@ -6,6 +6,8 @@ import com.capitalone.dashboard.util.UnsafeDeleteException;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,7 @@ import java.util.*;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServiceImpl.class);
     private final DashboardRepository dashboardRepository;
     private final ComponentRepository componentRepository;
     private final CollectorRepository collectorRepository;
@@ -66,6 +68,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public Dashboard create(Dashboard dashboard) {
+        LOGGER.info("Creating Dashboard : " + dashboard.getApplication().getComponents());
         componentRepository.save(dashboard.getApplication().getComponents());
         return dashboardRepository.save(dashboard);
     }
@@ -177,6 +180,11 @@ public class DashboardServiceImpl implements DashboardService {
         collectorItemRepository.save(toSaveCollectorItemList);
         componentRepository.save(component);
         return component;
+    }
+
+    @Override
+    public Iterable<Collector> getDashboardCollectors() {
+        return collectorRepository.findAll();
     }
 
     @Override
