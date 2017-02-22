@@ -93,6 +93,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
          * Logic: For each component, retrieve the collector item list of the type SCM.
          * Store their IDs in a unique set ONLY if their collector IDs match with Bitbucket collectors ID.
          */
+        List<com.capitalone.dashboard.model.Component> comps = (List<com.capitalone.dashboard.model.Component>) dbComponentRepository.findAll();
         for (com.capitalone.dashboard.model.Component comp : dbComponentRepository.findAll()) {
             if (comp.getCollectorItems() == null || comp.getCollectorItems().isEmpty()) continue;
             List<CollectorItem> itemList = comp.getCollectorItems().get(CollectorType.Jiraproject);
@@ -161,11 +162,19 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int enabledVersions = 0;
         int newIssues = 0;
         int updatedIssues = 0;
+        LOG.info("TOTAL ENABLED REPOS : "+ enabledRepos(collector));
+        
         for(JiraRepo repo : enabledRepos(collector)){
+        	
             boolean firstRun = false;
            // LOG.info("Enabled repo:");
            // LOG.info(repo);
            // enabledrepoList.add(repo);
+            
+            JiraRepo repoSlippage = jiraclient.getDefectSlippage(repo);
+            
+            repo.setStageDefects(repoSlippage.getStageDefects());
+            repo.setProdDefects(repoSlippage.getProdDefects());
             
             // geting active sprint 
             Sprint s = jiraclient.getActiveSprint(repo);
@@ -174,6 +183,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             	repo.setACTIVE_SPRINT_NAME(s.getSprintName());
             	repo.setACTIVE_SPRINT_START_TIME(s.getStartTime());
             	repo.setACTIVE_SPRINT_END_TIME(s.getEndTime());
+            	repo.setRAPIDVIEWID(s.getActiveBoardId());
             }
             
             List<ProjectVersionIssues> enabledProjectVersionIssues  = jiraclient.getprojectversionissues(repo,firstRun);
@@ -202,7 +212,10 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             
             
             List<SprintVelocity> sprintVelocities  = jiraclient.getVelocityReportByProject(repo);
+            
 
+            if(sprintVelocities != null)
+            {
             for(SprintVelocity sv : sprintVelocities){
                 SprintVelocity savedSprintVelocity = sprintVelocityRepository.findSprintVelocityByCollectorIdSprintId(collector.getId(),sv.getSprintId());
                 if(savedSprintVelocity != null){
@@ -219,6 +232,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                     sprintVelocityRepository.save(sv);
                     newSprintVelocities++;
                 }
+            }
             }
 
             enabledVersions++;

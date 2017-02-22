@@ -24,4 +24,5 @@ public interface JiraClient {
     List<JiraRepo> getProjects();
     Sprint getActiveSprint(JiraRepo jirarepo);
     List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo);
+	JiraRepo getDefectSlippage(JiraRepo repo);
 }

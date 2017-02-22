@@ -70,6 +70,9 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 		String versionId = (String) item.getOptions().get("versionId");
 		String sprintId = (String) item.getOptions().get("activeSprintId");
 		String projectId = (String) item.getOptions().get("projectId");	
+		String stageDefects = (String) item.getOptions().get("stageDefectsCnt");
+		String prodDefects = (String)item.getOptions().get("prodDefectsCnt");
+		
 
 		LOGGER.info("versionId ===>" + versionId);
 		LOGGER.info("Sprint Id==>" + sprintId);
@@ -244,8 +247,8 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 
 			JSONArray defectSlippage = new JSONArray();
 			JSONObject slippageObj = new JSONObject();
-			slippageObj.put("QA",100);
-			slippageObj.put("Production",15);
+			slippageObj.put("QA",stageDefects);
+			slippageObj.put("Production",prodDefects);
 			defectSlippage.add(slippageObj);
 			
 			
@@ -255,6 +258,14 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			
 			JSONObject releaseObj2 = new JSONObject();
 			JSONArray releaseSprintData2 = new JSONArray();
+			
+			
+			/*for(SprintVelocity velocity : pviSprintVel)
+			{
+				releaseObj.put("SprintName", velocity.getSprintName());
+				JSONObject releaseSprintDataPoints = new JSONObject();
+				
+			}*/
 			
 			releaseObj.put("SprintName", "SLZ2.1Sprint4");
 			JSONObject releaseSprintDataPoints1 = new JSONObject();

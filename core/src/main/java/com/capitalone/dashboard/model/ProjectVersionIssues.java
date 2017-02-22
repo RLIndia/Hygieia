@@ -29,6 +29,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
     private String issueType;
     private String acceptanceCriteria;
     private int defectsCnt;
+    private int stageDefectsCnt;
+    private int prodDefectsCnt;
     @Indexed
     private String changeDate;
     private String reportedDate;
@@ -41,7 +43,26 @@ import org.springframework.data.mongodb.core.mapping.Document;
     private ObjectId collectorItemId;
     private long timestamp;
 
-    public ObjectId getCollectorItemId() {
+    
+    
+    
+    public int getStageDefectsCnt() {
+		return stageDefectsCnt;
+	}
+
+	public void setStageDefectsCnt(int stageDefectsCnt) {
+		this.stageDefectsCnt = stageDefectsCnt;
+	}
+
+	public int getProdDefectsCnt() {
+		return prodDefectsCnt;
+	}
+
+	public void setProdDefectsCnt(int prodDefectsCnt) {
+		this.prodDefectsCnt = prodDefectsCnt;
+	}
+
+	public ObjectId getCollectorItemId() {
         return collectorItemId;
     }
 
