@@ -54,15 +54,22 @@ public class DefectInjectionServiceImpl implements DefectInjectionService {
 		item = collectorItemRepository.findOne(item.getId());
 		
 		JSONObject responseObj = new JSONObject();
-		List<DefectInjection> di = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"));
+		List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"));
 		
-		JSONArray diArray = new JSONArray();
+		JSONArray defectInjection = new JSONArray();
+		for(DefectInjection di : diList)
+		{
+			JSONObject diObj = new JSONObject();
+			diObj.put("SprintName", di.getSprintName());
+			/*diObj.put("StoryPoints", di.getDefectCount());
+			diObj.put("DefectCount", di.getAchievedPoints());*/
+			diObj.put("InjectionRatio", Math.round(((di.getDefectCount()/di.getAchievedPoints())*100)));
+			defectInjection.add(diObj);
+		}
 		
-		JSONObject diSummary = new JSONObject();
 		
 		
-		
-		responseObj.put("defectInjects", diArray);
+		responseObj.put("defectInjectionRate", defectInjection);
 
 		//responseObj.put("velocities", velocities);
 
