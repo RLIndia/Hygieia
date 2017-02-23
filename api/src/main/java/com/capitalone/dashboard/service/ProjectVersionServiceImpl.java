@@ -22,11 +22,13 @@ import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.Component;
 import com.capitalone.dashboard.model.DataResponse;
+import com.capitalone.dashboard.model.DefectInjection;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
 import com.capitalone.dashboard.model.SprintVelocity;
 import com.capitalone.dashboard.repository.CollectorItemRepository;
 import com.capitalone.dashboard.repository.CollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
+import com.capitalone.dashboard.repository.DefectInjectsRepository;
 import com.capitalone.dashboard.repository.ProjectVersionRepository;
 import com.capitalone.dashboard.repository.SprintVelocityRepository;
 
@@ -40,17 +42,19 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 	private final ProjectVersionRepository projectVersionRepository;
 	private final CollectorItemRepository collectorItemRepository;
 	private final SprintVelocityRepository sprintVelocityRepository;
+	private final DefectInjectsRepository defectInjectsRepository;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectVersionServiceImpl.class);
 
 	@Autowired
 	public ProjectVersionServiceImpl(ComponentRepository componentRepository, CollectorRepository collectorRepository,
 			ProjectVersionRepository projectVersionRepository, SprintVelocityRepository sprintVelocityRepository, 
-			CollectorItemRepository collectorItemRepository) {
+			CollectorItemRepository collectorItemRepository,DefectInjectsRepository defectInjectsRepository) {
 		this.collectorRepository = collectorRepository;
 		this.componentRepository = componentRepository;
 		this.projectVersionRepository = projectVersionRepository;
 		this.collectorItemRepository = collectorItemRepository;
 		this.sprintVelocityRepository =sprintVelocityRepository;
+		this.defectInjectsRepository = defectInjectsRepository;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -210,12 +214,17 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			responseObj.put("sprint", summarySprint);
 		}
 			
+		
+			JSONArray coverageArray = new JSONArray();
 			JSONObject coverageObj = new JSONObject();
 			coverageObj.put("notCovered",cntStryWoAccptCriteria);
 			coverageObj.put("covered",issues.size()-cntStryWoAccptCriteria);			
+			JSONObject coverageObjSum = new JSONObject();
+			coverageObjSum.put("Total", issues.size());
+			coverageArray.add(coverageObj);
+			coverageArray.add(coverageObjSum);
 			
-			
-			responseObj.put("acceptance", coverageObj);
+			responseObj.put("acceptance", coverageArray);
 			
 			
 			List<SprintVelocity> pviSprintVel = sprintVelocityRepository
@@ -244,15 +253,30 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 
 				
 			}
+			
+			List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"));
+			
+			JSONArray defectInjection = new JSONArray();
+			for(DefectInjection di : diList)
+			{
+				JSONObject diObj = new JSONObject();
+				diObj.put("SprintName", di.getSprintName());
+				/*diObj.put("StoryPoints", di.getDefectCount());
+				diObj.put("DefectCount", di.getAchievedPoints());*/
+				diObj.put("InjectionRatio", Math.round(((di.getDefectCount()/di.getAchievedPoints())*100)));
+				defectInjection.add(diObj);
+			}
 
 			JSONArray defectSlippage = new JSONArray();
 			JSONObject slippageObj = new JSONObject();
 			slippageObj.put("QA",stageDefects);
 			slippageObj.put("Production",prodDefects);
+			JSONObject slippageRatio = new JSONObject();			
+			slippageRatio.put("Ratio",Math.round((Double.parseDouble(prodDefects)/(Double.parseDouble(prodDefects)+Double.parseDouble(stageDefects)))*100));			
 			defectSlippage.add(slippageObj);
+			defectSlippage.add(slippageRatio);
 			
-			
-			JSONArray releaseStatus = new JSONArray();
+			/*JSONArray releaseStatus = new JSONArray();
 			JSONObject releaseObj = new JSONObject();
 			JSONArray releaseSprintData = new JSONArray();
 			
@@ -260,12 +284,12 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			JSONArray releaseSprintData2 = new JSONArray();
 			
 			
-			/*for(SprintVelocity velocity : pviSprintVel)
+			for(SprintVelocity velocity : pviSprintVel)
 			{
 				releaseObj.put("SprintName", velocity.getSprintName());
 				JSONObject releaseSprintDataPoints = new JSONObject();
 				
-			}*/
+			}
 			
 			releaseObj.put("SprintName", "SLZ2.1Sprint4");
 			JSONObject releaseSprintDataPoints1 = new JSONObject();
@@ -393,9 +417,9 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			
 			burnDownObj2.put("SprintData", burnDownData2);
 			
-			burnDownChart.add(burnDownObj2);
+			burnDownChart.add(burnDownObj2);*/
 			
-			JSONArray defectInjection = new JSONArray();
+			/*JSONArray defectInjection = new JSONArray();
 			JSONObject dIObj = new JSONObject();
 			JSONArray diObjData = new JSONArray();
 			
@@ -440,7 +464,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			diObjData2.add(dIObjDataPoints25);			
 			dIObj2.put("SprintData", diObjData2);
 			
-			defectInjection.add(releaseObj2);			
+			defectInjection.add(releaseObj2);		*/	
 			
 
 			responseObj.put("version", summary);
@@ -449,13 +473,12 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			
 			responseObj.put("defectSlippageRate",defectSlippage);
 			
-			responseObj.put("releaseStatus",releaseStatus);
+			/*responseObj.put("releaseStatus",releaseStatus);
 			
-			responseObj.put("burnDownChart",burnDownChart);
+			responseObj.put("burnDownChart",burnDownChart);*/
 			
-			responseObj.put("defectInjectionRate",defectInjection);			
-
-		
+			responseObj.put("defectInjectionRate",defectInjection);
+			
 
 		Collector collector = collectorRepository.findOne(item.getCollectorId());
 

@@ -15,6 +15,7 @@ import com.atlassian.util.concurrent.Promise;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
 import com.capitalone.dashboard.model.Sprint;
 import com.capitalone.dashboard.model.SprintVelocity;
+import com.capitalone.dashboard.model.DefectInjection;
 import com.capitalone.dashboard.model.JiraRepo;
 //import com.capitalone.dashboard.util.Encryption;
 //import com.capitalone.dashboard.util.EncryptionException;
@@ -110,6 +111,14 @@ public class DefaultJiraClient implements JiraClient {
 		
 	}
 
+
+	SearchResult getDefectInjects(String projectId, String sprintId, int maxCount, int index) {
+		String jql = "project in (" + projectId + ") AND sprint in (" + sprintId + ") AND issuetype in (Defect)";
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+	}
+	
+	
 	SearchResult getIssuesBySprint(String projectId, String sprintId, int maxCount, int index) {
 		String jql = "project in (" + projectId + ") AND sprint=" + sprintId;
 
@@ -396,8 +405,7 @@ public class DefaultJiraClient implements JiraClient {
 						
 						JSONArray versions = getProjectVersions(projectID);
 						int versioncount = 0;
-						if(jiraProject.getName().equals("LitPro Library"))
-						{
+						
 						for (Object version : versions) {
 							/*SearchResult searchResultQA = getEnvironmentDefects(projectID, str((JSONObject) version, "id"), "QA", 500,0);
 							SearchResult searchResultProd = getEnvironmentDefects(projectID, str((JSONObject) version, "id"), "Production", 500,0);			*/				
@@ -419,7 +427,7 @@ public class DefaultJiraClient implements JiraClient {
 						// versioncount + " Versions.");
 						// LOG.info(versions);
 						// projectVersions.add(versions);
-						}
+						
 					}
 					LOG.info("Scanned " + count + " projects.");
 
@@ -662,6 +670,8 @@ public class DefaultJiraClient implements JiraClient {
 		return url;
 	}	
 	
+	
+	
 	@Override
 	public List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo){
 		List<SprintVelocity> lstSprintVelocity=new ArrayList<SprintVelocity>();
@@ -738,4 +748,46 @@ public class DefaultJiraClient implements JiraClient {
 		return repo;
 		
 	}
+
+	@Override
+	public List<DefectInjection> getDefectInjections(List<SprintVelocity> sprintVelocities) {
+		List<DefectInjection> diList = new ArrayList<DefectInjection>();
+		
+		for(SprintVelocity velocity : sprintVelocities)
+		{
+		DefectInjection dInject = new DefectInjection();
+		SearchResult searchResultDI = getDefectInjects(velocity.getProjectId(),velocity.getSprintId(), 500,0);
+		dInject.setSprintId(velocity.getSprintId());
+		dInject.setSprintName(velocity.getSprintName());
+		dInject.setDefectCount(searchResultDI.getTotal());
+		dInject.setProjectId(velocity.getProjectId());		
+		/*SearchResult searchResultSP = getStoryPoints(velocity.getProjectId(),velocity.getSprintId(), 500,0);*/
+		dInject.setAchievedPoints(Double.parseDouble(velocity.getCompleted()));
+		diList.add(dInject);
+		}
+		
+		return diList;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
