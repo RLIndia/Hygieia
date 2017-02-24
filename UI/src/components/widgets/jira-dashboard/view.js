@@ -124,10 +124,10 @@
 
         ctrl.SPSChart={
         data : {
-                labels: ['PSI-SLZ-12.4', 'PSI-SLZ-13.1', 'PSI-SLZ-13.2', 'PSI-SLZ-13.3', 'PSI-SLZ-13.5'],
+                labels: [],
                 series: [
-                    { "name": "User Story", "data":[9, 6, 8, 7, 5]},
-                    { "name": "Story Points", "data":[8, 4, 6, 7, 4]}
+                    { "name": "User Story", "data":[]},
+                    { "name": "Story Points", "data":[]}
                 ]
             },
             options : {
@@ -320,6 +320,19 @@
                     ctrl.SPEChart.data.labels.push(val.SprintName);
                     ctrl.SPEChart.data.series[0].data.push(val.Committed);
                     ctrl.SPEChart.data.series[1].data.push(val.Completed);
+                });
+
+                //IssueStoryPoints
+                ctrl.SPSChart.data ={
+                    labels: [],
+                    series: [
+                        { "name": "Story Points", data:[]},
+                        { "name": "User Story", data:[]}]
+                };
+                angular.forEach(data.result.IssueStoryPoints,function (val) {
+                    ctrl.SPSChart.data.labels.push(val.SprintName);
+                    ctrl.SPSChart.data.series[0].data.push(val.StoryPoint);
+                    ctrl.SPSChart.data.series[1].data.push(val.StoryCount);
                 });
 
 			});
