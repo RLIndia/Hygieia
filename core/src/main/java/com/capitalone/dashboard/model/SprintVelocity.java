@@ -16,7 +16,8 @@ public class SprintVelocity extends BaseModel {
 	@Indexed
 	private String projectId;
 
-	private ObjectId collectorItemId;    
+	private ObjectId collectorItemId;
+	private int storyCount;    
 
     public ObjectId getCollectorItemId() {
         return collectorItemId;
@@ -70,4 +71,15 @@ public class SprintVelocity extends BaseModel {
 		this.projectId = projectId;
 		return this;
 	}
+
+	public void setStoryCount(int total) {
+		// TODO Auto-generated method stub
+		this.storyCount = total;
+	}
+
+	public int getStoryCount() {
+		return storyCount;
+	}
+
+	
 }

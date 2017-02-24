@@ -129,6 +129,18 @@ public class DefaultJiraClient implements JiraClient {
 		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
 		return src.claim();
 	}
+	
+	SearchResult getSprintStories(String projectId, String sprintId, int maxCount, int index) {
+		String jql = "project in (" + projectId + ") AND sprint=" + sprintId+" AND issuetype in (story)";
+
+		LOG.info("query string ===>" + jql);
+		LOG.info("maxCount ===>" + maxCount);
+		LOG.info("index ===>" + index);
+
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+	}
+	
 
 	private List<ProjectVersionIssues> getProjectVersionIssuesByVersion(JiraRepo jirarepo) {
 		List<ProjectVersionIssues> projectversionissues = new ArrayList<>();
@@ -691,7 +703,7 @@ public class DefaultJiraClient implements JiraClient {
 			//LOG.info("Velocity json ===> " + response.getBody());
 			JSONArray sprintArray = (JSONArray) respObj.get("sprints");
 
-
+			
 			List<String> sprints=new ArrayList<String>();
 			//List<SprintVelocity> velocities=new ArrayList<SprintVelocity>();
 			HashMap<String,SprintVelocity> mapVelocities=new HashMap<String,SprintVelocity>();
@@ -702,6 +714,8 @@ public class DefaultJiraClient implements JiraClient {
 					String name=(String) obj.get("name");	
 					String state=(String) obj.get("state");	
 					SprintVelocity v=new SprintVelocity();
+					SearchResult result = getSprintStories(jirarepo.getPROJECTID(),sprintId,500,0);
+					v.setStoryCount(result.getTotal());
 					v.setSprintId(sprintId);
 					v.setSprintName(name);
 					v.setSprintStatus(state);
