@@ -19,20 +19,14 @@
 		ctrl.showDetail = showDetail;
 		ctrl.showDetailSprint= showDetailSprint;
 		ctrl.title = "";
-		ctrl.sprints = [];
-		ctrl.releaseStatusDataSet = [];
-		ctrl.burnDownDataSet = [];
 		//####
 		ctrl.barChart={
             barData : {
-                chartPadding: {
-                    top: 100,
-                    right: 0,
-                    bottom: 0,
-                    left: 0
-                },
-                labels: [],
-                series: []
+                // labels: ['PSI-SLZ-12.4', 'PSI-SLZ-13.1', 'PSI-SLZ-13.2', 'PSI-SLZ-13.3', 'PSI-SLZ-13.5', 'PSI-SLZ-13.6'],
+                // series: [
+                //     { "name": "Committed", "data":[5, 4, 3, 7, 5, 10]},
+                //     { "name": "Completed", "data":[3, 2, 9, 5, 4, 6]}
+                // ]
             },
 
             barOptions : {
@@ -46,6 +40,7 @@
                 },
                 plugins: [
                     Chartist.plugins.legend(),
+                    Chartist.plugins.tooltip(),
                     Chartist.plugins.ctAxisTitle({
                         axisX: {
                             axisTitle: 'Sprint',
@@ -71,133 +66,40 @@
             }
 		};
 
-
-
         ctrl.PieChart={
             data : {
-                series: [],
-                labels: []
             },
             options : {
                 donut: true
             }
         };
-        
-        ctrl.DSRPieChart={
-            data : {
-               series: []
-            },
-            options : {
-                donut: false,
-                donutWidth: 60,
-                startAngle: 270,
-                total: 200,
-                showLabel: false
-            }
-        };
-        
-        
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
-        }
-
-
-
-        ctrl.RSChart1={
-            data : {
-                /*labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05'],
-                series: [
-                    [1,4,6,7,9,11]
-                ]*/
-            },
-            options : {
-                chartPadding: {
-                    right: 0,
-                    bottom: 30,
-                },
-                plugins: [
-                    Chartist.plugins.ctAxisTitle({
-                        axisX: {
-                            axisTitle: 'Days',
-                            axisClass: 'ct-axis-title',
-                            offset: {
-                                x: 0,
-                                y: 50
-                            },
-                            textAnchor: 'middle'
-                        },
-                        axisY: {
-                            axisTitle: 'Story points',
-                            axisClass: 'ct-axis-title',
-                            offset: {
-                                x: 0,
-                                y: 0
-                            },
-                            textAnchor: 'middle',
-                            flipTitle: false
-                        }
-                    })
-                ]
-            }
-        };
-        
-        ctrl.RSChart2={
-                data : {
-                    /*labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05'],
-                    series: [
-                        [1,4,6,7,9,11]
-                    ]*/
-                },
-                options : {
-                    chartPadding: {
-                        right: 0,
-                        bottom: 30,
-                    },
-                    plugins: [
-                        Chartist.plugins.ctAxisTitle({
-                            axisX: {
-                                axisTitle: 'Days',
-                                axisClass: 'ct-axis-title',
-                                offset: {
-                                    x: 0,
-                                    y: 50
-                                },
-                                textAnchor: 'middle'
-                            },
-                            axisY: {
-                                axisTitle: 'Story points',
-                                axisClass: 'ct-axis-title',
-                                offset: {
-                                    x: 0,
-                                    y: 0
-                                },
-                                textAnchor: 'middle',
-                                flipTitle: false
-                            }
-                        })
-                    ]
-                }
-            };
-
 
         ctrl.SPEChart={
             data : {
-                /*labels: ['Jan 01', 'Jan 02', 'Jan 03', 'Jan 04', 'Jan 05','Jan 06'],
-                series: [
-                    { "name": "Actual Values", "data":[8, 7, 4, 6, 2,1]},
-                    { "name": "Estimated Values", "data":[9, 7, 5, 3, 2,1]}
-                ]*/
+                // labels: ['PSI-SLZ-12.4', 'PSI-SLZ-13.1', 'PSI-SLZ-13.2', 'PSI-SLZ-13.3', 'PSI-SLZ-13.5','PSI-SLZ-13.13', 'PSI-SLZ-13.15'],
+                // series: [
+                //     { "name": "Estimated Values", "data":[9, 6, 8, 7, 5, 10,12]},
+                //     { "name": "Actual Values", "data":[8, 6, 7, 7, 4, 9,11]}
+                // ]
             },
             options : {
+                showArea: true,
+                showLine: true,
+                showPoint: true,
+                fullWidth: true,
+                axisX: {
+                    showGrid: false
+                },
                 chartPadding: {
                     right: 0,
                     bottom: 30,
                 },
                 plugins: [
+                    Chartist.plugins.tooltip(),
                     Chartist.plugins.legend(),
                     Chartist.plugins.ctAxisTitle({
                         axisX: {
-                            axisTitle: 'Days',
+                            axisTitle: 'Sprint',
                             axisClass: 'ct-axis-title',
                             offset: {
                                 x: 0,
@@ -206,7 +108,7 @@
                             textAnchor: 'middle'
                         },
                         axisY: {
-                            axisTitle: 'Values',
+                            axisTitle: 'Story Points',
                             axisClass: 'ct-axis-title',
                             offset: {
                                 x: 0,
@@ -220,24 +122,80 @@
             }
         };
 
-
-
-        ctrl.DIRChart={
-            data : {
-                /*labels: ['US1', 'US2', 'US3', 'US4', 'US5', 'US6'],
+        ctrl.SPSChart={
+        data : {
+                labels: ['PSI-SLZ-12.4', 'PSI-SLZ-13.1', 'PSI-SLZ-13.2', 'PSI-SLZ-13.3', 'PSI-SLZ-13.5'],
                 series: [
-                    { "name": "Money A", "data":[5, 4, 3, 7, 5, 10]}
-                ]*/
+                    { "name": "User Story", "data":[9, 6, 8, 7, 5]},
+                    { "name": "Story Points", "data":[8, 4, 6, 7, 4]}
+                ]
+            },
+            options : {
+                scales: {
+                    yAxes: [{
+                        position: "left",
+                        type: 'linear',
+                        id: "y-axis-0"
+                    }, {
+                        position: "right",
+                        type: 'linear',
+                        id: "y-axis-1"
+                    }]
+                },
+                chartPadding: {
+                    right: 30,
+                    bottom: 30,
+                },
+                plugins: [
+                    Chartist.plugins.tooltip(),
+                    Chartist.plugins.legend(),
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'Sprint',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 50
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Story Points',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 0
+                            },
+                            textAnchor: 'middle',
+                            flipTitle: false
+                        }
+                    })
+                ]
+            }
+        };
+
+        ctrl.DSPChart={
+            data : {
+                labels: ['Critical', 'Blocker', 'Minor'],
+                series: [
+                    { "name": "Critical", "data":[2, 4, 4]}
+                ]
             },
             options :{
                 chartPadding: {
                     right: 0,
                     bottom: 30,
                 },
+                axisY: {
+                    labelInterpolationFnc: function(value) {
+                        return (value ) + '0 %';
+                    }
+                },
                 plugins: [
+                    Chartist.plugins.tooltip(),
                     Chartist.plugins.ctAxisTitle({
                         axisX: {
-                            axisTitle: 'User story',
+                            axisTitle: ' ',
                             axisClass: 'ct-axis-title',
                             offset: {
                                 x: 0,
@@ -246,7 +204,51 @@
                             textAnchor: 'middle'
                         },
                         axisY: {
-                            axisTitle: 'Defects',
+                            axisTitle: 'Defects (%)',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 0
+                            },
+                            textAnchor: 'middle',
+                            flipTitle: false
+                        }
+                    })
+                ]
+            }
+        };
+        ctrl.DIRChart={
+            data : {
+                // labels: ['PSI-SLZ-12.4', 'PSI-SLZ-13.1', 'PSI-SLZ-13.2', 'PSI-SLZ-13.3', 'PSI-SLZ-13.5','PSI-SLZ-13.13', 'PSI-SLZ-13.15'],
+                // series: [[70, 80, 110, 73,64,64,82]
+                // ]
+            },
+            options :{
+                chartPadding: {
+                    right: 0,
+                    bottom: 30,
+                },
+                axisY: {
+                    offset: 30,
+                    showLabel: true,
+                    // labelInterpolationFnc: function(value) {
+                    //     return value === 0 ? 0 : ((Math.round(value / 100 * 10)) + '%');
+                    // }
+                },
+                plugins: [
+                    Chartist.plugins.tooltip(),
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'Sprint',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                                x: 0,
+                                y: 50
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Defects (%)',
                             axisClass: 'ct-axis-title',
                             offset: {
                                 x: 0,
@@ -264,73 +266,63 @@
 
 
 		function load() {
-			var deferred = $q.defer();
-			jiraDashboardData.details($scope.widgetConfig.componentId).then(function(data){				
-				/*console.log(data.result.acceptance);*/
-				console.log(data);		    
-				
-				/*Loop for team velocity*/
-				if(data.result.teamVelocity.length!==0)					
-					{
-					var teamVelocity = data.result.teamVelocity;
-					for(var i=0; i<=teamVelocity.length; i++)
-						{
-						ctrl.barChart.barData.labels.push(teamVelocity[i].SprintName);
-						var seriesObjs = {
-						      committed : teamVelocity[i].committed,
-						      completed : teamVelocity[i].completed						
-						};
-						ctrl.barChart.barData.series.push(seriesObjs);
-					}
-					ctrl.sprints = ctrl.barChart.barData.labels;
-					}
-					
-				/*Loop for acceptance coverage*/
-				if(data.result.acceptance)
-					{
-					ctrl.PieChart.data.series.push(data.result.acceptance.covered);
-					ctrl.PieChart.data.series.push(data.result.acceptance.notCovered);
-					console.log(ctrl.PieChart.data.series);
-					}
-					
-				/*Loop for defect slippage*/
-				if(data.result.defectSlippageRate.length!=0){
-					var slippageObj = data.result.defectSlippageRate[0];				
-					ctrl.DSRPieChart.data.series.push(slippageObj.Production);
-					ctrl.DSRPieChart.data.series.push(slippageObj.QA);
-				}
-				
-				/*Loop for release status*/
-			    if(data.result.releaseStatus.length!=0){
-			    	ctrl.releaseStatusDataSet = data.result.releaseStatus;
-			    }
-			    
-			    /*Loop for burn down chart*/
-			    if(data.result.burnDownChart.length!=0){
-			    	ctrl.burnDownDataSet = data.result.burnDownChart;
-			    }
-			    
-			    /*Loop for defect injection*/
-			    if(data.result.defectInjectionRate.length!=0){
-			    	ctrl.defectInjectionDataSet = data.result.defectInjectionRate;
-			    }
-			    
-			    	/*{
-			    	var relStatusObj = data.result.releaseStatus;
-			    	for(var i=0; i<=relStatusObj.length; i++)
-			    		{
-			    		var relStatusSprintData = relStatusObj[i];
-			    		for()
-			    		ctrl.RSChart.data.labels.push(relStatusSprintData.);
-			    		}
-			    	}*/
-			    	
-			    	
-					
-					
-					
+			jiraDashboardData.details($scope.widgetConfig.componentId).then(function(data){
+               // ctrl.barChart.barData={};
+               ctrl.projectName=data.result.version.projectName;
+                ctrl.versionName=data.result.version.versionName;
+
+                // acceptanceCover
+                ctrl.acceptanceCover=(Math.round(data.result.acceptance.covered/data.result.acceptance.Total)*100);
+                var notCovered=(Math.round(data.result.acceptance.notCovered/data.result.acceptance.Total)*100);
+
+                ctrl.PieChart.data={
+                    series: [ctrl.acceptanceCover,notCovered ],
+                    labels: [' ',' ']
+                }
+                //defectSlippageRate
+
+                ctrl.defectSlippageRate=data.result.defectSlippageRate;
+                //defectInjectionRate
+                ctrl.DIRChart.data={}
+                ctrl.DIRChart.data ={
+                        labels: [],
+                        series: []
+                    };
+                var dataSeries=[];
+                angular.forEach(data.result.defectInjectionRate,function (val) {
+                    ctrl.DIRChart.data.labels.push(val.SprintName);
+                    dataSeries.push(val.InjectionRatio);
+
+                });
+                ctrl.DIRChart.data.series.push(dataSeries);
+
+                //teamVelocity
+                ctrl.barChart.barData ={
+                        labels: [],
+                        series: [
+                            { "name": "Committed", data:[]},
+                            { "name": "Completed", data:[]}]
+                        };
+                angular.forEach(data.result.teamVelocity,function (val) {
+                    ctrl.barChart.barData.labels.push(val.SprintName);
+                    ctrl.barChart.barData.series[0].data.push(val.Committed);
+                    ctrl.barChart.barData.series[1].data.push(val.Completed);
+                });
+
+                //Release Status
+                ctrl.SPEChart.barData ={
+                    labels: [],
+                    series: [
+                        { "name": "Estimated Values", data:[]},
+                        { "name": "Actual Values", data:[]}]
+                };
+                angular.forEach(data.result.teamVelocity,function (val) {
+                    ctrl.SPEChart.barData.labels.push(val.SprintName);
+                    ctrl.SPEChart.barData.series[0].data.push(val.Committed);
+                    ctrl.SPEChart.barData.series[1].data.push(val.Completed);
+                });
+
 			});
-			return deferred.promise;
 		}
 		function processjiraDashboardData(data) {
 		  console.log("In process project data");
