@@ -14,6 +14,7 @@ kill -9 $(ps -aux | grep java | grep api.jar | grep spring | awk '{print $2}')
 kill -9 $(ps -aux | grep java | grep octopus-deployment-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
 kill -9 $(ps -aux | grep java | grep jenkins-build-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
 kill -9 $(ps -aux | grep java | grep bitbucket-scm-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep github-scm-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
 kill -9 $(ps -aux | grep java | grep sbux-functional-test-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
 kill -9 $(ps -aux | grep java | grep jira-project-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
 kill -9 $(ps -aux | grep java | grep sonar-codequality-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
@@ -71,7 +72,14 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 nohup java -jar bitbucket-scm-collector-2.0.2-SNAPSHOT.jar &
 
-
+echo "Configuring Github collector"
+cd ../../github-scm-collector/
+cp -f github.template target/application.properties
+#wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
+cat target/temp.properties >> target/application.properties
+echo "dbhost="$2 >> target/application.properties
+cd target
+nohup java -jar github-scm-collector-2.0.2-SNAPSHOT.jar &
 
 
 echo "Configuring Jira Project collector"

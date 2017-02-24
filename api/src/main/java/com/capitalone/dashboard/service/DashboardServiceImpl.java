@@ -144,6 +144,7 @@ public class DashboardServiceImpl implements DashboardService {
 
         //First: disable all collectorItems of the Collector TYPEs that came in with the request.
         //Second: remove all the collectorItem association of the Collector Type  that came in
+
         HashSet<CollectorType> incomingTypes = new HashSet<>();
         HashSet<CollectorItem> toSaveCollectorItemList = new HashSet<>();
         for (ObjectId collectorItemId : collectorItemIds) {
