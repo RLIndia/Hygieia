@@ -63,7 +63,11 @@ public class DashboardController {
         //dashboard should have the dashboardID and componentID
         List<Component> tempComponents = dashboard.getApplication().getComponents();
         Component firstComponent = tempComponents.get(0);
-
+        try{
+            LOGGER.info(firstComponent.getId().toString());
+        }catch(Exception e){
+            LOGGER.info(e.getMessage());
+        }
 
 
         //loop through each widget in the request
@@ -95,13 +99,17 @@ public class DashboardController {
                 widget.setCollectorItemIds(cids);
 
                 LOGGER.info("collector item ids " + cids.toString());
+                Component component = dashboardService.addCollectorItemToComponent(firstComponent.getId(),widget.getCollectorItemIds());
             }
             else {
-
-
                 Component component = dashboardService.associateCollectorToComponent(
                         firstComponent.getId(), widget.getCollectorItemIds());
             }
+
+
+
+
+
             Widget newwidget = dashboardService.addWidget(dashboard, widget.widget());
             LOGGER.info("Widget:" + widget.getName() + " setup");
         }

@@ -58,7 +58,7 @@ public interface DashboardService {
      * @return Component
      */
     Component associateCollectorToComponent(ObjectId componentId, List<ObjectId> collectorItemIds);
-
+    Component addCollectorItemToComponent(ObjectId componentId,List<ObjectId> collectorItemIds);
     /**
      *  Get all the collectors added
      *  @return all collectors

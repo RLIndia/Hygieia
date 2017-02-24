@@ -184,6 +184,39 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
+    public Component addCollectorItemToComponent(ObjectId componentId, List<ObjectId> collectorItemIds) {
+        com.capitalone.dashboard.model.Component component = componentRepository.findOne(componentId);
+        for (ObjectId collectorItemId : collectorItemIds) {
+            CollectorItem collectorItem = collectorItemRepository.findOne(collectorItemId);
+            Collector collector = collectorRepository.findOne(collectorItem.getCollectorId());
+            //removing all exisiting collector types and adding new
+            try{
+                component.getCollectorItems().remove(collector.getCollectorType());
+            }catch(Exception e){
+                //no items found.
+            }
+
+
+        }
+        for (ObjectId collectorItemId : collectorItemIds) {
+            CollectorItem collectorItem = collectorItemRepository.findOne(collectorItemId);
+            Collector collector = collectorRepository.findOne(collectorItem.getCollectorId());
+            //removing all exisiting collector types and adding new
+            try{
+                LOGGER.info(String.valueOf(collector.getCollectorType()));
+                component.addCollectorItem(collector.getCollectorType(), collectorItem);
+
+            }catch(Exception e){
+                //no items found.
+                LOGGER.info(e.getMessage());
+            }
+
+        }
+        componentRepository.save(component);
+        return component;
+    }
+
+    @Override
     public Iterable<Collector> getDashboardCollectors() {
         return collectorRepository.findAll();
     }
