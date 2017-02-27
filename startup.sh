@@ -101,16 +101,15 @@ cd target
 nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
 
 
-<<'COMMENT'
 
 echo "Configuring Sonar collector"
 cd ../../sonar-codequality-collector/
 cp -f sonar.template target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar > /dev/null 2>&1 &
+nohup java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar &
 
-COMMENT
+
  
 echo "Starting UI"
 cd ../../UI
