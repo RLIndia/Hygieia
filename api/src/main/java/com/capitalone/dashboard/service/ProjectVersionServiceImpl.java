@@ -247,6 +247,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				velocityObj.put("SprintStatus", velocity.getSprintStatus());
 				velocityObj.put("Committed", velocity.getCommitted());
 				velocityObj.put("Completed", velocity.getCompleted());
+				sprintPointsObj.put("SprintName", velocity.getSprintName());
 				sprintPointsObj.put("StoryCount", velocity.getStoryCount());
 				sprintPointsObj.put("StoryPoints", velocity.getCompleted());
 				sprintStoryPointsArray.add(sprintPointsObj);
@@ -280,7 +281,9 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			
 			slippageObj.put("QA",stageDefects);
 			slippageObj.put("Production",prodDefects);
-			Double denominator = (Double.parseDouble(prodDefects)+Double.parseDouble(stageDefects));
+			if(prodDefects != null && stageDefects != null)
+			{
+			Double denominator = (Double.parseDouble(prodDefects)+Double.parseDouble(stageDefects));			
 			if(denominator != 0.0)
 			{
 			Double ratio = (double) (Math.round((Double.parseDouble(prodDefects)/(Double.parseDouble(prodDefects)+Double.parseDouble(stageDefects)))*100));
@@ -289,6 +292,11 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			else
 			{
 			slippageObj.put("Ratio",0);
+			}
+			}
+			else
+			{
+				slippageObj.put("Ratio",0);
 			}
 			
 			

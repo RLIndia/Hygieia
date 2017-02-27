@@ -417,7 +417,8 @@ public class DefaultJiraClient implements JiraClient {
 						
 						JSONArray versions = getProjectVersions(projectID);
 						int versioncount = 0;
-						
+						if(projectName.equals("Literacy Pro Intl") || projectName.equals("LitPro Library"))
+						{
 						for (Object version : versions) {
 							/*SearchResult searchResultQA = getEnvironmentDefects(projectID, str((JSONObject) version, "id"), "QA", 500,0);
 							SearchResult searchResultProd = getEnvironmentDefects(projectID, str((JSONObject) version, "id"), "Production", 500,0);			*/				
@@ -439,7 +440,7 @@ public class DefaultJiraClient implements JiraClient {
 						// versioncount + " Versions.");
 						// LOG.info(versions);
 						// projectVersions.add(versions);
-						
+					}
 					}
 					LOG.info("Scanned " + count + " projects.");
 
