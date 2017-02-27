@@ -310,18 +310,18 @@
                 });
 
                 //Release Status
-                ctrl.SPEChart.barData ={
+                ctrl.SPEChart.data ={
                     labels: [],
                     series: [
                         { "name": "Estimated Values", data:[]},
                         { "name": "Actual Values", data:[]}]
                 };
                 angular.forEach(data.result.teamVelocity,function (val) {
-                    ctrl.SPEChart.barData.labels.push(val.SprintName);
-                    ctrl.SPEChart.barData.series[0].data.push(val.Committed);
-                    ctrl.SPEChart.barData.series[1].data.push(val.Completed);
+                    ctrl.SPEChart.data.labels.push(val.SprintName);
+                    ctrl.SPEChart.data.series[0].data.push(val.Committed);
+                    ctrl.SPEChart.data.series[1].data.push(val.Completed);
                 });
-                console.log( ctrl.SPEChart.barData);
+              
 
                 //IssueStoryPoints
                 ctrl.SPSChart.data ={
