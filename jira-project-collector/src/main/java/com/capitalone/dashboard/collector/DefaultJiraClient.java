@@ -103,6 +103,17 @@ public class DefaultJiraClient implements JiraClient {
 		return src.claim();
 	}
 	
+	SearchResult getQACompleteByVersionAndSprint(String projectId, String versionId, String sprintId, int maxCount, int index) {
+		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND sprint in ("+ sprintId +") "
+				+ "AND status in (\"QA Complete\")";
+
+		LOG.info("query string ===>" + jql);
+		LOG.info("maxCount ===>" + maxCount);
+		LOG.info("index ===>" + index);
+
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+	}
 	
 	SearchResult getEnvironmentDefects(String projectId, String versionId, String environment,int maxCount, int index){
 		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND cf[14518]="+environment;
@@ -737,9 +748,13 @@ public class DefaultJiraClient implements JiraClient {
 			        JSONObject estimatedObj=(JSONObject)velocityObj.get("estimated");
 			        String estimated=(String)estimatedObj.get("text");
 			        
-			        JSONObject completedObj=(JSONObject)velocityObj.get("completed");
-			        String completed=(String)completedObj.get("text");
-			        v.setCompleted(completed);
+			        /*JSONObject completedObj=(JSONObject)velocityObj.get("completed");
+			        String completed=(String)completedObj.get("text");*/
+			        
+			        
+			        SearchResult resQAComplete = getQACompleteByVersionAndSprint(jirarepo.getPROJECTID(), jirarepo.getVERSIONNAME(), sprintId, 500, 0);
+			        
+			        v.setCompleted(resQAComplete.getTotal()+"");
 			        v.setCommitted(estimated);
 			        lstSprintVelocity.add(v);
 			    }

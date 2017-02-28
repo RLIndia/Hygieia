@@ -93,7 +93,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 		int progressCount = 0;
 		int issueCount = 0;
 		int pendingCount = 0;
-		int cntStryWoAccptCriteria=0;
+		int cntStryAccptCriteria=0;
 		JSONObject summary = new JSONObject();
 		for (ProjectVersionIssues issue : pvi) {
 			JSONObject issueObj = new JSONObject();
@@ -166,7 +166,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				
 				sprintCommitted+=issue.getStoryPoint();			
 						if ("Story".equals(issue.getIssueType()) && issue.getAcceptanceCriteria()== null)
-								cntStryWoAccptCriteria++;
+								cntStryAccptCriteria++;
 							if ("Story".equals(issue.getIssueType()) && issue.getDefectsCnt()>0)
 								defectsOfStory++;
 							if ("Defect".equals(issue.getIssueType()) || "Bug".equals(issue.getIssueType())  )
@@ -175,7 +175,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 
 				sprintCommitted+=issue.getStoryPoint();			
 				if ("Story".equals(issue.getIssueType()) && issue.getAcceptanceCriteria()== null)
-					cntStryWoAccptCriteria++;
+					cntStryAccptCriteria++;
 				if ("Story".equals(issue.getIssueType()) && issue.getDefectsCnt()>0)
 					defectsOfStory++;
 				if ("Defect".equals(issue.getIssueType()) || "Bug".equals(issue.getIssueType())  )
@@ -205,7 +205,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			summarySprint.put("pendingTotal", pendingTotal);
 			summarySprint.put("velocityCommitted", sprintCommitted);
 			summarySprint.put("velocityCompleted", sprintCompleted);
-			summarySprint.put("IssuesWithoutAcceptanceCriteria",cntStryWoAccptCriteria);
+			summarySprint.put("IssuesWithoutAcceptanceCriteria",cntStryAccptCriteria);
 			summarySprint.put("storydefect",defectsOfStory);
 			summarySprint.put("DefectsInSprint",defectsCnt);
 			summarySprint.put("storyPointsEarned",sprintCompleted);
@@ -217,8 +217,8 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 		
 			//JSONArray coverageArray = new JSONArray();
 			JSONObject coverageObj = new JSONObject();
-			coverageObj.put("notCovered",cntStryWoAccptCriteria);
-			coverageObj.put("covered",issues.size()-cntStryWoAccptCriteria);	
+			coverageObj.put("covered",cntStryAccptCriteria);
+			coverageObj.put("notCovered",issues.size()-cntStryAccptCriteria);	
 			coverageObj.put("Total", issues.size());		
 			
 			responseObj.put("acceptance", coverageObj);
