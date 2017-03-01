@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -45,6 +46,14 @@ public class CollectorController {
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public Collector createCollector(@Valid @RequestBody CollectorRequest request) {
         return collectorService.createCollector(request.toCollector());
+    }
+
+    @RequestMapping(value = "/collector/{collectorId}",
+            method = GET, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CollectorItem>> getAllCollectorItemByType(@PathVariable ObjectId collectorId) {
+        ArrayList<ObjectId> objectIds = new ArrayList<>();
+        objectIds.add(collectorId);
+        return ResponseEntity.ok(collectorService.getAllCollectorItemsByCollectorId(objectIds));
     }
 
 

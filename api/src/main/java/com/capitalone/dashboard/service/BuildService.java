@@ -1,5 +1,7 @@
 package com.capitalone.dashboard.service;
 
+import org.bson.types.ObjectId;
+
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.Build;
 import com.capitalone.dashboard.model.DataResponse;
@@ -15,6 +17,7 @@ public interface BuildService {
      * @return builds matching criteria
      */
     DataResponse<Iterable<Build>> search(BuildSearchRequest request);
+    Boolean runJob(ObjectId componentId);
 
     String create(BuildDataCreateRequest request) throws HygieiaException;
 }

@@ -282,8 +282,11 @@
     <module>octopus-deployment-collector</module>
     <module>sbux-functional-test-collector</module>
       <module>jira-project-collector</module>
+    <module>chef-collector</module>
       <module>catalyst-deployment-collector</module>
       <module>testrail-results-collector</module>
+
       <module>octopus-deployment-all-collector</module>
+
   </modules>
 </project>

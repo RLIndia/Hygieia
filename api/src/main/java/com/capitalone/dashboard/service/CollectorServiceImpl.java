@@ -12,8 +12,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.Map;
 
 @Service
 public class CollectorServiceImpl implements CollectorService {
-	//private static final Log LOG = LogFactory.getLog(CollectorServiceImpl.class);
+	private static final Log LOG = LogFactory.getLog(CollectorServiceImpl.class);
 	private final CollectorRepository collectorRepository;
 	private final CollectorItemRepository collectorItemRepository;
 	private final DashboardRepository dashboardRepository;
@@ -48,12 +48,13 @@ public class CollectorServiceImpl implements CollectorService {
 
 	@Override
 	public List<CollectorItem> collectorItemsByType(CollectorType collectorType) {
+		LOG.info("size collectors ==>"+collectorType);
 		List<Collector> collectors = collectorRepository.findByCollectorType(collectorType);
-
+		LOG.info("size collectors ==>"+collectors.size());
 		List<ObjectId> collectorIds = Lists.newArrayList(Iterables.transform(collectors, new ToCollectorId()));
-
+		LOG.info("size collectorIds ==>"+collectorIds.size());
 		List<CollectorItem> collectorItems = collectorItemRepository.findByCollectorIdIn(collectorIds);
-
+		LOG.info("size ==>"+collectorItems.size());
 		for (CollectorItem options : collectorItems) {
 			options.setCollector(collectorById(options.getCollectorId(), collectors));
 		}
@@ -163,6 +164,11 @@ public class CollectorServiceImpl implements CollectorService {
 			collector.setId(existing.getId());
 		}
 		return collectorRepository.save(collector);
+	}
+
+	@Override
+	public List<CollectorItem> getAllCollectorItemsByCollectorId(List<ObjectId> collectorId) {
+		return collectorItemRepository.findByCollectorIdIn(collectorId);
 	}
 
 	private Collector collectorById(ObjectId collectorId, List<Collector> collectors) {

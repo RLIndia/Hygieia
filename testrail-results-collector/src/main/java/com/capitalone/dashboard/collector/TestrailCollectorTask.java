@@ -106,14 +106,14 @@ public class TestrailCollectorTask extends CollectorTask<Collector> {
                     LOG.info(trr.getUrl());
                     //to do check if entry in db else add.
                     String runId = trr.getRunid();
-                    TestRailRuns savedRun = (TestRailRuns) testRailRunRepository.findByCollectorItemIdAndRunId(collector.getId(),trr.getRunid());
+                    TestRailRuns savedRun = (TestRailRuns) testRailRunRepository.findByCollectorItemIdAndRunId(tcm.getId(),trr.getRunid());
                     LOG.info("Checking if found:" + savedRun);
                     if(savedRun != null){
                         //remove existing and add new
                         testRailRunRepository.delete(savedRun);
                     }
                     //To do : Historical run information would be retained in the db.
-                    trr.setCollectorItemId(tcm.getCollectorId());
+                    trr.setCollectorItemId(tcm.getId());
                     testRailRunRepository.save(trr);
                     runCount++;
 

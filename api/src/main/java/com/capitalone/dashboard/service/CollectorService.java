@@ -74,4 +74,6 @@ public interface CollectorService {
      * @return created Collector
      */
     Collector createCollector(Collector collector);
+
+    List<CollectorItem> getAllCollectorItemsByCollectorId(List<ObjectId> collectorId);
 }

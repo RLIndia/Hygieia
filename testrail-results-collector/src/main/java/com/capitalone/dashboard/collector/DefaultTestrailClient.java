@@ -80,6 +80,9 @@ public class DefaultTestrailClient implements TestrailClient {
 
             JSONObject runDetail = (JSONObject) client.sendGet("get_run/" + runObj.get("id"));
 
+            if(runDetail.get("milestone_id") == null)
+                continue;
+
             LOG.info("Reading Details for project : " + projectId + " run : " + runObj.get("id"));
             if(runDetail.get("milestone_id") == null)
                 continue;

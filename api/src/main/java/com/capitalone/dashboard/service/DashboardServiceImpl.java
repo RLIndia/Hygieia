@@ -7,6 +7,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.mongodb.util.JSON;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ import java.util.*;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServiceImpl.class);
     private final DashboardRepository dashboardRepository;
     private final ComponentRepository componentRepository;
     private final CollectorRepository collectorRepository;
@@ -33,7 +35,7 @@ public class DashboardServiceImpl implements DashboardService {
 	@SuppressWarnings("unused")
 	private final PipelineRepository pipelineRepository; //NOPMD
     private final ServiceRepository serviceRepository;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServiceImpl.class);
+
     @Autowired
     public DashboardServiceImpl(DashboardRepository dashboardRepository,
                                 ComponentRepository componentRepository,
@@ -76,6 +78,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public Dashboard create(Dashboard dashboard) {
+        LOGGER.info("Creating Dashboard : " + dashboard.getApplication().getComponents());
         componentRepository.save(dashboard.getApplication().getComponents());
         return dashboardRepository.save(dashboard);
     }
@@ -152,6 +155,7 @@ public class DashboardServiceImpl implements DashboardService {
 
         //First: disable all collectorItems of the Collector TYPEs that came in with the request.
         //Second: remove all the collectorItem association of the Collector Type  that came in
+
         HashSet<CollectorType> incomingTypes = new HashSet<>();
         HashSet<CollectorItem> toSaveCollectorItemList = new HashSet<>();
         for (ObjectId collectorItemId : collectorItemIds) {
@@ -251,6 +255,44 @@ public class DashboardServiceImpl implements DashboardService {
         }
 
         return component;
+    }
+
+    @Override
+    public Component addCollectorItemToComponent(ObjectId componentId, List<ObjectId> collectorItemIds) {
+        com.capitalone.dashboard.model.Component component = componentRepository.findOne(componentId);
+        for (ObjectId collectorItemId : collectorItemIds) {
+            CollectorItem collectorItem = collectorItemRepository.findOne(collectorItemId);
+            Collector collector = collectorRepository.findOne(collectorItem.getCollectorId());
+            //removing all exisiting collector types and adding new
+            try{
+                component.getCollectorItems().remove(collector.getCollectorType());
+            }catch(Exception e){
+                //no items found.
+            }
+
+
+        }
+        for (ObjectId collectorItemId : collectorItemIds) {
+            CollectorItem collectorItem = collectorItemRepository.findOne(collectorItemId);
+            Collector collector = collectorRepository.findOne(collectorItem.getCollectorId());
+            //removing all exisiting collector types and adding new
+            try{
+                LOGGER.info(String.valueOf(collector.getCollectorType()));
+                component.addCollectorItem(collector.getCollectorType(), collectorItem);
+
+            }catch(Exception e){
+                //no items found.
+                LOGGER.info(e.getMessage());
+            }
+
+        }
+        componentRepository.save(component);
+        return component;
+    }
+
+    @Override
+    public Iterable<Collector> getDashboardCollectors() {
+        return collectorRepository.findAll();
     }
 
     @Override

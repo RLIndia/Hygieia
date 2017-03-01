@@ -1,0 +1,19 @@
+#Database Name 
+database=dashboard
+
+#Database Port - default is 27017
+dbport=27017
+
+#Database Username - default is blank
+dbusername=
+
+#Database Password - default is blank
+dbpassword=
+
+#Collector schedule (required)
+github.cron=0 * * * * *
+
+github.host=github.com
+
+#Maximum number of days to go back in time when fetching commits
+github.commitThresholdDays=15

@@ -1,0 +1,28 @@
+<widget-modal widget-modal-title="Configure Chef Cookbook">
+    <form class="functional-config" name="configForm" ng-submit="chefConfig.submit(configForm.$valid)" novalidate="novalidate">
+        <form-group input="functionalStack" errors="{required:'Please select your project'}">
+            <select name="functionalStack"
+                    class="form-control"
+                    ng-model="chefConfig.cookbook"
+                    ng-options="cookbook.name for cookbook in chefConfig.cookbooks | orderBy: 'name' track by cookbook.value"
+                    ng-disabled="chefConfig.cookbookDropdownDisabled"
+                    required>
+                <option value="">{{chefConfig.cookbookDropdownPlaceholder}}</option>
+            </select>
+        </form-group>
+
+        <hr/>
+
+        <!-- <div class="form-group text-center">
+            <label class="modal-label">
+                Alert takeover criteria:
+            </label>
+            <br/>
+            If any environment is down
+        </div> -->
+
+        <div class="button-row row text-center">
+            <button type="submit" class="btn btn-primary btn-wide">Save</button>
+        </div>
+    </form>
+</widget-modal>

@@ -1,6 +1,7 @@
 <widget-modal widget-modal-close="true">
-	<div class="widget-detail build-detail">
-		<div class="widget-detail-heading" style="border-bottom:0px !important">
+	<div class="widget-detail build-detail" style="padding:0 !important">
+		<div class="widget-detail-heading">
+
 			<div class="row">
 				<div class="col-md-3 build-desc">
 					<span class="dash-status-lg" dash-status="{{detail.buildPassed()}}"></span>
@@ -14,13 +15,22 @@
 					<!---->
 				<!--</div>-->
 				<div class="col-md-3 view-in-tool title-font">
+
 					<a ng-href="{{::detail.build.buildUrl}}" target="_blank">
-						View in Jenkins <span class="fa fa-angle-right"></span>
+						View in {{::detail.collectorName}}
+
 					</a>
 				</div>
 				<div class="col-md-3 view-in-tool title-font">
 					<a ng-href="{{::detail.build.buildTestResult.resultUrl}}" target="_blank">
+
 						Get Test Results File <span class="fa fa-angle-right"></span>
+
+					</a>
+				</div>
+				<div class="col-md-2 view-in-tool">
+					<a  ng-click="detail.triggerBuild()" style="cursor:pointer" title="Trigger Build">
+						Build <span class="fa fa-play"></span>
 					</a>
 				</div>
 			</div>

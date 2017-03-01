@@ -16,7 +16,7 @@ public interface TestRailRunResultRepository extends CrudRepository<TestRailRuns
     @Query(value="{ 'runId': ?0,'testId':?1}")
     TestRailRunsResults findByTestIdAndRunId(String runId, String testId);
 
-    @Query(value="{ 'runId': ?0,'milestoneId':?1,'projectId':?2}")
-    List<TestRailRunsResults> findByRunIdAndProjectIdAndMilestoneId(String runId, String milestoneId, String projectId);
+    @Query(value="{ 'runId': ?0,'projectId':?1,'milestoneId':?2}")
+    List<TestRailRunsResults> findByRunIdAndProjectIdAndMilestoneId(String id,String projectId, String milestoneId);
 
 }

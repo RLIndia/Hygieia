@@ -5,14 +5,6 @@ dbport=27017
 server.contextPath=/api
 server.port=8080
 
-#mandatory
-git.host=api.bitbucket.org
-
-#mandatory
-git.api=/2.0/repositories/
-#Username
-git.username=
-
-#application password
-git.password=
-
+jenkins.server=
+jenkins.username=
+jenkins.apiKey=

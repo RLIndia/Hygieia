@@ -16,10 +16,10 @@ dbpassword=
 sonar.cron=0 0/5 * * * *
 
 #Sonar server(s) (required) - Can provide multiple
-sonar.servers[0]=http://supercatalyst.cloudapp.net:9000
+sonar.servers[0]=http://40.121.203.115
 
 #Sonar Metrics
 sonar.metrics=ncloc,line_coverage,violations,critical_violations,major_violations,blocker_violations,sqale_index,test_success_density,test_failures,test_errors,tests
 
 sonar.username=admin
-sonar.password=root@1234$
+sonar.password=admin

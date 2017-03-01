@@ -36,7 +36,8 @@
             console.log("**************** Scope start ***************");
 //            console.log(TestrailCollector[0].options.milestoneId);
 //            console.log(TestrailCollector[0].options.projectId);
-            if(TestrailCollector[0].options.milestoneId && TestrailCollector[0].options.projectId){
+
+            if(TestrailCollector && TestrailCollector[0].options.milestoneId && TestrailCollector[0].options.projectId){
                 ctrl.selectedproject =  {
                                         "name": TestrailCollector[0].options.projectName,
                                         "value":TestrailCollector[0].options.projectId,

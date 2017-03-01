@@ -1,5 +1,6 @@
 package com.capitalone.dashboard.service;
 
+import com.capitalone.dashboard.model.Collector;
 import com.capitalone.dashboard.model.Component;
 import com.capitalone.dashboard.model.Dashboard;
 import com.capitalone.dashboard.model.Widget;
@@ -57,6 +58,12 @@ public interface DashboardService {
      * @return Component
      */
     Component associateCollectorToComponent(ObjectId componentId, List<ObjectId> collectorItemIds);
+    Component addCollectorItemToComponent(ObjectId componentId,List<ObjectId> collectorItemIds);
+    /**
+     *  Get all the collectors added
+     *  @return all collectors
+     */
+     Iterable<Collector> getDashboardCollectors();
 
     /**
      * Creates a new Widget and adds it to the Dashboard indicated by the dashboardId parameter.
