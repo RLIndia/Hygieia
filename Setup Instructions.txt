@@ -1,0 +1,14 @@
+
+
+
+Compile Code:
+mvn clean install -DskipTests -Dpmd.skip=true
+
+Run API
+nohup java -jar api.jar --spring.config.location=../dashboard.properties & 
+
+Run JIRA Project Collector
+nohup java -jar jira-project-collector-2.0.2-SNAPSHOT.jar --spring.config.location=../application.properties & 
+
+To Add Certificate:
+keytool -import -trustcacerts -alias jira_scholastic -file /home/rle0416/Downloads/scholastic.pem -keystore "/etc/ssl/certs/java/cacerts"

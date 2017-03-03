@@ -18,25 +18,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.capitalone.dashboard.model.DataResponse;
 
-import com.capitalone.dashboard.service.ProjectVersionService;
+import com.capitalone.dashboard.service.SprintVelocityService;
 
 
 @RestController
-public class ProjectVersionController {
-    private  final ProjectVersionService projectVersionService;
+public class SprintVelocityController {
+    private  final SprintVelocityService sprintVelocityService;
 
     @Autowired
-    public ProjectVersionController(ProjectVersionService projectVersionService){
-        this.projectVersionService = projectVersionService;
+    public SprintVelocityController(SprintVelocityService sprintVelocityService){
+        this.sprintVelocityService = sprintVelocityService;
     }
 
-    @RequestMapping(value = "/releaseDashboardData/{componentId}", method = GET, produces = APPLICATION_JSON_VALUE)
-    public DataResponse<JSONObject>  projectVersionIssues(@PathVariable ObjectId componentId) {
+    @RequestMapping(value = "/sprintvelocity/{componentId}", method = GET, produces = APPLICATION_JSON_VALUE)
+    public DataResponse<JSONObject>  sprintVelocityReport(@PathVariable ObjectId componentId) {
 
         //JSONObject responseObj = new JSONObject();
         //responseObj.put("componentid", componentId);
       //  return  new DataResponse<>(responseObj, 1234);
-        return projectVersionService.getProjectVersionIssues(componentId);
+        return sprintVelocityService.getSprintVelocityReport(componentId);
     }
 
 }

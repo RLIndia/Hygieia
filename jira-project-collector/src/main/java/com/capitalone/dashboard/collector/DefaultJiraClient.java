@@ -15,6 +15,7 @@ import com.atlassian.util.concurrent.Promise;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
 import com.capitalone.dashboard.model.Sprint;
 import com.capitalone.dashboard.model.SprintVelocity;
+import com.capitalone.dashboard.model.DefectInjection;
 import com.capitalone.dashboard.model.JiraRepo;
 //import com.capitalone.dashboard.util.Encryption;
 //import com.capitalone.dashboard.util.EncryptionException;
@@ -101,7 +102,34 @@ public class DefaultJiraClient implements JiraClient {
 		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
 		return src.claim();
 	}
+	
+	SearchResult getQACompleteByVersionAndSprint(String projectId, String versionId, String sprintId, int maxCount, int index) {
+		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND sprint in ("+ sprintId +") "
+				+ "AND status in (\"QA Complete\")";
 
+		LOG.info("query string ===>" + jql);
+		LOG.info("maxCount ===>" + maxCount);
+		LOG.info("index ===>" + index);
+
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+	}
+	
+	SearchResult getEnvironmentDefects(String projectId, String versionId, String environment,int maxCount, int index){
+		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND cf[14518]="+environment;
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+		
+	}
+
+
+	SearchResult getDefectInjects(String projectId, String sprintId, int maxCount, int index) {
+		String jql = "project in (" + projectId + ") AND sprint in (" + sprintId + ") AND issuetype in (Defect)";
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+	}
+	
+	
 	SearchResult getIssuesBySprint(String projectId, String sprintId, int maxCount, int index) {
 		String jql = "project in (" + projectId + ") AND sprint=" + sprintId;
 
@@ -112,6 +140,18 @@ public class DefaultJiraClient implements JiraClient {
 		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
 		return src.claim();
 	}
+	
+	SearchResult getSprintStories(String projectId, String sprintId, int maxCount, int index) {
+		String jql = "project in (" + projectId + ") AND sprint=" + sprintId+" AND issuetype in (story)";
+
+		LOG.info("query string ===>" + jql);
+		LOG.info("maxCount ===>" + maxCount);
+		LOG.info("index ===>" + index);
+
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+	}
+	
 
 	private List<ProjectVersionIssues> getProjectVersionIssuesByVersion(JiraRepo jirarepo) {
 		List<ProjectVersionIssues> projectversionissues = new ArrayList<>();
@@ -135,11 +175,12 @@ public class DefaultJiraClient implements JiraClient {
 						// name=Done, id=11002, description=,
 						// iconUrl=https://starbucks-mobile.atlassian.net/}
 						// LOG.info(issue.getId() + " - " +
-						// issue.getStatus().getName());
+						// issue.getStatus().getName());settings
 						ProjectVersionIssues pvi = new ProjectVersionIssues();
-						pvi.setIssueDescription(issue.getSummary());
+						pvi.setIssueDescription(issue.getSummary());						
 						pvi.setIssueId(issue.getId().toString());
 						pvi.setKey(issue.getKey());
+						//pvi.setIssueType(issue.getIssueType());
 
 						String status = issue.getStatus().getName();
 						pvi.setStatusName(status);
@@ -171,7 +212,8 @@ public class DefaultJiraClient implements JiraClient {
 						pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
 						pvi.setVersionId((String) jirarepo.getOptions().get("versionId"));
 						//pvi.setIssueType((String)issue.getIssueType().getName());
-						//pvi.setAcceptanceCriteria((String)issue.getField(settings.getAcceptanceCriteriaFieldName()).getValue());						
+										
+						pvi.setAcceptanceCriteria((String)issue.getField(settings.getAcceptanceCriteriaFieldName()).getValue());						
 						
 						projectversionissues.add(pvi);
 						count++;
@@ -229,6 +271,7 @@ public class DefaultJiraClient implements JiraClient {
 						// issue.getStatus().getName());
 						if (issue.getIssueType().getName().equals("Story")) {
 							ProjectVersionIssues pvi = new ProjectVersionIssues();
+							pvi.setSprintId(jirarepo.getACTIVE_SPRINT_ID());
 							pvi.setIssueDescription(issue.getSummary());
 							pvi.setIssueId(issue.getId().toString());
 							pvi.setKey(issue.getKey());
@@ -384,15 +427,23 @@ public class DefaultJiraClient implements JiraClient {
 						String projectID = TOOLS.sanitizeResponse(jiraProject.getId());
 						// Fetch Version
 						// LOG.info(projectName);
+						
 						JSONArray versions = getProjectVersions(projectID);
 						int versioncount = 0;
+						if(projectName.equals("Literacy Pro Intl") || projectName.equals("LitPro Library"))
+						{
 						for (Object version : versions) {
+							/*SearchResult searchResultQA = getEnvironmentDefects(projectID, str((JSONObject) version, "id"), "QA", 500,0);
+							SearchResult searchResultProd = getEnvironmentDefects(projectID, str((JSONObject) version, "id"), "Production", 500,0);			*/				
 							JiraRepo jr = new JiraRepo();
 							jr.setPROJECTID(projectID);
 							jr.setPROJECTNAME(projectName);
 							jr.setVERSIONID(str((JSONObject) version, "id"));
 							jr.setVERSIONDESCRIPTION(str((JSONObject) version, "description"));
 							jr.setVERSIONNAME(str((JSONObject) version, "name"));
+							/*jr.setStageDefects(searchResultQA.getTotal()+"");
+							jr.setProdDefects(searchResultProd.getTotal()+"");*/
+							
 							projectVersions.add(jr);
 							// LOG.info("Added:" + jr.getVERSIONNAME());
 							count++;
@@ -402,6 +453,7 @@ public class DefaultJiraClient implements JiraClient {
 						// versioncount + " Versions.");
 						// LOG.info(versions);
 						// projectVersions.add(versions);
+					}
 					}
 					LOG.info("Scanned " + count + " projects.");
 
@@ -429,12 +481,49 @@ public class DefaultJiraClient implements JiraClient {
 	public Sprint getActiveSprint(JiraRepo jirarepo) {
 		Sprint s = null;
 		try {
+			/*System.out.println(jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"));
+			System.out.println(jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));*/
+			
+			ResponseEntity<String> rapidViews = makeRestCall(buildUriRapidViews(),
+					jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+					jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+			JSONObject respObjRap = (JSONObject) new JSONParser().parse(rapidViews.getBody());
+			JSONArray rapidViewArray = (JSONArray) respObjRap.get("views");
+			
 			ResponseEntity<String> response = makeRestCall(buildUriSprint(jirarepo.getPROJECTID()),
 					jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
 					jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
 			JSONObject respObj = (JSONObject) new JSONParser().parse(response.getBody());
-			JSONArray sprintArray = (JSONArray) respObj.get("sprints");
+			JSONArray sprintArray = (JSONArray) respObj.get("sprints");	
+			
+					
+			
+		    
+			String rapidViewId = "";
 			if (sprintArray != null) {
+				
+				if(rapidViewArray != null)
+				{
+					JSONObject obj = (JSONObject) sprintArray.get(sprintArray.size()-1);
+					JSONArray proArray = (JSONArray) obj.get("projects");
+					for(Object proj : proArray)
+					{
+						JSONObject temp = (JSONObject)proj;
+						if (temp.get("name").equals(jirarepo.getPROJECTNAME()))
+						{
+							for(Object views : rapidViewArray)
+							{
+								JSONObject view = (JSONObject) views;
+								if(view.get("name").equals(temp.get("key")))
+								{
+									rapidViewId = String.valueOf(view.get("id"));
+									System.out.println("RapidBoard for"+ jirarepo.getPROJECTNAME()+" : "+rapidViewId);
+								}
+							}
+						}
+					}
+				}
+				
 				for (int i = 0; i < sprintArray.size(); i++) {
 					JSONObject obj = (JSONObject) sprintArray.get(i);
 					boolean closed = (boolean) obj.get("closed");
@@ -444,6 +533,7 @@ public class DefaultJiraClient implements JiraClient {
 						s.setSprintName((String) obj.get("name"));
 						s.setStartTime((String) obj.get("start"));
 						s.setEndTime((String) obj.get("end"));
+						s.setActiveBoardId(rapidViewId);
 						break;
 					}
 				}
@@ -594,7 +684,29 @@ public class DefaultJiraClient implements JiraClient {
 
 		LOG.info(url);
 		return url;
+	}
+	
+	String buildUriCustomVelocity(String rapidViewId, String sprintId)
+	{
+		//https://jira.sts.scholastic.com/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId=852&sprintId=3878
+		String url = settings.getJiraBaseUrl()+"/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId="+rapidViewId+"&sprintId="+sprintId;
+	    LOG.info(url);
+	    return url;
+	}
+	
+	
+	String buildUriRapidViews() {
+		// projectname = projectname.replaceAll(" ","%20");
+
+		String url = settings.getJiraBaseUrl()
+				+ "/rest/greenhopper/1.0/rapidview";
+
+		LOG.info(url);
+		return url;
 	}	
+	
+	
+	
 	@Override
 	public List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo){
 		List<SprintVelocity> lstSprintVelocity=new ArrayList<SprintVelocity>();
@@ -614,30 +726,39 @@ public class DefaultJiraClient implements JiraClient {
 			//LOG.info("Velocity json ===> " + response.getBody());
 			JSONArray sprintArray = (JSONArray) respObj.get("sprints");
 
-
+			
 			List<String> sprints=new ArrayList<String>();
 			//List<SprintVelocity> velocities=new ArrayList<SprintVelocity>();
-			HashMap<String,SprintVelocity> mapVelocities=new HashMap<String,SprintVelocity>();
+			LinkedHashMap<String,SprintVelocity> mapVelocities=new LinkedHashMap<String,SprintVelocity>();
 			if (sprintArray != null) {
 				for (int i = 0; i < sprintArray.size(); i++) {
 					JSONObject obj = (JSONObject) sprintArray.get(i);
-					String sprintId=String.valueOf(obj.get("id"));
+					String sprintId=String.valueOf(obj.get("id"));					
 					String name=(String) obj.get("name");	
 					String state=(String) obj.get("state");	
 					SprintVelocity v=new SprintVelocity();
+					SearchResult result = getSprintStories(jirarepo.getPROJECTID(),sprintId,500,0);
+					v.setStoryCount(result.getTotal());
 					v.setSprintId(sprintId);
 					v.setSprintName(name);
 					v.setSprintStatus(state);
 					v.setProjectId(jirarepo.getPROJECTID());
-					v.setVersionId(jirarepo.getVERSIONID());					
+					v.setVersionId(jirarepo.getVERSIONID());				
+					
 					mapVelocities.put(sprintId, v);
 				}
 			}
-			JSONObject velocityEntriesObj = (JSONObject) respObj.get("velocityStatEntries");			
+			JSONObject velocityEntriesObj = (JSONObject) respObj.get("velocityStatEntries");	
+			/*for(int i=0; i<=sprintArray.size(); i++)
+			{
+				JSONObject velocityEntry = new JSONObject();
+				velocityEntry = (JSONObject) velocityEntriesObj.get("sprintId");
+				
+			}*/
 			if (velocityEntriesObj != null) {
 				
 				Iterator it = mapVelocities.entrySet().iterator();
-			    while (it.hasNext()) {
+			    while (it.hasNext()) {					
 			        Map.Entry pair = (Map.Entry)it.next();
 			        String sprintId=(String)pair.getKey();
 			        SprintVelocity v=(SprintVelocity)pair.getValue();
@@ -645,10 +766,32 @@ public class DefaultJiraClient implements JiraClient {
 			        JSONObject estimatedObj=(JSONObject)velocityObj.get("estimated");
 			        String estimated=(String)estimatedObj.get("text");
 			        
+			        ResponseEntity<String> miscResponse = makeRestCall(buildUriCustomVelocity(jirarepo.getRAPIDVIEWID(),sprintId),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+					JSONObject miscRespObj = (JSONObject) new JSONParser().parse(miscResponse.getBody());
+					
+					JSONObject sprintContents = (JSONObject) miscRespObj.get("contents");
+			        
 			        JSONObject completedObj=(JSONObject)velocityObj.get("completed");
 			        String completed=(String)completedObj.get("text");
+			        
+			        
+			       // SearchResult resQAComplete = getQACompleteByVersionAndSprint(jirarepo.getPROJECTID(), jirarepo.getVERSIONNAME(), sprintId, 500, 0);
+			        
 			        v.setCompleted(completed);
 			        v.setCommitted(estimated);
+			        JSONObject completedIssuesEstimateSumObj = (JSONObject) sprintContents.get("completedIssuesEstimateSum");
+			        v.setCompletedSum((String)completedIssuesEstimateSumObj.get("text"));
+			        JSONObject issuesNotCompletedEstimateSumObj = (JSONObject) sprintContents.get("issuesNotCompletedEstimateSum");
+					v.setNotCompletedSum((String)issuesNotCompletedEstimateSumObj.get("text"));
+					JSONObject allIssuesEstimateSumObj = (JSONObject) sprintContents.get("allIssuesEstimateSum");
+					v.setAllIssuesSum((String)allIssuesEstimateSumObj.get("text"));
+					JSONObject issuesCompletedInAnotherSprintEstimateSumObj = (JSONObject) sprintContents.get("issuesCompletedInAnotherSprintEstimateSum");
+					v.setOutOfSprintSum((String) issuesCompletedInAnotherSprintEstimateSumObj.get("text"));
+					JSONObject puntedIssuesEstimateSumObj = (JSONObject) sprintContents.get("puntedIssuesEstimateSum");
+					v.setPuntedSum((String) puntedIssuesEstimateSumObj.get("text"));
+					
 			        lstSprintVelocity.add(v);
 			    }
 			}			
@@ -659,4 +802,58 @@ public class DefaultJiraClient implements JiraClient {
 		}
 		return lstSprintVelocity;
 	}
+
+	@Override
+	public JiraRepo getDefectSlippage(JiraRepo repo) {
+		SearchResult searchResultQA = getEnvironmentDefects(repo.getPROJECTID(),repo.getVERSIONID(), "QA", 500,0);
+		SearchResult searchResultProd = getEnvironmentDefects(repo.getPROJECTID(), repo.getVERSIONID(), "Production", 500,0);
+		
+	    repo.setStageDefects(searchResultQA.getTotal()+"");
+		repo.setProdDefects(searchResultProd.getTotal()+"");
+		
+		return repo;
+		
+	}
+
+	@Override
+	public List<DefectInjection> getDefectInjections(List<SprintVelocity> sprintVelocities) {
+		List<DefectInjection> diList = new ArrayList<DefectInjection>();
+		
+		for(SprintVelocity velocity : sprintVelocities)
+		{
+		DefectInjection dInject = new DefectInjection();
+		SearchResult searchResultDI = getDefectInjects(velocity.getProjectId(),velocity.getSprintId(), 500,0);
+		dInject.setSprintId(velocity.getSprintId());
+		dInject.setSprintName(velocity.getSprintName());
+		dInject.setDefectCount(searchResultDI.getTotal());
+		dInject.setProjectId(velocity.getProjectId());		
+		/*SearchResult searchResultSP = getStoryPoints(velocity.getProjectId(),velocity.getSprintId(), 500,0);*/
+		dInject.setAchievedPoints(Double.parseDouble(velocity.getCompleted()));
+		diList.add(dInject);
+		}
+		
+		return diList;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

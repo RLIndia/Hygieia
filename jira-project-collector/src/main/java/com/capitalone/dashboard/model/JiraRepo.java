@@ -1,9 +1,16 @@
 package com.capitalone.dashboard.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.capitalone.dashboard.collector.DefaultJiraClient;
+
 /**
  * Created by Vinod on 6/9/16.
  */
 public class JiraRepo extends CollectorItem{
+	
+	private static final Log LOG = LogFactory.getLog(DefaultJiraClient.class);
 
     private static final String PROJECTNAME = "projectName";
     private static final String PROJECTID = "projectId";
@@ -15,8 +22,29 @@ public class JiraRepo extends CollectorItem{
     private static final String ACTIVE_SPRINT_START_TIME = "activeSprintStartTime";
     private static final String ACTIVE_SPRINT_END_TIME = "activeSprintEndTime";
     private static final String RAPIDVIEW_ID="rapidViewId";
+    private static String STAGE_DEFECTS="stageDefectsCnt";
+    private static String PROD_DEFECTS="prodDefectsCnt"; 
     
-    public String getACTIVE_SPRINT_START_TIME() { return (String) getOptions().get(ACTIVE_SPRINT_START_TIME);}
+    
+  
+	public String getStageDefects() {
+		return  (String) getOptions().get(STAGE_DEFECTS);
+	}
+
+	public void setStageDefects(String stageDefects) {
+		 getOptions().put(STAGE_DEFECTS, stageDefects);
+	}
+
+	public String getProdDefects() {
+		return  (String) getOptions().get(PROD_DEFECTS);
+	}
+
+	public void setProdDefects(String prodDefects) {
+		 getOptions().put(PROD_DEFECTS, prodDefects);
+	}
+	
+
+	public String getACTIVE_SPRINT_START_TIME() { return (String) getOptions().get(ACTIVE_SPRINT_START_TIME);}
 
     public void setACTIVE_SPRINT_START_TIME(String startTime){
         getOptions().put(ACTIVE_SPRINT_START_TIME, startTime);
@@ -27,7 +55,10 @@ public class JiraRepo extends CollectorItem{
         getOptions().put(ACTIVE_SPRINT_END_TIME, endTime);
     }
 
-    public String getACTIVE_SPRINT_ID() { return (String) getOptions().get(ACTIVE_SPRINT_ID);}
+    public String getACTIVE_SPRINT_ID() {
+    	LOG.error((String) getOptions().get(ACTIVE_SPRINT_ID));
+    	return (String) getOptions().get(ACTIVE_SPRINT_ID);
+    	}
 
     public void setACTIVE_SPRINT_ID(String sprintId){
         getOptions().put(ACTIVE_SPRINT_ID, sprintId);
@@ -80,7 +111,7 @@ public class JiraRepo extends CollectorItem{
     }
 
     public void setRAPIDVIEWID(String rapidViewId){
-        getOptions().put(RAPIDVIEW_ID,rapidViewId);
+       getOptions().put(RAPIDVIEW_ID,rapidViewId);
     }
 
     @Override

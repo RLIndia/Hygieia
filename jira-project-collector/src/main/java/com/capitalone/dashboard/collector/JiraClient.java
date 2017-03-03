@@ -3,6 +3,7 @@ package com.capitalone.dashboard.collector;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
 import com.capitalone.dashboard.model.Sprint;
+import com.capitalone.dashboard.model.DefectInjection;
 import com.capitalone.dashboard.model.JiraRepo;
 import com.capitalone.dashboard.model.SprintVelocity;
 import java.util.List;
@@ -24,4 +25,6 @@ public interface JiraClient {
     List<JiraRepo> getProjects();
     Sprint getActiveSprint(JiraRepo jirarepo);
     List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo);
+	JiraRepo getDefectSlippage(JiraRepo repo);
+	List<DefectInjection> getDefectInjections(List<SprintVelocity> sprintVelocities);
 }

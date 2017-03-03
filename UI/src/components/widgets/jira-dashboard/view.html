@@ -1,8 +1,9 @@
 <div class="project-view" ng-model="projectView">
      <div class="col-xs-9.5 text-standard-sm dash-overflow">
      <div class="col-md-12 col-lg-12 col-sm-12" style="text-align: center; ">
-    <h4> Project : <small>LitPro Library</small>  | Version: <small>Release 2.2.2</small></h4>
-</div>
+
+    <h4> Project : <small>{{jiraDashboardView.projectName}}</small>  | Version: <small>{{jiraDashboardView.versionName}}</small></h4>
+
 <div class="clearfix  margin-deploy"></div>
 <div class="clearfix  margin-deploy"></div>
      
@@ -15,91 +16,84 @@
 
          <div class="col-md-4 col-lg-4 col-sm-12">
              <h4 class="text-center">Acceptance Coverage</h4>
-             <div class="valPer">75%</div>
+
+              <div class="valPer">{{jiraDashboardView.acceptanceCover}}%</div>
              <chartist class="ct-chart ct-golden-section" style="height:280px"  chartist-data="jiraDashboardView.PieChart.data" chartist-chart-type="Pie" chartist-chart-options="jiraDashboardView.PieChart.options"></chartist>
          </div>
 
-         <div class="col-md-4 col-lg-4 col-sm-12">
+         <!-- <div class="col-md-4 col-lg-4 col-sm-12">
+
              <h4 class="text-center">Defect Slippage Rate</h4>
 
              <table class="table">
                  <tr>
                      <td colspan="5">
-                         <!-- <chartist class="ct-chart ct-golden-section"   chartist-data="jiraDashboardView.DSRPieChart.data" chartist-chart-type="Pie" chartist-chart-options="jiraDashboardView.DSRPieChart.options"></chartist> -->
+
+                         <chartist class="ct-chart ct-golden-section"   chartist-data="jiraDashboardView.DSRPieChart.data" chartist-chart-type="Pie" chartist-chart-options="jiraDashboardView.DSRPieChart.options"></chartist>
+
                              </td>
                  </tr>
                  <tr>
 
-                     <td style="text-align:center;text-align:center;color: green;font-weight:bold">STAGE</td>
-                     <td style="text-align:center;text-align:center;color: #d8514d;font-weight:bold;font-size: 16px">PROD</td>
-                     <td style="text-align:center;text-align:center;color: orange;font-weight:bold">DEFECT(%)</td>
-                     <!--<td style="text-align:center;text-align:center;color: red;font-weight:bold">RELEASR</td>-->
+
+                     <td style="text-align:center;text-align:center;color: green;font-weight:bold" ng-repeat="(key,val) in jiraDashboardView.defectSlippageRate">{{key}}</td>
+                     <td style="text-align:center;text-align:center;color: #d8514d;font-weight:bold;font-size: 16px">PROD + UAT</td>
+                     <td style="text-align:center;text-align:center;color: orange;font-weight:bold">RATE(%)</td>
+                     <td style="text-align:center;text-align:center;color: red;font-weight:bold">RELEASR</td>
+
 
                  </tr>
                  <tr >
 
 
-                     <td style="text-align:center;text-align:center;color: green;font-weight:bold;font-size: 16px">100</td>
-                     <td style="text-align:center;text-align:center;color: #d8514d;font-weight:bold;font-size: 16px">15</td>
-                     <td style="text-align:center;text-align:center;color: orange;font-weight:bold;font-size: 16px">15%</td>
-                     <!--<td style="text-align:center;text-align:center;color: red;font-weight:bold;font-size: 16px">10</td>-->
+                     <td style="text-align:center;text-align:center;color: green;font-weight:bold;font-size: 16px"ng-repeat="(key,val) in jiraDashboardView.defectSlippageRate">{{val}}</td>
+                     <td style="text-align:center;text-align:center;color: #d8514d;font-weight:bold;font-size: 16px">3</td>
+                     <td style="text-align:center;text-align:center;color: orange;font-weight:bold;font-size: 16px">3%</td>
+                     <td style="text-align:center;text-align:center;color: red;font-weight:bold;font-size: 16px">10</td>
 
+                 </tr>
+                 <tr >
+                    <td colspan="3">
+
+                        <chartist class="ct-chart ct-golden-section ream-velocity" id="defect-chart" style="height:200px" chartist-data="jiraDashboardView.DSPChart.data" chartist-chart-type="Bar" chartist-chart-options="jiraDashboardView.DSPChart.options" ></chartist>
+                    </td>
                  </tr>
 
              </table>
-         </div>
+         </div> -->
+
 
          <div class="clearfix margin-deploy" style="padding-top:20px;"></div>
          <div class="clearfix margin-deploy" style="padding-top:20px;"></div>
 
          <div class="col-md-4 col-lg-4 col-sm-12">
              <h4 class="text-center">Release Status</h4>
-             <div class="pull-left col-md-7 col-lg-7 col-sm-12">STORY POINTS PER DAY</div>
-             <div class="col-md-5 col-lg-5 col-sm-12">
-                 <div class="pull-right ">
-                 <span class="subtitle">Sprint :</span>&nbsp;
-                 <select  ng-options="opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">
-                     <option>SLZ2.1Sprint4</option>
-                     <option>PSI-SLZ-11.5</option>
-                 </select>
-                 </div>
-             </div>
 
-<div class="clearfix"></div>
-             <chartist class="ct-chart ct-golden-section" style="height:300px" chartist-data="jiraDashboardView.RSChart.data" chartist-chart-type="Line" chartist-chart-options="jiraDashboardView.RSChart.options"></chartist>
-
+             <!--<chartist class="ct-chart ct-golden-section ream-velocity" style="height:300px" chartist-data="jiraDashboardView.barChart.barData" chartist-chart-type="Bar"  chartist-chart-options="jiraDashboardView.barChart.barOptions" chartist-responsive-options="jiraDashboardView.barChart.barResponsiveOptions"></chartist>-->
+             <chartist class="ct-chart ct-golden-section ream-velocity" style="height:300px" chartist-data="jiraDashboardView.SPEChart.data" chartist-chart-type="Line" chartist-chart-options="jiraDashboardView.SPEChart.options" ></chartist>
          </div>
 
          <div class="col-md-4 col-lg-4 col-sm-12">
-             <h4 class="text-center">Burndown Chart</h4>
-             <div class="pull-right col-md-8 col-lg-8 col-sm-12">
-                 <div class="pull-right">
-                 <span class="subtitle">Sprint :</span>&nbsp;
-                 <select  ng-options="opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">
-                     <option>SLZ2.1Sprint4</option>
-                     <option>PSI-SLZ-11.5</option>
-                 </select>
-                 </div>
-             </div>
+             <h4 class="text-center">Story & Point per Sprint</h4>
 
-             <div class="clearfix"></div>
-             <chartist class="ct-chart ct-golden-section" style="height:300px" chartist-data="jiraDashboardView.SPEChart.data" chartist-chart-type="Line" chartist-chart-options="jiraDashboardView.SPEChart.options"></chartist>
+             <chartist class="ct-chart ct-golden-section ream-velocity" style="height:300px" chartist-data="jiraDashboardView.SPSChart.data" chartist-chart-type="Bar" chartist-chart-options="jiraDashboardView.SPSChart.options" chartist-responsive-options="jiraDashboardView.SPEChart.responsiveOptions"></chartist>
+
          </div>
 
          <div class="col-md-4 col-lg-4 col-sm-12">
              <h4 class="text-center">Defect Injection Rate</h4>
-             <div class="pull-left col-md-7 col-lg-7 col-sm-12">DEFECTS PER USER STORY</div>
-             <div class=" col-md-5 col-lg-5 col-sm-12">
-                 <div class="pull-right">
-                 <span class="subtitle">Sprint :</span>&nbsp;
-                 <select  ng-options="opt.name for opt in dropdownList track by opt.id" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">
-                     <option>SLZ2.1Sprint4</option>
-                     <option>PSI-SLZ-11.5</option>
-                 </select>
-                 </div>
-             </div>
-             <div class="clearfix"></div>
-             <chartist class="ct-chart ct-golden-section " id="defect-chart" style="height:300px" chartist-data="jiraDashboardView.DIRChart.data" chartist-chart-type="Bar" chartist-chart-options="jiraDashboardView.DIRChart.options" chartist-responsive-options="jiraDashboardView.DIRChart.barResponsiveOptions"></chartist>
+             <!--<div class="pull-left col-md-7 col-lg-7 col-sm-12">DEFECTS PER USER STORY</div>-->
+             <!--<div class=" col-md-5 col-lg-5 col-sm-12">-->
+                 <!--<div class="pull-right">-->
+                 <!--<span class="subtitle">Sprint :</span>&nbsp;-->
+                 <!--<select  ng-options="jiraDashboardView.sprints" style="color:initial;font-size:10px" id="buildBranchSelect" class="ng-pristine ng-valid ng-touched">-->
+                    <!---->
+                 <!--</select>-->
+                 <!--&lt;!&ndash;</div>&ndash;&gt;-->
+             <!--</div>-->
+             <!--<div class="clearfix"></div>-->
+             <chartist class="ct-chart ct-golden-section ream-velocity" id="defect-chart" style="height:300px" chartist-data="jiraDashboardView.DIRChart.data" chartist-chart-type="Bar" chartist-chart-options="jiraDashboardView.DIRChart.options" chartist-responsive-options="jiraDashboardView.DIRChart.barResponsiveOptions"></chartist>
+
          </div>
 
      </div>

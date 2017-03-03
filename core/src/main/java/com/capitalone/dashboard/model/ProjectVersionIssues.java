@@ -26,6 +26,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
     
     private String issueId;
     private String issueDescription;
+    private String issueType;
+    private String acceptanceCriteria;
+    private int defectsCnt;
+    private int stageDefectsCnt;
+    private int prodDefectsCnt;
     @Indexed
     private String changeDate;
     private String reportedDate;
@@ -33,14 +38,31 @@ import org.springframework.data.mongodb.core.mapping.Document;
     private String sprintId;
     private String key;
     private double storyPoint;
-    private String acceptanceCriteria;
-    private String issueType;
 
 
     private ObjectId collectorItemId;
     private long timestamp;
 
-    public ObjectId getCollectorItemId() {
+    
+    
+    
+    public int getStageDefectsCnt() {
+		return stageDefectsCnt;
+	}
+
+	public void setStageDefectsCnt(int stageDefectsCnt) {
+		this.stageDefectsCnt = stageDefectsCnt;
+	}
+
+	public int getProdDefectsCnt() {
+		return prodDefectsCnt;
+	}
+
+	public void setProdDefectsCnt(int prodDefectsCnt) {
+		this.prodDefectsCnt = prodDefectsCnt;
+	}
+
+	public ObjectId getCollectorItemId() {
         return collectorItemId;
     }
 
@@ -162,20 +184,25 @@ import org.springframework.data.mongodb.core.mapping.Document;
     public String getVersionId() {
         return versionId;
     }
-
     public void setVersionId(String versionId) {
         this.versionId = versionId;
-    }
-    public void setAcceptanceCriteria(String criteria){
-        this.acceptanceCriteria=criteria;    
-    }
-    public String getAcceptanceCriteria(){
-        return this.acceptanceCriteria;
-    }
-    public void setIssueType(String issueType){
-        this.issueType=issueType;        
-    }
+    }   
     public String getIssueType(){
         return this.issueType;
+    }
+    public void  setIssueType(String issueType){
+        this.issueType=issueType;
+    }
+    public void setAcceptanceCriteria(String criteria){
+        this.acceptanceCriteria=criteria;
+    }
+    public  String getAcceptanceCriteria(){
+        return this.acceptanceCriteria;
+    }
+    public int getDefectsCnt(){
+        return this.defectsCnt;
+    }
+    public void setDefectsCnt(int defectsCnt){
+        this.defectsCnt=defectsCnt;
     }
 }

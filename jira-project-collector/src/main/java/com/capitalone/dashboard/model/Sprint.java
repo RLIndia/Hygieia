@@ -6,7 +6,11 @@ public class Sprint {
 	private String sprintName;
 	private String startTime;
 	private String endTime;
+	private String activeBoardId;
 	
+	public String getActiveBoardId() {
+		return activeBoardId;
+	}
 	public String getSprintName() {
 		return sprintName;
 	}
@@ -30,6 +34,9 @@ public class Sprint {
 	}
 	public void setEndTime(String endTime) {
 		this.endTime = endTime;
+	}
+	public void setActiveBoardId(String activeBoardId) {
+		this.activeBoardId = activeBoardId;		
 	}
 	
 }

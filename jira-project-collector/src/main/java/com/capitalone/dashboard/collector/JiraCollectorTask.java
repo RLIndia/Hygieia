@@ -9,12 +9,14 @@ import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.capitalone.dashboard.model.Collector;
 import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
+import com.capitalone.dashboard.model.DefectInjection;
 import com.capitalone.dashboard.model.JiraRepo;
 import com.capitalone.dashboard.model.ProjectVersionIssues;
 import com.capitalone.dashboard.model.Sprint;
 import com.capitalone.dashboard.model.SprintVelocity;
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
+import com.capitalone.dashboard.repository.DefectInjectsRepository;
 import com.capitalone.dashboard.repository.JiraProjectRepository;
 import com.capitalone.dashboard.repository.ProjectVersionRepository;
 import com.capitalone.dashboard.repository.SprintVelocityRepository;
@@ -27,6 +29,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +47,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
     private final SprintVelocityRepository sprintVelocityRepository;
     private final JiraClient jiraclient;
     private final JiraSettings jirasettings;
+    private final DefectInjectsRepository defectInjectsRepository;
     private final ComponentRepository dbComponentRepository;
 
 
@@ -56,6 +60,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                              SprintVelocityRepository sprintVelocityRepository,
                              JiraClient jiraclient,
                              JiraSettings jirasettings,
+                             DefectInjectsRepository defectInjectsRepository,
                              ComponentRepository dbComponentRepository) {
         super(taskScheduler, "Jiraproject");
         this.collectorRepository = collectorRepository;
@@ -63,6 +68,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         this.jiraprojectrepository = jiraprojectrepository;
         this.projectversionrepository = projectversionrepository;
         this.sprintVelocityRepository=sprintVelocityRepository;
+        this.defectInjectsRepository=defectInjectsRepository;
         this.jirasettings = jirasettings;
         this.dbComponentRepository = dbComponentRepository;
     }
@@ -93,6 +99,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
          * Logic: For each component, retrieve the collector item list of the type SCM.
          * Store their IDs in a unique set ONLY if their collector IDs match with Bitbucket collectors ID.
          */
+        List<com.capitalone.dashboard.model.Component> comps = (List<com.capitalone.dashboard.model.Component>) dbComponentRepository.findAll();
         for (com.capitalone.dashboard.model.Component comp : dbComponentRepository.findAll()) {
             if (comp.getCollectorItems() == null || comp.getCollectorItems().isEmpty()) continue;
             List<CollectorItem> itemList = comp.getCollectorItems().get(CollectorType.Jiraproject);
@@ -129,7 +136,9 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int scannedProjects = 0;
         int newProjects = 0;
         int updatedSprintVelocities=0;
-            int newSprintVelocities=0;
+        int updatedDefectInjections=0;
+        int newSprintVelocities=0;
+        int newDefectInjections=0;
         clean(collector);
 
 
@@ -161,11 +170,19 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         int enabledVersions = 0;
         int newIssues = 0;
         int updatedIssues = 0;
+        LOG.info("TOTAL ENABLED REPOS : "+ enabledRepos(collector));
+        
         for(JiraRepo repo : enabledRepos(collector)){
+        	
             boolean firstRun = false;
            // LOG.info("Enabled repo:");
            // LOG.info(repo);
            // enabledrepoList.add(repo);
+            
+            JiraRepo repoSlippage = jiraclient.getDefectSlippage(repo);
+            
+            repo.setStageDefects(repoSlippage.getStageDefects());
+            repo.setProdDefects(repoSlippage.getProdDefects());
             
             // geting active sprint 
             Sprint s = jiraclient.getActiveSprint(repo);
@@ -174,6 +191,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             	repo.setACTIVE_SPRINT_NAME(s.getSprintName());
             	repo.setACTIVE_SPRINT_START_TIME(s.getStartTime());
             	repo.setACTIVE_SPRINT_END_TIME(s.getEndTime());
+            	repo.setRAPIDVIEWID(s.getActiveBoardId());
             }
             
             List<ProjectVersionIssues> enabledProjectVersionIssues  = jiraclient.getprojectversionissues(repo,firstRun);
@@ -202,13 +220,20 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             
             /*
             List<SprintVelocity> sprintVelocities  = jiraclient.getVelocityReportByProject(repo);
+            Collections.reverse(sprintVelocities);
 
+            if(sprintVelocities != null)
+            {
             for(SprintVelocity sv : sprintVelocities){
                 SprintVelocity savedSprintVelocity = sprintVelocityRepository.findSprintVelocityByCollectorIdSprintId(collector.getId(),sv.getSprintId());
                 if(savedSprintVelocity != null){
                     savedSprintVelocity.setCommitted(sv.getCommitted());
                     savedSprintVelocity.setCompleted(sv.getCompleted());
-                    
+                    savedSprintVelocity.setCompletedSum(sv.getCompletedSum());
+                    savedSprintVelocity.setNotCompletedSum(sv.getNotCompletedSum());
+                    savedSprintVelocity.setOutOfSprintSum(sv.getOutOfSprintSum());
+                    savedSprintVelocity.setAllIssuesSum(sv.getAllIssuesSum());
+                    savedSprintVelocity.setPuntedSum(sv.getPuntedSum());
                     sprintVelocityRepository.save(savedSprintVelocity);
                    
                     updatedSprintVelocities++;
@@ -220,9 +245,37 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                     newSprintVelocities++;
                 }
             }
-*/
+
+            }
+
             enabledVersions++;
             jiraprojectrepository.save(repo);
+            
+            List<DefectInjection> defectInjects = jiraclient.getDefectInjections(sprintVelocities);
+            
+            if(defectInjects != null)
+            {
+            for(DefectInjection di : defectInjects){
+            	
+            	DefectInjection savedDefectInjection = defectInjectsRepository.findDefectInjectionByCollectorIdSprintId(collector.getId(),di.getSprintId());
+                 if(savedDefectInjection != null){
+                	 savedDefectInjection.setDefectCount(di.getDefectCount());
+                	 savedDefectInjection.setAchievedPoints(di.getAchievedPoints());
+                     
+                	 defectInjectsRepository.save(savedDefectInjection);
+                    
+                     updatedDefectInjections++;
+                 }
+                 else
+                 {
+            	 di.setCollectorItemId(collector.getId());
+            	 defectInjectsRepository.save(di);   
+            	 newDefectInjections++;
+                 }
+            }
+            }
+            
+            
         }
         LOG.info("Enabled Projects Versions:" + enabledVersions);
         LOG.info("New Issues:" + newIssues);
