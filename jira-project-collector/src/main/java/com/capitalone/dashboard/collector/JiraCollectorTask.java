@@ -29,6 +29,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -219,7 +220,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             
             
             List<SprintVelocity> sprintVelocities  = jiraclient.getVelocityReportByProject(repo);
-            
+            Collections.reverse(sprintVelocities);
 
             if(sprintVelocities != null)
             {

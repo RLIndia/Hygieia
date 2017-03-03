@@ -729,7 +729,7 @@ public class DefaultJiraClient implements JiraClient {
 			
 			List<String> sprints=new ArrayList<String>();
 			//List<SprintVelocity> velocities=new ArrayList<SprintVelocity>();
-			HashMap<String,SprintVelocity> mapVelocities=new HashMap<String,SprintVelocity>();
+			LinkedHashMap<String,SprintVelocity> mapVelocities=new LinkedHashMap<String,SprintVelocity>();
 			if (sprintArray != null) {
 				for (int i = 0; i < sprintArray.size(); i++) {
 					JSONObject obj = (JSONObject) sprintArray.get(i);
@@ -748,7 +748,13 @@ public class DefaultJiraClient implements JiraClient {
 					mapVelocities.put(sprintId, v);
 				}
 			}
-			JSONObject velocityEntriesObj = (JSONObject) respObj.get("velocityStatEntries");			
+			JSONObject velocityEntriesObj = (JSONObject) respObj.get("velocityStatEntries");	
+			/*for(int i=0; i<=sprintArray.size(); i++)
+			{
+				JSONObject velocityEntry = new JSONObject();
+				velocityEntry = (JSONObject) velocityEntriesObj.get("sprintId");
+				
+			}*/
 			if (velocityEntriesObj != null) {
 				
 				Iterator it = mapVelocities.entrySet().iterator();

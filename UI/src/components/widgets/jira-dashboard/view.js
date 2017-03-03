@@ -247,7 +247,7 @@
                             textAnchor: 'middle'
                         },
                         axisY: {
-                            axisTitle: 'Defects (%)',
+                            axisTitle: 'Defects Ratio',
                             axisClass: 'ct-axis-title',
                             offset: {
                                 x: 0,
