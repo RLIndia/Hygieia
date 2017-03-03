@@ -126,8 +126,7 @@
         data : {
                 labels: [],
                 series: [
-                    { "name": "User Story", "data":[]},
-                    { "name": "Story Points", "data":[]}
+                    { "name": "User Story", "data":[]}                   
                 ]
             },
             options : {
@@ -248,7 +247,7 @@
                             textAnchor: 'middle'
                         },
                         axisY: {
-                            axisTitle: 'Defects (%)',
+                            axisTitle: 'Defects Ratio',
                             axisClass: 'ct-axis-title',
                             offset: {
                                 x: 0,
@@ -272,8 +271,10 @@
                 ctrl.versionName=data.result.version.versionName;
 
                 // acceptanceCover
-                ctrl.acceptanceCover=(Math.round(data.result.acceptance.covered/data.result.acceptance.Total)*100);
-                var notCovered=(Math.round(data.result.acceptance.notCovered/data.result.acceptance.Total)*100);
+               
+                ctrl.acceptanceCover=((data.result.acceptance.covered/data.result.acceptance.Total).toFixed(4)*100);
+                var notCovered=((data.result.acceptance.notCovered/data.result.acceptance.Total).toFixed(4)*100);
+               
 
                 ctrl.PieChart.data={
                     series: [ctrl.acceptanceCover,notCovered ],
@@ -326,14 +327,13 @@
                 //IssueStoryPoints
                 ctrl.SPSChart.data ={
                     labels: [],
-                    series: [
-                        { "name": "Story Points", data:[]},
+                    series: [                       
                         { "name": "User Story", data:[]}]
                 };
                 angular.forEach(data.result.IssueStoryPoints,function (val) {
                     ctrl.SPSChart.data.labels.push(val.SprintName);
-                    ctrl.SPSChart.data.series[0].data.push(val.StoryPoint);
-                    ctrl.SPSChart.data.series[1].data.push(val.StoryCount);
+                  //  ctrl.SPSChart.data.series[0].data.push(val.StoryPoint);
+                    ctrl.SPSChart.data.series[0].data.push(val.StoryCount);
                 });
 
 			});
@@ -416,3 +416,5 @@
 
 
 })();
+
+
