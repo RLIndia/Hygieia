@@ -12,9 +12,11 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -48,8 +50,10 @@ public class DashboardController {
     @RequestMapping(value = "/dashboard", method = POST,
             consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Dashboard> createDashboard(@Valid @RequestBody DashboardRequest request) {
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+
                 .body(dashboardService.create(request.toDashboard()));
     }
 
@@ -115,13 +119,21 @@ public class DashboardController {
         }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .header("Access-Control-Allow-Origin", "*")
                 .body(dashboard);
     }
 
     @RequestMapping(value = "/dashboard/collectors", method = GET,
             produces = APPLICATION_JSON_VALUE)
-    public Iterable<Collector> getDashboardCollectors() {
-        return dashboardService.getDashboardCollectors();
+    public ResponseEntity<Iterable<Collector>> getDashboardCollectors() {
+        LOGGER.info("Hit");
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .header("Access-Control-Allow-Origin","*")
+                .header("Access-Control-Allow-Methods","GET")
+                .body( dashboardService.getDashboardCollectors());
+
+
     }
 
 

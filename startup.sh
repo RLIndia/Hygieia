@@ -20,6 +20,7 @@ kill -9 $(ps -aux | grep java | grep jira-project-collector-2.0.2-SNAPSHOT.jar |
 kill -9 $(ps -aux | grep java | grep sonar-codequality-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
 kill -9 $(ps -aux | grep java | grep catalyst-deployment-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
 kill -9 $(ps -aux | grep java | grep testrail-results-collector.jar | awk '{print $2}')
+kill -9 $(ps -aux | grep java | grep chef-collector-2.0.2-SNAPSHOT.jar | awk '{print $2}')
 
 echo "Configuring API"
 cp -f dashboard.template target/dashboard.properties
@@ -100,7 +101,19 @@ echo "dbhost="$2 >> target/application.properties
 cd target
 nohup java -jar sbux-functional-test-collector-2.0.2-SNAPSHOT.jar &
 
+echo "Configuring Chef collector"
+cd ../../chef-collector/
+cp -f chef.template target/application.properties
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/10 -O target/temp.properties
+chefId=$(sed -n 's/.*chef.id *= *\([^ ]*.*\)/\1/p' < target/temp.properties)
+echo $chefId
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/chef/pemFile/$chefId -O target/chef.pem
 
+cat target/temp.properties >> target/application.properties
+echo "dbhost="$2 >> target/application.properties
+echo "chef.pemFilePath="$(pwd)/target/chef.pem >> target/application.properties
+cd target
+nohup java -jar chef-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Sonar collector"
 cd ../../sonar-codequality-collector/
@@ -110,12 +123,15 @@ cd target
 nohup java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar &
 
 
+
+
  
 echo "Starting UI"
 cd ../../UI
 cp -r dist/* /usr/share/nginx/html/
 cat ../nginx.default > /etc/nginx/sites-enabled/default
-service nginx reload
+service nginx stop
+service nginx start
 #nohup node/node node_modules/gulp/bin/gulp.js serve &
 echo "Done..."
 
