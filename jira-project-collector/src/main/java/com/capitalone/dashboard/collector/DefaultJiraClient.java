@@ -177,9 +177,10 @@ public class DefaultJiraClient implements JiraClient {
 						// LOG.info(issue.getId() + " - " +
 						// issue.getStatus().getName());settings
 						ProjectVersionIssues pvi = new ProjectVersionIssues();
-						pvi.setIssueDescription(issue.getSummary());
+						pvi.setIssueDescription(issue.getSummary());						
 						pvi.setIssueId(issue.getId().toString());
 						pvi.setKey(issue.getKey());
+						//pvi.setIssueType(issue.getIssueType());
 
 						String status = issue.getStatus().getName();
 						pvi.setStatusName(status);
@@ -211,7 +212,8 @@ public class DefaultJiraClient implements JiraClient {
 						pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
 						pvi.setVersionId((String) jirarepo.getOptions().get("versionId"));
 						//pvi.setIssueType((String)issue.getIssueType().getName());
-						//pvi.setAcceptanceCriteria((String)issue.getField(settings.getAcceptanceCriteriaFieldName()).getValue());						
+										
+						pvi.setAcceptanceCriteria((String)issue.getField(settings.getAcceptanceCriteriaFieldName()).getValue());						
 						
 						projectversionissues.add(pvi);
 						count++;
@@ -682,7 +684,16 @@ public class DefaultJiraClient implements JiraClient {
 
 		LOG.info(url);
 		return url;
-	}	
+	}
+	
+	String buildUriCustomVelocity(String rapidViewId, String sprintId)
+	{
+		//https://jira.sts.scholastic.com/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId=852&sprintId=3878
+		String url = settings.getJiraBaseUrl()+"/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId="+rapidViewId+"&sprintId="+sprintId;
+	    LOG.info(url);
+	    return url;
+	}
+	
 	
 	String buildUriRapidViews() {
 		// projectname = projectname.replaceAll(" ","%20");
@@ -722,7 +733,7 @@ public class DefaultJiraClient implements JiraClient {
 			if (sprintArray != null) {
 				for (int i = 0; i < sprintArray.size(); i++) {
 					JSONObject obj = (JSONObject) sprintArray.get(i);
-					String sprintId=String.valueOf(obj.get("id"));
+					String sprintId=String.valueOf(obj.get("id"));					
 					String name=(String) obj.get("name");	
 					String state=(String) obj.get("state");	
 					SprintVelocity v=new SprintVelocity();
@@ -732,7 +743,8 @@ public class DefaultJiraClient implements JiraClient {
 					v.setSprintName(name);
 					v.setSprintStatus(state);
 					v.setProjectId(jirarepo.getPROJECTID());
-					v.setVersionId(jirarepo.getVERSIONID());					
+					v.setVersionId(jirarepo.getVERSIONID());				
+					
 					mapVelocities.put(sprintId, v);
 				}
 			}
@@ -740,7 +752,7 @@ public class DefaultJiraClient implements JiraClient {
 			if (velocityEntriesObj != null) {
 				
 				Iterator it = mapVelocities.entrySet().iterator();
-			    while (it.hasNext()) {
+			    while (it.hasNext()) {					
 			        Map.Entry pair = (Map.Entry)it.next();
 			        String sprintId=(String)pair.getKey();
 			        SprintVelocity v=(SprintVelocity)pair.getValue();
@@ -748,14 +760,32 @@ public class DefaultJiraClient implements JiraClient {
 			        JSONObject estimatedObj=(JSONObject)velocityObj.get("estimated");
 			        String estimated=(String)estimatedObj.get("text");
 			        
-			        /*JSONObject completedObj=(JSONObject)velocityObj.get("completed");
-			        String completed=(String)completedObj.get("text");*/
+			        ResponseEntity<String> miscResponse = makeRestCall(buildUriCustomVelocity(jirarepo.getRAPIDVIEWID(),sprintId),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+					JSONObject miscRespObj = (JSONObject) new JSONParser().parse(miscResponse.getBody());
+					
+					JSONObject sprintContents = (JSONObject) miscRespObj.get("contents");
+			        
+			        JSONObject completedObj=(JSONObject)velocityObj.get("completed");
+			        String completed=(String)completedObj.get("text");
 			        
 			        
-			        SearchResult resQAComplete = getQACompleteByVersionAndSprint(jirarepo.getPROJECTID(), jirarepo.getVERSIONNAME(), sprintId, 500, 0);
+			       // SearchResult resQAComplete = getQACompleteByVersionAndSprint(jirarepo.getPROJECTID(), jirarepo.getVERSIONNAME(), sprintId, 500, 0);
 			        
-			        v.setCompleted(resQAComplete.getTotal()+"");
+			        v.setCompleted(completed);
 			        v.setCommitted(estimated);
+			        JSONObject completedIssuesEstimateSumObj = (JSONObject) sprintContents.get("completedIssuesEstimateSum");
+			        v.setCompletedSum((String)completedIssuesEstimateSumObj.get("text"));
+			        JSONObject issuesNotCompletedEstimateSumObj = (JSONObject) sprintContents.get("issuesNotCompletedEstimateSum");
+					v.setNotCompletedSum((String)issuesNotCompletedEstimateSumObj.get("text"));
+					JSONObject allIssuesEstimateSumObj = (JSONObject) sprintContents.get("allIssuesEstimateSum");
+					v.setAllIssuesSum((String)allIssuesEstimateSumObj.get("text"));
+					JSONObject issuesCompletedInAnotherSprintEstimateSumObj = (JSONObject) sprintContents.get("issuesCompletedInAnotherSprintEstimateSum");
+					v.setOutOfSprintSum((String) issuesCompletedInAnotherSprintEstimateSumObj.get("text"));
+					JSONObject puntedIssuesEstimateSumObj = (JSONObject) sprintContents.get("puntedIssuesEstimateSum");
+					v.setPuntedSum((String) puntedIssuesEstimateSumObj.get("text"));
+					
 			        lstSprintVelocity.add(v);
 			    }
 			}			

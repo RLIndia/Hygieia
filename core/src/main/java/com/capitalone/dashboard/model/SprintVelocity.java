@@ -17,7 +17,12 @@ public class SprintVelocity extends BaseModel {
 	private String projectId;
 
 	private ObjectId collectorItemId;
-	private int storyCount;    
+	private int storyCount;
+	private String completedSum;
+	private String notCompletedSum;
+	private String allIssuesSum;
+	private String outOfSprintSum;
+	private String puntedSum;    
 
     public ObjectId getCollectorItemId() {
         return collectorItemId;
@@ -79,6 +84,51 @@ public class SprintVelocity extends BaseModel {
 
 	public int getStoryCount() {
 		return storyCount;
+	}
+
+	public void setCompletedSum(String string) {
+		// TODO Auto-generated method stub
+		this.completedSum = string;
+	}
+
+	public void setNotCompletedSum(String string) {
+		// TODO Auto-generated method stub
+		this.notCompletedSum = string;
+	}
+
+	public void setAllIssuesSum(String string) {
+		// TODO Auto-generated method stub
+		this.allIssuesSum = string;
+	}
+
+	public void setOutOfSprintSum(String string) {
+		// TODO Auto-generated method stub
+		this.outOfSprintSum = string;
+	}
+
+	public String getCompletedSum() {
+		return completedSum;
+	}
+
+	public String getNotCompletedSum() {
+		return notCompletedSum;
+	}
+
+	public String getAllIssuesSum() {
+		return allIssuesSum;
+	}
+
+	public String getOutOfSprintSum() {
+		return outOfSprintSum;
+	}
+
+	public String getPuntedSum() {
+		return puntedSum;
+	}
+
+	public void setPuntedSum(String string) {
+		// TODO Auto-generated method stub
+		this.puntedSum = string;
 	}
 
 	

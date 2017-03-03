@@ -228,7 +228,11 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                 if(savedSprintVelocity != null){
                     savedSprintVelocity.setCommitted(sv.getCommitted());
                     savedSprintVelocity.setCompleted(sv.getCompleted());
-                    
+                    savedSprintVelocity.setCompletedSum(sv.getCompletedSum());
+                    savedSprintVelocity.setNotCompletedSum(sv.getNotCompletedSum());
+                    savedSprintVelocity.setOutOfSprintSum(sv.getOutOfSprintSum());
+                    savedSprintVelocity.setAllIssuesSum(sv.getAllIssuesSum());
+                    savedSprintVelocity.setPuntedSum(sv.getPuntedSum());
                     sprintVelocityRepository.save(savedSprintVelocity);
                    
                     updatedSprintVelocities++;

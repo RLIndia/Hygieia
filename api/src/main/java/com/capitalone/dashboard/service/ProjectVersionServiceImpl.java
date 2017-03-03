@@ -165,7 +165,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 
 				
 				sprintCommitted+=issue.getStoryPoint();			
-						if ("Story".equals(issue.getIssueType()) && issue.getAcceptanceCriteria()== null)
+						if (issue.getAcceptanceCriteria()!= null)
 								cntStryAccptCriteria++;
 							if ("Story".equals(issue.getIssueType()) && issue.getDefectsCnt()>0)
 								defectsOfStory++;
@@ -245,8 +245,12 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				velocityObj.put("SprintId", velocity.getSprintId());
 				velocityObj.put("SprintName", velocity.getSprintName());
 				velocityObj.put("SprintStatus", velocity.getSprintStatus());
-				velocityObj.put("Committed", velocity.getCommitted());
-				velocityObj.put("Completed", velocity.getCompleted());
+				velocityObj.put("Committed", velocity.getAllIssuesSum());
+				if(velocity.getCompletedSum().equals("") || velocity.getCompletedSum()==null || velocity.getCompletedSum().equals("null"))
+					velocity.setCompletedSum("0.0");
+				if(velocity.getOutOfSprintSum().equals("") || velocity.getOutOfSprintSum()==null || velocity.getOutOfSprintSum().equals("null"))
+					velocity.setOutOfSprintSum("0.0");
+				velocityObj.put("Completed", Double.parseDouble(velocity.getCompletedSum())+Double.parseDouble(velocity.getOutOfSprintSum()));
 				sprintPointsObj.put("SprintName", velocity.getSprintName());
 				sprintPointsObj.put("StoryCount", velocity.getStoryCount());
 				sprintPointsObj.put("StoryPoints", velocity.getCompleted());
@@ -266,7 +270,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				diObj.put("SprintName", di.getSprintName());			
 				if(di.getAchievedPoints() != 0.0 || di.getAchievedPoints() != 0)
 				{
-				  diObj.put("InjectionRatio", Math.round(((di.getDefectCount()/di.getAchievedPoints())*100)));
+				  diObj.put("InjectionRatio", di.getDefectCount()/di.getAchievedPoints());
 				}
 				else
 				{

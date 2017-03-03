@@ -124,10 +124,9 @@
 
         ctrl.SPSChart={
         data : {
-                labels: ['PSI-SLZ-12.4', 'PSI-SLZ-13.1', 'PSI-SLZ-13.2', 'PSI-SLZ-13.3', 'PSI-SLZ-13.5'],
+                labels: [],
                 series: [
-                    { "name": "User Story", "data":[9, 6, 8, 7, 5]},
-                    { "name": "Story Points", "data":[8, 4, 6, 7, 4]}
+                    { "name": "User Story", "data":[]}                   
                 ]
             },
             options : {
@@ -272,8 +271,10 @@
                 ctrl.versionName=data.result.version.versionName;
 
                 // acceptanceCover
-                ctrl.acceptanceCover=(Math.round(data.result.acceptance.covered/data.result.acceptance.Total)*100);
-                var notCovered=(Math.round(data.result.acceptance.notCovered/data.result.acceptance.Total)*100);
+               
+                ctrl.acceptanceCover=((data.result.acceptance.covered/data.result.acceptance.Total).toFixed(4)*100);
+                var notCovered=((data.result.acceptance.notCovered/data.result.acceptance.Total).toFixed(4)*100);
+               
 
                 ctrl.PieChart.data={
                     series: [ctrl.acceptanceCover,notCovered ],
@@ -310,18 +311,30 @@
                 });
 
                 //Release Status
-                ctrl.SPEChart.barData ={
+                ctrl.SPEChart.data ={
                     labels: [],
                     series: [
                         { "name": "Estimated Values", data:[]},
                         { "name": "Actual Values", data:[]}]
                 };
                 angular.forEach(data.result.teamVelocity,function (val) {
-                    ctrl.SPEChart.barData.labels.push(val.SprintName);
-                    ctrl.SPEChart.barData.series[0].data.push(val.Committed);
-                    ctrl.SPEChart.barData.series[1].data.push(val.Completed);
+                    ctrl.SPEChart.data.labels.push(val.SprintName);
+                    ctrl.SPEChart.data.series[0].data.push(val.Committed);
+                    ctrl.SPEChart.data.series[1].data.push(val.Completed);
                 });
-                console.log( ctrl.SPEChart.barData);
+              
+
+                //IssueStoryPoints
+                ctrl.SPSChart.data ={
+                    labels: [],
+                    series: [                       
+                        { "name": "User Story", data:[]}]
+                };
+                angular.forEach(data.result.IssueStoryPoints,function (val) {
+                    ctrl.SPSChart.data.labels.push(val.SprintName);
+                  //  ctrl.SPSChart.data.series[0].data.push(val.StoryPoint);
+                    ctrl.SPSChart.data.series[0].data.push(val.StoryCount);
+                });
 
 			});
 		}
