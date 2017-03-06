@@ -9,16 +9,19 @@ public class ChefNode {
 	
 	private ObjectId id;
     private ObjectId collectorItemId;
+	private String nodeName;
 	private String envName;
 	private String runlist;
-	private String productName;
-	private String version;
+	private String cookbookName;
 	private String ipAddress;
-	private String build;
-	private String date;
 
 
-	
+	public String getNodeName() {
+		return nodeName;
+	}
+	public void setNodeName(String nodeName) {
+		this.nodeName = nodeName;
+	}
 	public String getEnvName() {
 		return envName;
 	}
@@ -31,11 +34,11 @@ public class ChefNode {
 	public void setRunlist(String runlist) {
 		this.runlist = runlist;
 	}
-	public String getProductName() {
-		return productName;
+	public String getCookbookName() {
+		return cookbookName;
 	}
-	public void setProductName(String productName) {
-		this.productName = productName;
+	public void setCookbookName(String cookbookName) {
+		this.cookbookName = cookbookName;
 	}
 	public ObjectId getCollectorItemId() {
 		return collectorItemId;
@@ -54,23 +57,5 @@ public class ChefNode {
 	}
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
-	}
-	public String getVersion() {
-		return version;
-	}
-	public void setVersion(String version) {
-		this.version = version;
-	}
-	public String getBuild() {
-		return build;
-	}
-	public void setBuild(String build) {
-		this.build = build;
-	}
-	public String getDate() {
-		return date;
-	}
-	public void setDate(String date) {
-		this.date = date;
 	}
 }
