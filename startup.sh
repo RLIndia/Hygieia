@@ -118,6 +118,8 @@ nohup java -jar chef-collector-2.0.2-SNAPSHOT.jar &
 echo "Configuring Sonar collector"
 cd ../../sonar-codequality-collector/
 cp -f sonar.template target/application.properties
+wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/31 -O target/temp.properties
+cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
 nohup java -jar sonar-codequality-collector-2.0.2-SNAPSHOT.jar &
