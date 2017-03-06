@@ -159,7 +159,7 @@
                             textAnchor: 'middle'
                         },
                         axisY: {
-                            axisTitle: 'Story Points',
+                            axisTitle: 'Story Count',
                             axisClass: 'ct-axis-title',
                             offset: {
                                 x: 0,
