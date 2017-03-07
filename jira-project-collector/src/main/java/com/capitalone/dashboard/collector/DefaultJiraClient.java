@@ -52,6 +52,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
+import com.capitalone.dashboard.collector.JiraRestClientSupplier;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 
@@ -61,6 +62,7 @@ import java.net.URISyntaxException;
 //import java.nio.charset.StandardCharsets;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 //Implementation to connect to Jira server
@@ -132,6 +134,20 @@ public class DefaultJiraClient implements JiraClient {
 	
 	SearchResult getIssuesBySprint(String projectId, String sprintId, int maxCount, int index) {
 		String jql = "project in (" + projectId + ") AND sprint=" + sprintId;
+
+		LOG.info("query string ===>" + jql);
+		LOG.info("maxCount ===>" + maxCount);
+		LOG.info("index ===>" + index);
+
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+	}
+	
+	//project = "Literacy Pro Intl" AND fixVersion = 1.10 AND issuetype in (Story) AND sprint in (3879) AND updated >= 2017-01-25 AND status="QA Complete"
+	
+	SearchResult getMidSprintIssues(String projectId, String sprintId, String versionName, String startDate, String midDate, String doneStatus, int maxCount, int index) {
+		String jql = "project in (" + projectId + ") AND sprint in (" + sprintId+ ") AND fixVersion = "+ versionName +" AND issuetype in (story) AND updated >= "+ startDate +" AND updated <="
+				+ midDate + " AND status in (\""+ doneStatus+"\")";
 
 		LOG.info("query string ===>" + jql);
 		LOG.info("maxCount ===>" + maxCount);
@@ -708,7 +724,7 @@ public class DefaultJiraClient implements JiraClient {
 	
 	
 	@Override
-	public List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo){
+	public List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo) {
 		List<SprintVelocity> lstSprintVelocity=new ArrayList<SprintVelocity>();
 		try{
 			if (jirarepo.getRAPIDVIEWID() == null)
@@ -737,7 +753,7 @@ public class DefaultJiraClient implements JiraClient {
 					String name=(String) obj.get("name");	
 					String state=(String) obj.get("state");	
 					SprintVelocity v=new SprintVelocity();
-					SearchResult result = getSprintStories(jirarepo.getPROJECTID(),sprintId,500,0);
+					SearchResult result = getSprintStories(jirarepo.getPROJECTID(),sprintId,500,0);					
 					v.setStoryCount(result.getTotal());
 					v.setSprintId(sprintId);
 					v.setSprintName(name);
@@ -791,6 +807,33 @@ public class DefaultJiraClient implements JiraClient {
 					v.setOutOfSprintSum((String) issuesCompletedInAnotherSprintEstimateSumObj.get("text"));
 					JSONObject puntedIssuesEstimateSumObj = (JSONObject) sprintContents.get("puntedIssuesEstimateSum");
 					v.setPuntedSum((String) puntedIssuesEstimateSumObj.get("text"));
+					
+					JSONObject sprintInfo = (JSONObject) miscRespObj.get("sprint");
+					String startDate = (String) sprintInfo.get("startDate");
+					System.out.println(startDate);
+					// 28/Dec/16 11:40 AM
+					SimpleDateFormat inBoundFormatter = new SimpleDateFormat("dd/MMM/yy HH:mm a");
+					SimpleDateFormat outBoundFormatter = new SimpleDateFormat("yyyy-MM-dd");
+					
+					
+					v.setStartDate(outBoundFormatter.format(inBoundFormatter.parse( (String) sprintInfo.get("startDate"))));
+					v.setEndDate(outBoundFormatter.format(inBoundFormatter.parse( (String) sprintInfo.get("endDate"))));
+					
+					Date midDate = new Date((inBoundFormatter.parse((String) sprintInfo.get("startDate")).getTime()+inBoundFormatter.parse((String) sprintInfo.get("endDate")).getTime())/2);					
+					v.setMidSprintDate(outBoundFormatter.format(midDate));
+					
+					SearchResult midSprintIssues = getMidSprintIssues(jirarepo.getPROJECTID(),sprintId , jirarepo.getVERSIONNAME(), v.getStartDate(), v.getMidSprintDate(), "QA Complete", 500, 0);
+					double midPointSum = 0;
+					if(midSprintIssues.getTotal()>0)
+					{
+						ArrayList<Issue> issuesItr= (ArrayList<Issue>) midSprintIssues.getIssues();
+					    for(Issue issue: issuesItr)
+						{							
+					    	midPointSum = midPointSum + (double) issue.getFieldByName("Story Points").getValue();							
+						}						
+					}
+					
+					v.setMidPointSum(midPointSum);
 					
 			        lstSprintVelocity.add(v);
 			    }
