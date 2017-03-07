@@ -3,6 +3,8 @@ package com.capitalone.dashboard.collector;
 import com.capitalone.dashboard.model.Collector;
 import com.capitalone.dashboard.repository.BaseCollectorRepository;
 import com.google.common.base.Strings;
+
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +63,12 @@ public abstract class CollectorTask<T extends Collector> implements Runnable {
 
         if (collector.isEnabled()) {
             // Do collection run
-            collect(collector);
+            try {
+				collect(collector);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
             // Update lastUpdate timestamp in Collector
             collector.setLastExecuted(System.currentTimeMillis());
@@ -86,7 +93,7 @@ public abstract class CollectorTask<T extends Collector> implements Runnable {
 
     public abstract String getCron();
 
-    public abstract void collect(T collector);
+    public abstract void collect(T collector) throws ParseException;
 
     private void setOnline(boolean online) {
         T collector = getCollectorRepository().findByName(collectorName);

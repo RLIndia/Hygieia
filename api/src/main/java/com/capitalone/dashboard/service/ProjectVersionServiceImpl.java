@@ -121,6 +121,8 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 					progressCount++;
 				}
 			}
+			if (issue.getAcceptanceCriteria()!= null)
+				cntStryAccptCriteria++;
 
 			issueCount++;
 		}
@@ -164,9 +166,8 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				issueObj.put("storyPoint", issue.getStoryPoint());
 
 				
-				sprintCommitted+=issue.getStoryPoint();			
-						if (issue.getAcceptanceCriteria()!= null)
-								cntStryAccptCriteria++;
+				sprintCommitted+=issue.getStoryPoint();		
+						
 							if ("Story".equals(issue.getIssueType()) && issue.getDefectsCnt()>0)
 								defectsOfStory++;
 							if ("Defect".equals(issue.getIssueType()) || "Bug".equals(issue.getIssueType())  )

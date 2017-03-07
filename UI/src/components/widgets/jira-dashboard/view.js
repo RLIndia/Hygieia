@@ -29,6 +29,11 @@
                      { "name": "Completed", "data":[]}
                  ]
             },
+            
+            	targetLine:{
+            		value:50,
+            		class:'ct-target-line'
+            	},
 
             barOptions : {
                 chartPadding: {
@@ -160,7 +165,7 @@
                             textAnchor: 'middle'
                         },
                         axisY: {
-                            axisTitle: 'Story Points',
+                            axisTitle: 'Story Count',
                             axisClass: 'ct-axis-title',
                             offset: {
                                 x: 0,
@@ -273,8 +278,8 @@
 
                 // acceptanceCover
                
-                ctrl.acceptanceCover=((data.result.acceptance.covered/data.result.acceptance.Total).toFixed(4)*100);
-                var notCovered=((data.result.acceptance.notCovered/data.result.acceptance.Total).toFixed(4)*100);
+                ctrl.acceptanceCover=((data.result.acceptance.covered/data.result.acceptance.Total).toFixed(4)*100).toFixed(2);
+                var notCovered=((data.result.acceptance.notCovered/data.result.acceptance.Total).toFixed(4)*100).toFixed(2);
                
 
                 ctrl.PieChart.data={
