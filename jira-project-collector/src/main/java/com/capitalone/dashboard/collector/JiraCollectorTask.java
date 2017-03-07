@@ -235,6 +235,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             if(sprintVelocities.size() != prevVelocities.size())
             {
             	sprintVelocityRepository.deleteAll();
+            	//sprintVelocityRepository.delete(entity);
             }
            
 
