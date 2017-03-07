@@ -218,12 +218,6 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                 }
             }
 
-            
-           
-            List<SprintVelocity> sprintVelocities  = jiraclient.getVelocityReportByProject(repo);
-
-
-            
             List<SprintVelocity> sprintVelocities = null;
 			try {
 				sprintVelocities = jiraclient.getVelocityReportByProject(repo);
