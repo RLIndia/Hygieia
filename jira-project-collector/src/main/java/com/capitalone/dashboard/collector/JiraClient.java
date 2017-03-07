@@ -7,6 +7,8 @@ import com.capitalone.dashboard.model.DefectInjection;
 import com.capitalone.dashboard.model.JiraRepo;
 import com.capitalone.dashboard.model.SprintVelocity;
 import java.util.List;
+
+import org.json.simple.parser.ParseException;
 /**
  * Created by vinod on 6/9/16.
  * This client will fetch all issues for a version
@@ -24,7 +26,7 @@ public interface JiraClient {
     List<ProjectVersionIssues> getprojectversionissues(JiraRepo jirarepo,  boolean firstrun);
     List<JiraRepo> getProjects();
     Sprint getActiveSprint(JiraRepo jirarepo);
-    List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo);
+    List<SprintVelocity> getVelocityReportByProject(JiraRepo jirarepo) throws ParseException;
 	JiraRepo getDefectSlippage(JiraRepo repo);
 	List<DefectInjection> getDefectInjections(List<SprintVelocity> sprintVelocities);
 }

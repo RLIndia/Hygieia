@@ -24,6 +24,7 @@ import com.capitalone.dashboard.repository.SprintVelocityRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
@@ -220,7 +221,25 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             
            
             List<SprintVelocity> sprintVelocities  = jiraclient.getVelocityReportByProject(repo);
-            Collections.reverse(sprintVelocities);
+
+
+            
+            List<SprintVelocity> sprintVelocities = null;
+			try {
+				sprintVelocities = jiraclient.getVelocityReportByProject(repo);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}      
+
+           Collections.reverse(sprintVelocities);
+            List<SprintVelocity> prevVelocities = sprintVelocityRepository
+    				.findVelocityReport(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
+            if(sprintVelocities.size() != prevVelocities.size())
+            {
+            	sprintVelocityRepository.deleteAll();
+            }
+           
 
             if(sprintVelocities != null)
             {
@@ -252,6 +271,12 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             jiraprojectrepository.save(repo);
             
             List<DefectInjection> defectInjects = jiraclient.getDefectInjections(sprintVelocities);
+            List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(collector.getId(),repo.getPROJECTID());
+            
+            if(diList.size() != defectInjects.size())
+            {
+            	defectInjectsRepository.deleteAll();
+            }
             
             if(defectInjects != null)
             {
