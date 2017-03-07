@@ -1,4 +1,6 @@
 package com.capitalone.dashboard.model;
+import java.util.Date;
+
 import org.bson.types.ObjectId;
 
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -22,7 +24,11 @@ public class SprintVelocity extends BaseModel {
 	private String notCompletedSum;
 	private String allIssuesSum;
 	private String outOfSprintSum;
-	private String puntedSum;    
+	private String puntedSum;
+	private String startDate;
+	private String endDate;
+	private String midSprintDate;
+	private double midPointSum;    
 
     public ObjectId getCollectorItemId() {
         return collectorItemId;
@@ -130,6 +136,44 @@ public class SprintVelocity extends BaseModel {
 		// TODO Auto-generated method stub
 		this.puntedSum = string;
 	}
+
+	public void setStartDate(String string) {
+		this.startDate = string;
+		
+	}
+
+	public void setEndDate(String string) {
+		// TODO Auto-generated method stub
+		this.endDate = string;
+	}
+
+	public void setMidSprintDate(String string) {
+		// TODO Auto-generated method stub
+		this.midSprintDate = string;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public String getMidSprintDate() {
+		return midSprintDate;
+	}
+
+	public void setMidPointSum(double midPointSum) {
+		// TODO Auto-generated method stub
+		this.midPointSum = midPointSum;
+	}
+
+	public double getMidPointSum() {
+		return midPointSum;
+	}
+	
+	
 
 	
 }
