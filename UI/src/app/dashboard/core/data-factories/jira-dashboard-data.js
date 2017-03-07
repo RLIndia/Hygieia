@@ -12,6 +12,7 @@
         //Api to be updated to project version issues.
         //Api to be updated to project version issues.
         var testDetailRoute = 'test-data/deploy_detail.json';
+
         var projectversionissuesRoute = 'api/releaseDashboardData/';
 
         return {

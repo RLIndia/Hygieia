@@ -219,6 +219,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             }
 
             
+
             
             List<SprintVelocity> sprintVelocities = null;
 			try {
@@ -226,7 +227,8 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}      
+
             Collections.reverse(sprintVelocities);
             List<SprintVelocity> prevVelocities = sprintVelocityRepository
     				.findVelocityReport(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
@@ -259,6 +261,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                     newSprintVelocities++;
                 }
             }
+
             }
 
             enabledVersions++;
