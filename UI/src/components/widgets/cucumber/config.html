@@ -1,40 +1,33 @@
 <widget-modal widget-modal-title="Configure Jenkins Cucumber Widget">
 <!-- {{catalystRepoConfig.catalystprojects}} -->
-    <form class="projectversion-config" name="configForm" ng-submit="CucumberConfig.submit(configForm.$valid)" novalidate="novalidate">
-        <form-group input="JenkinsCucumberConfigProjects" errors="{required:'Please select all fields'}">
-           
-             <div class="dash-modal-row clearfix">
-                    <label>Instance:</label>
-
-                     <select name="selectInstances"
-                            class="form-control"
-                            ng-model="CucumberConfig.selectedInstance"
-                            ng-options="obj.name for obj in CucumberConfig.instances track by obj.value" 
-                            ng-change="CucumberConfig.projectChange(CucumberConfig,CucumberConfig.selectedInstance);"
-                            required>
-                        <option value="">Select a Jenkins Instance</option>
-                    </select>
-                </div>  
-         </form-group>
-         <form-group input="JenkinsCucumberConfigJob" errors="{required:'Please select all fields'}">
-                <div class="dash-modal-row clearfix">
-                    <label>Job Name:</label>
-
-                     <select name="selectJob"
-                            class="form-control"
-                            ng-model="CucumberConfig.selectedJob"
-                            ng-options="obj.name for obj in CucumberConfig.jobs track by obj.value"
-                            
-                            required>
-                        <option value="">Select a Job Name</option>
-                    </select>
-                </div>
+    
+    
+    <form class="functional-config" name="configForm" ng-submit="CucumberConfig.submit(configForm.$valid)" novalidate="novalidate">
+        <form-group input="functionalStack" errors="{required:'Please select your project'}">
+            <select name="functionalStack"
+                    class="form-control"
+                    ng-model="CucumberConfig.job"
+                    ng-options="job.name for job in CucumberConfig.jobs | orderBy: 'name' track by job.value"
+                    ng-disabled="CucumberConfig.jobDropdownDisabled"
+                    required>
+                <option value="">{{CucumberConfig.jobDropdownPlaceholder}}</option>
+            </select>
         </form-group>
 
         <hr/>
+
+        <!-- <div class="form-group text-center">
+            <label class="modal-label">
+                Alert takeover criteria:
+            </label>
+            <br/>
+            If any environment is down
+        </div> -->
 
         <div class="button-row row text-center">
             <button type="submit" class="btn btn-primary btn-wide">Save</button>
         </div>
     </form>
+    
+    
 </widget-modal>
