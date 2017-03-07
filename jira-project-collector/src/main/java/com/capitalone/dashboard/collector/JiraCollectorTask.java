@@ -218,7 +218,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             }
 
             
-            /*
+           
             List<SprintVelocity> sprintVelocities  = jiraclient.getVelocityReportByProject(repo);
             Collections.reverse(sprintVelocities);
 
