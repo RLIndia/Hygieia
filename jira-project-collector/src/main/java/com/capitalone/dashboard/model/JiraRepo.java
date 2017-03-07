@@ -92,7 +92,7 @@ public class JiraRepo extends CollectorItem{
     }
 
     public String getVERSIONNAME() {
-        return (String) getOptions().get(VERSIONDESCRIPTION);
+        return (String) getOptions().get(VERSIONNAME);
     }
 
     public void setVERSIONNAME(String versionname){
