@@ -275,9 +275,9 @@
 
                 // acceptanceCover
                
-                ctrl.acceptanceCover=((data.result.acceptance.covered/data.result.acceptance.Total).toFixed(4)*100).toFixed(2);
+            	ctrl.acceptanceCover=((data.result.acceptance.covered/data.result.acceptance.Total).toFixed(4)*100).toFixed(2);          
                 var notCovered=((data.result.acceptance.notCovered/data.result.acceptance.Total).toFixed(4)*100).toFixed(2);
-               
+                
 
                 ctrl.PieChart.data={
                     series: [ctrl.acceptanceCover,notCovered ],
