@@ -196,7 +196,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             }
             
             List<ProjectVersionIssues> enabledProjectVersionIssues  = jiraclient.getprojectversionissues(repo,firstRun);
-
+           // System.out.println("ISSUES COLLECTED SIZE "  + enabledProjectVersionIssues.size());
             for(ProjectVersionIssues pvi : enabledProjectVersionIssues){
                 ProjectVersionIssues savedIssue = projectversionrepository.findByCollectorItemIdAndIssueId(collector.getId(),pvi.getIssueId());
                 if(savedIssue != null){

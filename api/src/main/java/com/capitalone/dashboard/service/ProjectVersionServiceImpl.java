@@ -229,13 +229,15 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 					.findVelocityReport(item.getCollectorId(), versionId,projectId);
 			
 			JSONArray velocities = new JSONArray();
-			JSONArray sprintStoryPointsArray= new JSONArray();
+			JSONArray sprintStoryPointsArray= new JSONArray();			
+			JSONArray midStoryPointsArray= new JSONArray();
 
 			boolean isfirstRec=true;
 			JSONObject summaryVel = new JSONObject();
 			for (SprintVelocity velocity : pviSprintVel) {
 				JSONObject velocityObj = new JSONObject();
 				JSONObject sprintPointsObj = new JSONObject();
+				JSONObject midSprintPointsObj = new JSONObject();
 				// push the first issues projectname and versionname to the summary
 				// object
 				if (isfirstRec){
@@ -252,14 +254,16 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				if(velocity.getOutOfSprintSum().equals("") || velocity.getOutOfSprintSum()==null || velocity.getOutOfSprintSum().equals("null"))
 					velocity.setOutOfSprintSum("0.0");
 				velocityObj.put("Completed", Double.parseDouble(velocity.getCompletedSum())+Double.parseDouble(velocity.getOutOfSprintSum()));
+				velocities.add(velocityObj);	
+				
 				sprintPointsObj.put("SprintName", velocity.getSprintName());
 				sprintPointsObj.put("StoryCount", velocity.getStoryCount());
 				sprintPointsObj.put("StoryPoints", velocity.getCompleted());
 				sprintStoryPointsArray.add(sprintPointsObj);
-
-				velocities.add(velocityObj);	
-
 				
+				midSprintPointsObj.put("SprintName", velocity.getSprintName());
+				midSprintPointsObj.put("MidSprintPoints", velocity.getMidPointSum());
+				midStoryPointsArray.add(midSprintPointsObj);				
 			}
 			
 			List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"));
@@ -308,7 +312,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			
 			
 
-			responseObj.put("version", summary);
+		//	responseObj.put("version", summary);
 
 			responseObj.put("teamVelocity", velocities);
 			
@@ -317,6 +321,8 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			responseObj.put("defectInjectionRate",defectInjection);
 			
 			responseObj.put("IssueStoryPoints", sprintStoryPointsArray);
+			
+			responseObj.put("MidSprintPoints", midStoryPointsArray);
 			
 
 		Collector collector = collectorRepository.findOne(item.getCollectorId());
