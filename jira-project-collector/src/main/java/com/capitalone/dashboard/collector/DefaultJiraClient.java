@@ -146,7 +146,7 @@ public class DefaultJiraClient implements JiraClient {
 	//project = "Literacy Pro Intl" AND fixVersion = 1.10 AND issuetype in (Story) AND sprint in (3879) AND updated >= 2017-01-25 AND status="QA Complete"
 	
 	SearchResult getMidSprintIssues(String projectId, String sprintId, String versionName, String startDate, String midDate, String doneStatus, int maxCount, int index) {
-		String jql = "project in (" + projectId + ") AND sprint in (" + sprintId+ ") AND fixVersion = "+ versionName +" AND issuetype in (story) AND updated >= "+ startDate +" AND updated <="
+		String jql = "project in (" + projectId + ") AND sprint in (" + sprintId+ ") AND fixVersion = \""+ versionName +"\" AND issuetype in (story) AND updated >= "+ startDate +" AND updated <="
 				+ midDate + " AND status in (\""+ doneStatus+"\")";
 
 		LOG.info("query string ===>" + jql);
