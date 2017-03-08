@@ -84,8 +84,8 @@
             data : {
                  labels: [],
                  series: [
-                     { "name": "Estimated Values", "data":[]},
-                     { "name": "Actual Values", "data":[]}
+                     { "name": "Points Burnt Halfway Through Sprint", "data":[]}
+                     
                  ]
             },
             options : {
@@ -320,13 +320,11 @@
                 ctrl.SPEChart.data ={
                     labels: [],
                     series: [
-                        { "name": "Estimated Values", data:[]},
-                        { "name": "Actual Values", data:[]}]
+                    	{ "name": "Points Burnt Halfway Through Sprint", "data":[]}]
                 };
                 angular.forEach(data.result.teamVelocity,function (val) {
                     ctrl.SPEChart.data.labels.push(val.SprintName);
-                    ctrl.SPEChart.data.series[0].data.push(val.Committed);
-                    ctrl.SPEChart.data.series[1].data.push(val.Completed);
+                    ctrl.SPEChart.data.series[0].data.push(val.MidSprintPoints);                   
                 });
               
 

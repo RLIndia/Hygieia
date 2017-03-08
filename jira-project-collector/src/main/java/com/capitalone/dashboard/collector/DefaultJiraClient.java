@@ -179,8 +179,10 @@ public class DefaultJiraClient implements JiraClient {
 			int fetchedCount = 0;
 
 			while (hasNextPage) {
+				
 				SearchResult searchResult = getIssuesByVersion((String) jirarepo.getOptions().get("projectId"),
 						jirarepo.getVERSIONID(), maxCount, index);
+				
 
 				Iterable<Issue> searchResultIssues = searchResult.getIssues();
 				if (searchResultIssues != null) {
@@ -412,9 +414,9 @@ public class DefaultJiraClient implements JiraClient {
 		List<ProjectVersionIssues> projectversionissues = new ArrayList<>();
 		List<ProjectVersionIssues> issuesV = getProjectVersionIssuesByVersion(jirarepo);
 		List<ProjectVersionIssues> issuesS = getProjectVersionIssuesBySprint(jirarepo);
-		if (issuesV != null)
+		if (issuesV != null)			
 			projectversionissues.addAll(issuesV);
-		if (issuesS != null)
+		if (issuesS != null)			
 			projectversionissues.addAll(issuesS);
 
 		return projectversionissues;
