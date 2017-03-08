@@ -84,21 +84,18 @@
             data : {
                  labels: [],
                  series: [
-                     { "name": "Points Burnt Halfway Through Sprint", "data":[]}
+                     { "name": "Sprint Points Mid Sprint", "data":[]}
                      
                  ]
             },
             options : {
-                showArea: true,
-                showLine: true,
-                showPoint: true,
-                fullWidth: true,
-                axisX: {
-                    showGrid: false
-                },
-                chartPadding: {
+            	chartPadding: {
                     right: 0,
                     bottom: 30,
+                    left: 0
+                },
+                axisY: {
+                    onlyInteger: true
                 },
                 plugins: [
                     Chartist.plugins.tooltip(),
