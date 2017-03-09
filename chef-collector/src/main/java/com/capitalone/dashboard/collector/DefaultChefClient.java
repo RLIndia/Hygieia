@@ -67,32 +67,36 @@ public class DefaultChefClient implements ChefClient {
 			while(i.hasNext()) {
 				String nodeName = i.next();
 				LOG.info("Fetching node ==> "+nodeName);
-				String nodeData = cac.get("/nodes/"+nodeName).execute().getResponseBodyAsString();
-				JSONObject nodeObj = (JSONObject) new JSONParser().parse(nodeData);
-				JSONArray runlist = (JSONArray)nodeObj.get("run_list");
-				if(runlist != null) {
-					for(int count=0;count<cookbookItems.size();count++) {
-						for(Object o : runlist) {
-							String r = (String)o;
-							if(r.contains("recipe["+cookbookItems.get(count).getCookbookName())){
-								ChefNode chefNode = new ChefNode();
-								chefNode.setEnvName((String)nodeObj.get("chef_environment"));
-								chefNode.setNodeName(nodeName);
-								chefNode.setRunlist(runlist.toJSONString());
-								chefNode.setCollectorItemId(cookbookItems.get(count).getId());
-								chefNode.setCookbookName(cookbookItems.get(count).getCookbookName());
-								JSONObject automatic = (JSONObject)nodeObj.get("automatic");
-								if(automatic != null) {
-									String ipAddress = (String)automatic.get("ipaddress");
-									chefNode.setIpAddress(ipAddress);
+				try {
+					String nodeData = cac.get("/nodes/"+nodeName).execute().getResponseBodyAsString();
+					JSONObject nodeObj = (JSONObject) new JSONParser().parse(nodeData);
+					JSONArray runlist = (JSONArray)nodeObj.get("run_list");
+					if(runlist != null) {
+						for(int count=0;count<cookbookItems.size();count++) {
+							for(Object o : runlist) {
+								String r = (String)o;
+								if(r.contains("recipe["+cookbookItems.get(count).getCookbookName())){
+									ChefNode chefNode = new ChefNode();
+									chefNode.setEnvName((String)nodeObj.get("chef_environment"));
+									chefNode.setNodeName(nodeName);
+									chefNode.setRunlist(runlist.toJSONString());
+									chefNode.setCollectorItemId(cookbookItems.get(count).getId());
+									chefNode.setCookbookName(cookbookItems.get(count).getCookbookName());
+									JSONObject automatic = (JSONObject)nodeObj.get("automatic");
+									if(automatic != null) {
+										String ipAddress = (String)automatic.get("ipaddress");
+										chefNode.setIpAddress(ipAddress);
+									}
+
+									nodes.add(chefNode);
+									break;
 								}
+							}	
+						}
 
-								nodes.add(chefNode);
-								break;
-							}
-						}	
 					}
-
+				} catch (Exception e) {
+					LOG.error("Exception occured while processing node ==>"+nodeName);
 				}
 			}
 		}catch(Exception e) {
