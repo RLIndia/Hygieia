@@ -18,6 +18,8 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClientException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,6 +42,8 @@ public class HudsonCollectorTask extends CollectorTask<HudsonCollector> {
     private final HudsonClient hudsonClient;
     private final HudsonSettings hudsonSettings;
     private final ComponentRepository dbComponentRepository;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CollectorTask.class);
 
     @Autowired
     public HudsonCollectorTask(TaskScheduler taskScheduler,

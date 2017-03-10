@@ -1,6 +1,11 @@
 #!/bin/bash
 
-mvn clean install -DskipTests -Dpmd.skip
+if [ "$5" == "nobuild" ]
+then
+    echo "No Build request found ... proceeding to restart of collectors"
+else
+    mvn clean install -DskipTests -Dpmd.skip=true
+fi
 cd api
 echo $1
 echo $2
@@ -62,7 +67,7 @@ wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-#nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Bitbucket collector"
 cd ../../bitbucket-scm-collector/
@@ -90,7 +95,7 @@ wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar jira-project-collector-2.0.2-SNAPSHOT.jar &
+#nohup java -jar jira-project-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Functional Test collector"
 cd ../../sbux-functional-test-collector/

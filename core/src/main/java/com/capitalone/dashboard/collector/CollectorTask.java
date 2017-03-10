@@ -73,6 +73,11 @@ public abstract class CollectorTask<T extends Collector> implements Runnable {
     public void onStartup() {
         taskScheduler.schedule(this, new CronTrigger(getCron()));
         setOnline(true);
+        LOGGER.info("Triggering first run of collector {}",collectorName);
+        T collector = getCollectorRepository().findByName(collectorName);
+        if (collector != null) {
+            collect(collector);
+        }
     }
 
     @PreDestroy

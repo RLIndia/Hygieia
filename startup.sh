@@ -1,6 +1,11 @@
 #!/bin/bash
 
-mvn clean install -DskipTests -Dpmd.skip
+if [ "$5" == "nobuild" ]
+then
+    echo "No Build request found ... proceeding to restart of collectors"
+else
+    mvn clean install -DskipTests -Dpmd.skip=true
+fi
 cd api
 echo $1
 echo $2
