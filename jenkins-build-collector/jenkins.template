@@ -20,4 +20,4 @@ jenkins.cron=0 0/5 * * * *
 
 
 #Determines if build console log is collected - defaults to false
-jenkins.saveLog=true
+jenkins.saveLog=false
