@@ -871,7 +871,8 @@ public class DefaultJiraClient implements JiraClient {
 		dInject.setSprintId(velocity.getSprintId());
 		dInject.setSprintName(velocity.getSprintName());
 		dInject.setDefectCount(searchResultDI.getTotal());
-		dInject.setProjectId(velocity.getProjectId());		
+		dInject.setProjectId(velocity.getProjectId());
+		dInject.setVersionId(velocity.getVersionId());
 		/*SearchResult searchResultSP = getStoryPoints(velocity.getProjectId(),velocity.getSprintId(), 500,0);*/
 		dInject.setAchievedPoints(Double.parseDouble(velocity.getCompleted()));
 		diList.add(dInject);
