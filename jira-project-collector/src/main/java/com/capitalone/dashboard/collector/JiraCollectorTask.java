@@ -232,17 +232,21 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             Collections.reverse(sprintVelocities);
             List<SprintVelocity> prevVelocities = sprintVelocityRepository
     				.findVelocityReport(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
-            if(sprintVelocities.size() != prevVelocities.size())
+           
+            if(prevVelocities.size()!=0 && sprintVelocities.size() != prevVelocities.size())
             {
-            	sprintVelocityRepository.deleteAll();
-            	//sprintVelocityRepository.delete(entity);
+            	for(SprintVelocity entity : prevVelocities)
+            	{            	
+            	sprintVelocityRepository.delete(entity);
+            	}
             }
+        
            
 
             if(sprintVelocities != null)
             {
             for(SprintVelocity sv : sprintVelocities){
-                SprintVelocity savedSprintVelocity = sprintVelocityRepository.findSprintVelocityByCollectorIdSprintId(collector.getId(),sv.getSprintId());
+                SprintVelocity savedSprintVelocity = sprintVelocityRepository.findSprintVelocityByCollectorIdSprintId(collector.getId(),sv.getSprintId(),sv.getVersionId(), sv.getProjectId());
                 if(savedSprintVelocity != null){
                     savedSprintVelocity.setCommitted(sv.getCommitted());
                     savedSprintVelocity.setCompleted(sv.getCompleted());
@@ -263,24 +267,24 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                 }
             }
 
-            }
-
-            enabledVersions++;
-            jiraprojectrepository.save(repo);
+            }           
             
             List<DefectInjection> defectInjects = jiraclient.getDefectInjections(sprintVelocities);
-            List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(collector.getId(),repo.getPROJECTID());
+            List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(collector.getId(),repo.getPROJECTID(),repo.getVERSIONID());
             
-            if(diList.size() != defectInjects.size())
+            if(diList.size()!=0 && diList.size() != defectInjects.size())
             {
-            	defectInjectsRepository.deleteAll();
+            	for(DefectInjection entity : diList)
+            	{            	
+            		defectInjectsRepository.delete(entity);
+            	}
             }
             
             if(defectInjects != null)
             {
             for(DefectInjection di : defectInjects){
             	
-            	DefectInjection savedDefectInjection = defectInjectsRepository.findDefectInjectionByCollectorIdSprintId(collector.getId(),di.getSprintId());
+            	DefectInjection savedDefectInjection = defectInjectsRepository.findDefectInjectionByCollectorIdSprintId(collector.getId(),di.getSprintId(),di.getVersionId(), di.getProjectId());
                  if(savedDefectInjection != null){
                 	 savedDefectInjection.setDefectCount(di.getDefectCount());
                 	 savedDefectInjection.setAchievedPoints(di.getAchievedPoints());
@@ -297,6 +301,9 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                  }
             }
             }
+            
+            enabledVersions++;
+            jiraprojectrepository.save(repo);
             
             
         }

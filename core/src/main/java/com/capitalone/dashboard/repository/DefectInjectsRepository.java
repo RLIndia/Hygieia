@@ -12,9 +12,9 @@ import com.capitalone.dashboard.model.SprintVelocity;
 
 
 public interface DefectInjectsRepository extends CrudRepository<DefectInjection, ObjectId>, QueryDslPredicateExecutor<DefectInjection> {
-    @Query(value="{ 'collectorItemId' : ?0, projectId : ?1}")
-    List<DefectInjection> findDefectInjection(ObjectId collectorItemId, String PROJECTID);
+    @Query(value="{ 'collectorItemId' : ?0, projectId : ?1, versionId: ?2}")
+    List<DefectInjection> findDefectInjection(ObjectId collectorItemId, String PROJECTID, String versionId);
     
-    @Query(value="{ 'collectorItemId' : ?0, sprintId: ?1}")
-    DefectInjection findDefectInjectionByCollectorIdSprintId(ObjectId collectorId,String sprintId);
+    @Query(value="{ 'collectorItemId' : ?0, sprintId: ?1, versionId: ?2, projectId: ?3}")
+    DefectInjection findDefectInjectionByCollectorIdSprintId(ObjectId collectorId,String sprintId, String versionId, String projectId);
 }

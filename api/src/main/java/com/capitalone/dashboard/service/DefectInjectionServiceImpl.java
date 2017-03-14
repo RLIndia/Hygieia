@@ -28,7 +28,7 @@ public class DefectInjectionServiceImpl implements DefectInjectionService {
 	private final CollectorRepository collectorRepository;
 	private final DefectInjectsRepository defectInjectsRepository;
 	private final CollectorItemRepository collectorItemRepository;
-	private static final Logger LOGGER = LoggerFactory.getLogger(SprintVelocityServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefectInjectionServiceImpl.class);
 	
 	@Autowired
 	public DefectInjectionServiceImpl(ComponentRepository componentRepository, CollectorRepository collectorRepository,
@@ -54,7 +54,8 @@ public class DefectInjectionServiceImpl implements DefectInjectionService {
 		item = collectorItemRepository.findOne(item.getId());
 		
 		JSONObject responseObj = new JSONObject();
-		List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"));
+		List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"),
+				(String) item.getOptions().get("versionId"));
 		
 		JSONArray defectInjection = new JSONArray();
 		for(DefectInjection di : diList)

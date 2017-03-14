@@ -13,6 +13,6 @@ public interface SprintVelocityRepository extends CrudRepository<SprintVelocity,
     List<SprintVelocity> findVelocityReport(ObjectId collectorItemId, String VERSIONID, String PROJECTID);
 
 
-    @Query(value="{ 'collectorItemId' : ?0, sprintId: ?1}")
-    SprintVelocity findSprintVelocityByCollectorIdSprintId(ObjectId collectorId,String sprintId);
+    @Query(value="{ 'collectorItemId' : ?0, sprintId: ?1,  versionId : ?2, projectId : ?3}")
+    SprintVelocity findSprintVelocityByCollectorIdSprintId(ObjectId collectorId,String sprintId, String versionId, String projectId);
 }
