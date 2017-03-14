@@ -13,6 +13,7 @@ public class DefectInjection extends BaseModel{
 	private String sprintId;
 	@Indexed
 	private String projectId;
+	private String versionId;
 	
 	private ObjectId collectorItemId; 
 	
@@ -56,6 +57,12 @@ public class DefectInjection extends BaseModel{
 	}
 	public void setAchievedPoints(double achievedPoints) {
 		this.achievedPoints = achievedPoints;
+	}
+	public String getVersionId() {
+		return versionId;
+	}
+	public void setVersionId(String versionId) {
+		this.versionId = versionId;
 	}
 	
 	

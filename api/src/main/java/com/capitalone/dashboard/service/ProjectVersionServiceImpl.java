@@ -266,7 +266,8 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				midStoryPointsArray.add(midSprintPointsObj);				
 			}
 			
-			List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"));
+			List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"),
+					(String) item.getOptions().get("versionId"));
 			
 			JSONArray defectInjection = new JSONArray();
 			for(DefectInjection di : diList)
