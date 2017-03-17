@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$5" == "nobuild" ]
+if [ "$6" == "nobuild" ]
 then
     echo "No Build request found ... proceeding to restart of collectors"
 else
@@ -10,6 +10,8 @@ cd api
 echo $1
 echo $2
 echo $4
+echo $5
+
 #echo "Installing Nginx"
 #apt-get install nginx -y
 echo "Stopping all java services"
@@ -45,7 +47,7 @@ rm response.json
 #echo "Configuring Octopus collector"
 #cd ../../octopus-deployment-collector/
 #cp -f octopus.template target/application.properties
-#wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
+#wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
 #cat target/temp.properties >> target/application.properties
 #echo "dbhost="$2 >> target/application.properties
 #cd target
@@ -54,7 +56,7 @@ rm response.json
 #echo "Configuring Octopus Environment collector"
 #cd ../../octopus-deployment-all-collector/
 #cp -f octopus.template target/application.properties
-#wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
+#wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/28 -O target/temp.properties
 #cat target/temp.properties >> target/application.properties
 #echo "dbhost="$2 >> target/application.properties
 #cd target
@@ -63,7 +65,7 @@ rm response.json
 echo "Configuring Jenkins collector"
 cd ../../jenkins-build-collector/
 cp -f jenkins.template target/application.properties
-wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/20 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5" --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/20 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -72,7 +74,7 @@ nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 echo "Configuring Bitbucket collector"
 cd ../../bitbucket-scm-collector/
 cp -f bitbucket.template target/application.properties
-wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5" --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -81,7 +83,7 @@ cd target
 echo "Configuring Github collector"
 cd ../../github-scm-collector/
 cp -f github.template target/application.properties
-#wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
+#wget --header="Accept-Charset: UTF-8"--header="dashboard-host:$5"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/27 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -91,7 +93,7 @@ cd target
 echo "Configuring Jira Project collector"
 cd ../../jira-project-collector/
 cp -f jira.template target/application.properties
-wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5" --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/23 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -100,7 +102,7 @@ cd target
 echo "Configuring Functional Test collector"
 cd ../../sbux-functional-test-collector/
 cp -f application.template target/application.properties
-wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/29 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5" --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/29 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
@@ -109,7 +111,7 @@ cd target
 echo "Configuring Chef collector"
 cd ../../chef-collector/
 cp -f chef.template target/application.properties
-wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/10 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5" --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/10 -O target/temp.properties
 chefId=$(sed -n 's/.*chef.id *= *\([^ ]*.*\)/\1/p' < target/temp.properties)
 echo $chefId
 wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/chef/pemFile/$chefId -O target/chef.pem
@@ -123,7 +125,7 @@ cd target
 echo "Configuring Sonar collector"
 cd ../../sonar-codequality-collector/
 cp -f sonar.template target/application.properties
-wget --header="Accept-Charset: UTF-8"  --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/31 -O target/temp.properties
+wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5" --header="x-catalyst-auth:\"$token\"" $1/d4dMastersCICD/readmasterjsonnew/31 -O target/temp.properties
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
