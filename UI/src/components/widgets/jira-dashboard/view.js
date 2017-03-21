@@ -72,7 +72,7 @@
             }
 		};
 
-        ctrl.PieChart={
+       ctrl.PieChart={
             data : {
             },
             options : {
@@ -80,6 +80,52 @@
             }
         };
 
+		ctrl.ACovChart={
+	            data : {
+	                 labels: [],
+	                 series: [
+	                     { "name": "Acceptance Coverage", "data":[]}
+	                     
+	                 ]
+	            },
+	            options : {
+	            	chartPadding: {
+	                    right: 0,
+	                    bottom: 30,
+	                    left: 0
+	                },
+	                axisY: {
+	                    onlyInteger: true
+	                },
+	                plugins: [
+	                    Chartist.plugins.tooltip(),
+	                    Chartist.plugins.legend(),
+	                    Chartist.plugins.ctAxisTitle({
+	                        axisX: {
+	                            axisTitle: 'Sprint',
+	                            axisClass: 'ct-axis-title',
+	                            offset: {
+	                                x: 0,
+	                                y: 50
+	                            },
+	                            textAnchor: 'middle'
+	                        },
+	                        axisY: {
+	                            axisTitle: 'Coverage',
+	                            axisClass: 'ct-axis-title',
+	                            offset: {
+	                                x: 0,
+	                                y: 0
+	                            },
+	                            textAnchor: 'middle',
+	                            flipTitle: false
+	                        }
+	                    })
+	                ]
+	            }
+	        };
+		
+		
         ctrl.SPEChart={
             data : {
                  labels: [],
@@ -91,11 +137,7 @@
             options : {
             	chartPadding: {
                     right: 0,
-                    bottom: 30,
-                    left: 0
-                },
-                axisY: {
-                    onlyInteger: true
+                    bottom: 30
                 },
                 plugins: [
                     Chartist.plugins.tooltip(),
@@ -283,6 +325,7 @@
                     series: [ctrl.acceptanceCover,notCovered ],
                     labels: [' ',' ']
                 }
+                
                 //defectSlippageRate
 
                 ctrl.defectSlippageRate=data.result.defectSlippageRate;
@@ -312,17 +355,32 @@
                     ctrl.barChart.barData.series[0].data.push(val.Committed);
                     ctrl.barChart.barData.series[1].data.push(val.Completed);
                 });
+                
+                
+            /*    ctrl.ACovChart.data ={
+                        labels: [],
+                        series: [
+                            { "name": "Stories with Acceptance Coverage", data:[]}
+                            ]
+                        };
+                angular.forEach(data.result.AcceptanceCoverage,function (val) {
+                    ctrl.barChart.barData.labels.push(val.SprintName);
+                    ctrl.barChart.barData.series[0].data.push(val.Coverage);
+                   
+                });*/
+                
 
                 //Release Status
                 ctrl.SPEChart.data ={
                     labels: [],
-                    series: [
-                    	{ "name": "Points Burnt Halfway Through Sprint", "data":[]}]
+                    series: []
                 };
-                angular.forEach(data.result.teamVelocity,function (val) {
+                var a=[];
+                angular.forEach(data.result.MidSprintPoints,function (val) {
                     ctrl.SPEChart.data.labels.push(val.SprintName);
-                    ctrl.SPEChart.data.series[0].data.push(val.MidSprintPoints);                   
+                    a.push(val.MidSprintPoints);                   
                 });
+                ctrl.SPEChart.data.series.push(a);
               
 
                 //IssueStoryPoints

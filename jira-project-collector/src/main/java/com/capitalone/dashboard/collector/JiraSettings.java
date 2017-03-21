@@ -23,6 +23,11 @@ public class JiraSettings {
     private String[] doneStatuses;
     private String[] todoStatuses;
     private String[] doingStatuses;
+    private String previousMajorVersion;
+    private String[] previousMinorVersions;
+    private String[] preQA;
+    private String[] postQA;
+    
     
     
     public String getCron() {
@@ -128,6 +133,7 @@ public class JiraSettings {
 	public void setDoingStatuses(String[] doingStatuses) {
 		this.doingStatuses = doingStatuses;
 	}
+	
 
 	public String getStoryPointDataFieldName() {
 		return storyPointDataFieldName;
@@ -156,4 +162,36 @@ public class JiraSettings {
     public void setStoryPointFieldName(String storypoint) {
         this.storyPointFieldName = storypoint;
     }
+
+	public String getPreviousMajorVersion() {
+		return previousMajorVersion;
+	}
+
+	public void setPreviousMajorVersion(String previousMajorVersion) {
+		this.previousMajorVersion = previousMajorVersion;
+	}
+
+	public String[] getPreviousMinorVersions() {
+		return previousMinorVersions;
+	}
+
+	public void setPreviousMinorVersions(String[] previousMinorVersions) {
+		this.previousMinorVersions = previousMinorVersions;
+	}
+
+	public String[] getPreQA() {
+		return preQA;
+	}
+
+	public void setPreQA(String[] preQA) {
+		this.preQA = preQA;
+	}
+
+	public String[] getPostQA() {
+		return postQA;
+	}
+
+	public void setPostQA(String[] postQA) {
+		this.postQA = postQA;
+	}
 }

@@ -28,9 +28,18 @@ public class SprintVelocity extends BaseModel {
 	private String startDate;
 	private String endDate;
 	private String midSprintDate;
-	private double midPointSum;    
+	private double midPointSum;
+	private int acceptanceCriteria;    
 
-    public ObjectId getCollectorItemId() {
+    public int getAcceptanceCriteria() {
+		return acceptanceCriteria;
+	}
+
+	public void setAcceptanceCriteria(int acceptanceCriteria) {
+		this.acceptanceCriteria = acceptanceCriteria;
+	}
+
+	public ObjectId getCollectorItemId() {
         return collectorItemId;
     }
 
@@ -172,8 +181,7 @@ public class SprintVelocity extends BaseModel {
 	public double getMidPointSum() {
 		return midPointSum;
 	}
-	
-	
 
+	
 	
 }
