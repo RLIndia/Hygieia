@@ -1,40 +1,24 @@
 package com.capitalone.dashboard.collector;
 
-/**
- * Created by vinod on 8/9/16.
- */
-
-//import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.SearchRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicProject;
-import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.atlassian.jira.rest.client.api.domain.IssueField;
-import com.atlassian.jira.rest.client.api.domain.SearchResult;
-import com.atlassian.util.concurrent.Promise;
-import com.capitalone.dashboard.model.ProjectVersionIssues;
-import com.capitalone.dashboard.model.Sprint;
-import com.capitalone.dashboard.model.SprintVelocity;
-import com.capitalone.dashboard.model.DefectInjection;
-import com.capitalone.dashboard.model.JiraRepo;
-//import com.capitalone.dashboard.util.Encryption;
-//import com.capitalone.dashboard.util.EncryptionException;
-import com.capitalone.dashboard.util.Supplier;
-import com.capitalone.dashboard.util.ClientUtil;
-//import org.apache.commons.codec.binary.Base64;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ExecutionError;
+import java.lang.reflect.Constructor;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-//import org.apache.http.client.utils.URIBuilder;
-//import org.json.simple.JSONArray;
-//import org.json.simple.JSONObject;
-//import org.json.simple.parser.JSONParser;
-//import org.json.simple.parser.ParseException;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.HttpClient;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -49,21 +33,46 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
-import com.capitalone.dashboard.collector.JiraRestClientSupplier;
+import org.springframework.web.client.RestTemplate;
 
+import com.atlassian.event.api.EventPublisher;
+import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClientFactory;
+import com.atlassian.httpclient.api.factory.HttpClientOptions;
+
+/**
+ * Created by vinod on 8/9/16.
+ */
+
+//import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-//import java.nio.charset.StandardCharsets;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.IssueField;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClient;
+import com.atlassian.jira.rest.client.internal.async.AtlassianHttpClientDecorator;
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
+import com.atlassian.sal.api.ApplicationProperties;
+/*import com.atlassian.sal.api.executor.ThreadLocalContextManager;*/
+import com.atlassian.util.concurrent.Promise;
+import com.capitalone.dashboard.model.DefectInjection;
+import com.capitalone.dashboard.model.JiraRepo;
+import com.capitalone.dashboard.model.ProjectVersionIssues;
+import com.capitalone.dashboard.model.Sprint;
+import com.capitalone.dashboard.model.SprintVelocity;
+import com.capitalone.dashboard.util.ClientUtil;
+//import com.capitalone.dashboard.util.Encryption;
+//import com.capitalone.dashboard.util.EncryptionException;
+import com.capitalone.dashboard.util.Supplier;
+//import org.apache.commons.codec.binary.Base64;
+import com.google.common.collect.Lists;
 
 //Implementation to connect to Jira server
 @Component
@@ -76,7 +85,8 @@ public class DefaultJiraClient implements JiraClient {
 
 	private JiraRestClient client;
 	private JSONObject projectVersions = null;
-
+	URI jiraServerURI = null;
+	
 	private static final ClientUtil TOOLS = ClientUtil.getInstance();
 	private JiraRestClientSupplier jiraRestClientSupplier;
 
@@ -93,7 +103,90 @@ public class DefaultJiraClient implements JiraClient {
 		this.restOperations = restOperationsSupplier.get();
 		this.jiraRestClientSupplier = restSupplier;
 	}
+	
+	/*JiraRestClient getJiraRestClient() throws Exception
+	{
+		try
+		{
+			jiraServerURI = new URI(settings.getJiraBaseUrl());
+		}
+		catch(URISyntaxException e)
+		{
+			System.out.println(e);
+		}
+	    return new AsynchronousJiraRestClient(jiraServerURI, getHttpClient());
+	}
+	
+	HttpClientOptions getClientOptions()
+	{
+		HttpClientOptions options = new HttpClientOptions();
+	    options.setSocketTimeout(60, TimeUnit.SECONDS);
+	    return options;
+	}
+	
+	public static Object giveMeAHCFEventPubInstance() throws Exception{
+		AsynchronousHttpClientFactory ahcf = new AsynchronousHttpClientFactory();
+        Class<?> EventPublisher = Class.forName("com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory$NoOpEventPublisher");
+        Constructor<?> constructor = EventPublisher.getDeclaredConstructor(AsynchronousHttpClientFactory.class);
+        constructor.setAccessible(true);
+        return constructor.newInstance(ahcf);
+    }
+	
+	public Object giveMeAHCFAppPropsInnerInstance() throws Exception{
+		AsynchronousHttpClientFactory ahcf = new AsynchronousHttpClientFactory();
+        Class<?> ApplicationProperties = Class.forName("com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory$RestClientApplicationProperties");
+        Constructor<?> constructor = ApplicationProperties.getDeclaredConstructor(AsynchronousHttpClientFactory.class,URI.class);
+        constructor.setAccessible(true);
+        try
+		{
+			jiraServerURI = new URI(settings.getJiraBaseUrl());
+		}
+		catch(URISyntaxException e)
+		{
+			System.out.println(e);
+		}
+        return constructor.newInstance(ahcf,jiraServerURI);
+    }
+	
+	
+	DisposableHttpClient getHttpClient() throws Exception
+	{
+		AsynchronousHttpClientFactory ahcf = new AsynchronousHttpClientFactory();
+	    final DefaultHttpClientFactory defaultHttpClientFactory =
+	        new DefaultHttpClientFactory((EventPublisher)giveMeAHCFEventPubInstance(),
+	        		(ApplicationProperties)giveMeAHCFAppPropsInnerInstance(),
+	        new ThreadLocalContextManager() {
+	            @Override
+	            public Object getThreadLocalContext() {
+	                return null;
+	            }
 
+	            @Override
+	            public void setThreadLocalContext(Object context) {}
+
+	            @Override
+	            public void clearThreadLocalContext() {}
+	        });
+
+	    final com.atlassian.httpclient.api.HttpClient httpClient = defaultHttpClientFactory.create(getClientOptions());
+
+	    return new AtlassianHttpClientDecorator(httpClient, getAuthenticationHandler()) {
+	        @Override
+	        public void destroy() throws Exception {
+	            defaultHttpClientFactory.dispose(httpClient);
+	        }
+	    };
+	}
+	
+	BasicHttpAuthenticationHandler getAuthenticationHandler()
+	{
+		return new BasicHttpAuthenticationHandler(
+	    		"NSangani-consultant@Scholastic.com",
+	    		"Naveen123");
+	}*/
+
+
+	
 	SearchResult getIssuesByVersion(String projectId, String versionId, int maxCount, int index) {
 		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ")";
 
@@ -118,7 +211,7 @@ public class DefaultJiraClient implements JiraClient {
 	}
 	
 	SearchResult getEnvironmentDefects(String projectId, String versionId, String environment,int maxCount, int index){
-		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND cf[14518]="+environment;
+		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND issuetype in (Defect) AND cf[14518] in ("+environment+")";
 		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
 		return src.claim();
 		
@@ -156,6 +249,117 @@ public class DefaultJiraClient implements JiraClient {
 		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
 		return src.claim();
 	}
+	
+	SearchResult getSprintVelocityCommitmentUpdated(String projectId, String sprintId, ArrayList<String> issueType, ArrayList<String> doneStatus
+			, String startDate, int maxCount, int index) throws Exception
+	{
+		String issueTypes = "";
+		if(issueType.size()==1)
+		{
+			issueTypes = issueType.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder = new StringBuilder();
+			for ( int i = 0; i< issueType.size(); i++)
+			{
+				commaSepValueBuilder.append(issueType.get(i));
+				if ( i != issueType.size()-1)
+				{
+			        commaSepValueBuilder.append(", ");
+			    }
+			}
+			issueTypes = commaSepValueBuilder.toString();
+		}
+		
+		String doneStatusTypes = "";
+		if(doneStatus.size()==1)
+		{
+			doneStatusTypes = doneStatus.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder2 = new StringBuilder();
+			for ( int i = 0; i< doneStatus.size(); i++)
+			{
+				commaSepValueBuilder2.append(doneStatus.get(i));
+				if ( i != doneStatus.size()-1)
+				{
+			        commaSepValueBuilder2.append(", ");
+			    }
+			}
+			doneStatusTypes = commaSepValueBuilder2.toString();
+		}
+		
+		
+		String jql = "project in (" + projectId + ") AND sprint in (" + sprintId+ ") AND issuetype in ("+issueTypes+") "
+				+ "AND status was not in ("+doneStatusTypes+") ON ("+startDate+")";
+		
+		LOG.info("query string ===>" + jql);
+		LOG.info("maxCount ===>" + maxCount);
+		LOG.info("index ===>" + index);	
+		
+
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+		
+	}
+	
+	SearchResult getSprintVelocityAchievementUpdated(String projectId, String sprintId, ArrayList<String> issueType, ArrayList<String> doneStatus
+			, String startDate, String endDate, int maxCount, int index)
+	{
+		String issueTypes = "";
+		if(issueType.size()==1)
+		{
+			issueTypes = issueType.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder = new StringBuilder();
+			for ( int i = 0; i< issueType.size(); i++)
+			{
+				commaSepValueBuilder.append(issueType.get(i));
+				if ( i != issueType.size()-1)
+				{
+			        commaSepValueBuilder.append(", ");
+			    }
+			}
+			issueTypes = commaSepValueBuilder.toString();
+		}
+		
+		String doneStatusTypes = "";
+		if(doneStatus.size()==1)
+		{
+			doneStatusTypes = doneStatus.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder2 = new StringBuilder();
+			for ( int i = 0; i< doneStatus.size(); i++)
+			{
+				commaSepValueBuilder2.append(doneStatus.get(i));
+				if ( i != doneStatus.size()-1)
+				{
+			        commaSepValueBuilder2.append(", ");
+			    }
+			}
+			doneStatusTypes = commaSepValueBuilder2.toString();
+		}
+		
+		
+		String jql = "project in (" + projectId + ") AND sprint in (" + sprintId+ ") AND issuetype in ("+issueTypes+") "
+				+ "AND status was not in ("+doneStatusTypes+") BEFORE ("+startDate+") AND status was in ("+doneStatusTypes+") DURING "
+						+ "("+ startDate+","+endDate+")";
+		
+		LOG.info("query string ===>" + jql);
+		LOG.info("maxCount ===>" + maxCount);
+		LOG.info("index ===>" + index);
+
+		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
+		return src.claim();
+		
+	}
+	
 	
 	SearchResult getSprintStories(String projectId, String sprintId, int maxCount, int index) {
 		String jql = "project in (" + projectId + ") AND sprint=" + sprintId+" AND issuetype in (story)";
@@ -229,7 +433,7 @@ public class DefaultJiraClient implements JiraClient {
 						pvi.setProjectName((String) jirarepo.getOptions().get("projectName"));
 						pvi.setVersionName((String) jirarepo.getOptions().get("versionName"));
 						pvi.setVersionId((String) jirarepo.getOptions().get("versionId"));
-						//pvi.setIssueType((String)issue.getIssueType().getName());
+						//pvi.setIssueType((String)issue.getIssueType().getName());	    
 										
 						pvi.setAcceptanceCriteria((String)issue.getField(settings.getAcceptanceCriteriaFieldName()).getValue());						
 						
@@ -581,12 +785,23 @@ public class DefaultJiraClient implements JiraClient {
 		}
 		return jsonParentObject;
 	}
+	
+	private ClientHttpRequestFactory getClientHttpRequestFactory() {
+	    int timeout = 60000;
+	    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
+	      new HttpComponentsClientHttpRequestFactory();
+	    clientHttpRequestFactory.setConnectTimeout(timeout);
+	    return clientHttpRequestFactory;
+	}
 
 	private ResponseEntity<String> makeRestCall(String url, String userId, String password) {
 		// Basic Auth only.
 		if (!"".equals(userId) && !"".equals(password)) {
+			/*RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory());
+			restOperations.*/
 			// LOG.info("Call with userid and password");
-			return restOperations.exchange(url, HttpMethod.GET, new HttpEntity<>(createHeaders(userId, password)),
+			RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory());
+			return restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(createHeaders(userId, password)),
 					String.class);
 
 		} else {
@@ -704,6 +919,163 @@ public class DefaultJiraClient implements JiraClient {
 		return url;
 	}
 	
+	
+	String buildURICommitmentUpdated(String projectId, String sprintId, ArrayList<String> issueType, ArrayList<String> doneStatus
+			, String startDate)
+	{
+		String issueTypes = "";
+		if(issueType.size()==1)
+		{
+			issueTypes = issueType.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder = new StringBuilder();
+			for ( int i = 0; i< issueType.size(); i++)
+			{
+				commaSepValueBuilder.append(issueType.get(i));
+				if ( i != issueType.size()-1)
+				{
+			        commaSepValueBuilder.append(", ");
+			    }
+			}
+			issueTypes = commaSepValueBuilder.toString();
+		}
+		
+		String doneStatusTypes = "";
+		if(doneStatus.size()==1)
+		{
+			doneStatusTypes = doneStatus.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder2 = new StringBuilder();
+			for ( int i = 0; i< doneStatus.size(); i++)
+			{
+				commaSepValueBuilder2.append(doneStatus.get(i));
+				if ( i != doneStatus.size()-1)
+				{
+			        commaSepValueBuilder2.append(", ");
+			    }
+			}
+			doneStatusTypes = commaSepValueBuilder2.toString();
+		}
+		
+		
+		String jqlString = "project in (" + projectId + ") AND sprint in (" + sprintId+ ") AND issuetype in ("+issueTypes+") "
+				+ "AND status was not in ("+doneStatusTypes+") ON ("+startDate+")";
+		
+		String url = settings.getJiraBaseUrl()+"/"+"rest/api/2/search?jql="+jqlString;
+		
+		return url;
+		
+	}
+	
+	
+	private String buildURIAchievementUpdated(String projectId, String sprintId, ArrayList<String> issueType, ArrayList<String> doneStatus
+			, String startDate, String endDate) {
+		// TODO Auto-generated method stub
+		String issueTypes = "";
+		if(issueType.size()==1)
+		{
+			issueTypes = issueType.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder = new StringBuilder();
+			for ( int i = 0; i< issueType.size(); i++)
+			{
+				commaSepValueBuilder.append(issueType.get(i));
+				if ( i != issueType.size()-1)
+				{
+			        commaSepValueBuilder.append(", ");
+			    }
+			}
+			issueTypes = commaSepValueBuilder.toString();
+		}
+		
+		String doneStatusTypes = "";
+		if(doneStatus.size()==1)
+		{
+			doneStatusTypes = doneStatus.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder2 = new StringBuilder();
+			for ( int i = 0; i< doneStatus.size(); i++)
+			{
+				commaSepValueBuilder2.append(doneStatus.get(i));
+				if ( i != doneStatus.size()-1)
+				{
+			        commaSepValueBuilder2.append(", ");
+			    }
+			}
+			doneStatusTypes = commaSepValueBuilder2.toString();
+		}
+		
+		String jqlString = "project in (" + projectId + ") AND sprint in (" + sprintId+ ") AND issuetype in ("+issueTypes+") "
+				+ "AND status was not in ("+doneStatusTypes+") BEFORE ("+startDate+") AND status was in ("+doneStatusTypes+") DURING "
+						+ "("+ startDate+","+endDate+")";
+		
+		String url = settings.getJiraBaseUrl()+"/"+"rest/api/2/search?jql="+jqlString;
+		
+		return url;
+	}
+	
+	String buildURIMidSprintUpdated(String projectId, String sprintId, ArrayList<String> issueType, ArrayList<String> doneStatus
+			, String startDate, String midDate)
+	{
+		String issueTypes = "";
+		if(issueType.size()==1)
+		{
+			issueTypes = issueType.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder = new StringBuilder();
+			for ( int i = 0; i< issueType.size(); i++)
+			{
+				commaSepValueBuilder.append(issueType.get(i));
+				if ( i != issueType.size()-1)
+				{
+			        commaSepValueBuilder.append(", ");
+			    }
+			}
+			issueTypes = commaSepValueBuilder.toString();
+		}
+		
+		String doneStatusTypes = "";
+		if(doneStatus.size()==1)
+		{
+			doneStatusTypes = doneStatus.get(0);
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder2 = new StringBuilder();
+			for ( int i = 0; i< doneStatus.size(); i++)
+			{
+				commaSepValueBuilder2.append(doneStatus.get(i));
+				if ( i != doneStatus.size()-1)
+				{
+			        commaSepValueBuilder2.append(", ");
+			    }
+			}
+			doneStatusTypes = commaSepValueBuilder2.toString();
+		}
+		
+		
+		String jqlString = "project in (" + projectId + ") AND sprint in (" + sprintId+ ") AND issuetype in ("+issueTypes+") "
+				+ "AND status was not in ("+doneStatusTypes+") BEFORE ("+startDate+") AND status was in ("+doneStatusTypes+") DURING"
+						+ "("+startDate+","+midDate +")";
+		
+		String url = settings.getJiraBaseUrl()+"/"+"rest/api/2/search?jql="+jqlString;
+		System.out.println(url);
+		return url;
+		
+	}
+	
+	
+	
 	String buildUriCustomVelocity(String rapidViewId, String sprintId)
 	{
 		//https://jira.sts.scholastic.com/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId=852&sprintId=3878
@@ -711,6 +1083,8 @@ public class DefaultJiraClient implements JiraClient {
 	    LOG.info(url);
 	    return url;
 	}
+	
+	
 	
 	
 	String buildUriRapidViews() {
@@ -755,8 +1129,8 @@ public class DefaultJiraClient implements JiraClient {
 					String name=(String) obj.get("name");	
 					String state=(String) obj.get("state");	
 					SprintVelocity v=new SprintVelocity();
-					SearchResult result = getSprintStories(jirarepo.getPROJECTID(),sprintId,500,0);					
-					v.setStoryCount(result.getTotal());
+					/*SearchResult result = getSprintStories(jirarepo.getPROJECTID(),sprintId,500,0);					
+					v.setStoryCount(result.getTotal());*/
 					v.setSprintId(sprintId);
 					v.setSprintName(name);
 					v.setSprintStatus(state);
@@ -782,7 +1156,7 @@ public class DefaultJiraClient implements JiraClient {
 			        SprintVelocity v=(SprintVelocity)pair.getValue();
 			        JSONObject velocityObj = (JSONObject) velocityEntriesObj.get(sprintId);
 			        JSONObject estimatedObj=(JSONObject)velocityObj.get("estimated");
-			        String estimated=(String)estimatedObj.get("text");
+			        String estimated=(String)estimatedObj.get("text");		        
 			        
 			        ResponseEntity<String> miscResponse = makeRestCall(buildUriCustomVelocity(jirarepo.getRAPIDVIEWID(),sprintId),
 							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
@@ -791,14 +1165,15 @@ public class DefaultJiraClient implements JiraClient {
 					
 					JSONObject sprintContents = (JSONObject) miscRespObj.get("contents");
 			        
-			        JSONObject completedObj=(JSONObject)velocityObj.get("completed");
+			        /*JSONObject completedObj=(JSONObject)velocityObj.get("completed");
 			        String completed=(String)completedObj.get("text");
 			        
 			        
 			       // SearchResult resQAComplete = getQACompleteByVersionAndSprint(jirarepo.getPROJECTID(), jirarepo.getVERSIONNAME(), sprintId, 500, 0);
 			        
 			        v.setCompleted(completed);
-			        v.setCommitted(estimated);
+			        v.setCommitted(estimated);*/
+			        
 			        JSONObject completedIssuesEstimateSumObj = (JSONObject) sprintContents.get("completedIssuesEstimateSum");
 			        v.setCompletedSum((String)completedIssuesEstimateSumObj.get("text"));
 			        JSONObject issuesNotCompletedEstimateSumObj = (JSONObject) sprintContents.get("issuesNotCompletedEstimateSum");
@@ -824,7 +1199,7 @@ public class DefaultJiraClient implements JiraClient {
 					Date midDate = new Date((inBoundFormatter.parse((String) sprintInfo.get("startDate")).getTime()+inBoundFormatter.parse((String) sprintInfo.get("endDate")).getTime())/2);					
 					v.setMidSprintDate(outBoundFormatter.format(midDate));
 					
-					SearchResult midSprintIssues = getMidSprintIssues(jirarepo.getPROJECTID(),sprintId , jirarepo.getVERSIONNAME(), v.getStartDate(), v.getMidSprintDate(), "QA Complete", 500, 0);
+					/*SearchResult midSprintIssues = getMidSprintIssues(jirarepo.getPROJECTID(),sprintId , jirarepo.getVERSIONNAME(), v.getStartDate(), v.getMidSprintDate(), "QA Complete", 500, 0);
 					double midPointSum = 0;
 					if(midSprintIssues.getTotal()>0)
 					{
@@ -835,7 +1210,113 @@ public class DefaultJiraClient implements JiraClient {
 						}						
 					}
 					
+					v.setMidPointSum(midPointSum);*/
+					
+					
+					ArrayList<String> issueTypes = new ArrayList<String>();
+					issueTypes.add("story");
+					
+					ArrayList<String> statusTypes = new ArrayList<String>();
+					statusTypes.add("\"QA Complete\"");
+					statusTypes.add("Done");
+					statusTypes.add("Closed");
+					
+					JSONArray issueArray = null;
+					LOG.info("Fetching Commitment");
+				    ResponseEntity<String> commitResponse = makeRestCall(buildURICommitmentUpdated(jirarepo.getPROJECTID(),
+						    sprintId,issueTypes, statusTypes, v.getStartDate()),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+					//SearchResult sprintIssues = (SearchResult) commitResponse;
+					JSONObject miscCommitObj = (JSONObject) new JSONParser().parse(commitResponse.getBody());
+					issueArray = (JSONArray) miscCommitObj.get("issues");
+					Double commitPointSum = 0.0;
+					int acceptance = 0;
+					for(int i=0; i < issueArray.size(); i++)
+					{
+					JSONObject issue = (JSONObject) issueArray.get(i);
+					JSONObject fields = (JSONObject) issue.get("fields");
+					Double commitPoints = (Double) fields.get(settings.getStoryPointDataFieldName());
+					commitPointSum = commitPointSum+commitPoints;
+					if(fields.get(settings.getAcceptanceCriteriaFieldName())!=null)
+					{
+						acceptance++;
+					}
+					}
+					v.setAcceptanceCriteria(acceptance);
+					v.setCommitted(commitPointSum+"");
+					v.setStoryCount(issueArray.size());
+					
+					LOG.info("Fetching Achievement");
+					ResponseEntity<String> achieveResponse = makeRestCall(buildURIAchievementUpdated(jirarepo.getPROJECTID(),
+						    sprintId,issueTypes, statusTypes, v.getStartDate(), v.getEndDate()),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+					//SearchResult sprintIssues = (SearchResult) commitResponse;
+					JSONObject miscAchieveObj = (JSONObject) new JSONParser().parse(achieveResponse.getBody());
+					issueArray = (JSONArray) miscAchieveObj.get("issues");
+					Double achievePointSum = 0.0;
+					for(int i=0; i < issueArray.size(); i++)
+					{
+					JSONObject issue = (JSONObject) issueArray.get(i);
+					JSONObject fields = (JSONObject) issue.get("fields");
+					Double achievePoints = (Double) fields.get(settings.getStoryPointDataFieldName());
+					achievePointSum = achievePointSum+achievePoints;					
+					}
+					
+					v.setCompleted(achievePointSum+"");
+					
+					LOG.info("Fetching MidSprint Achievement");
+					ResponseEntity<String> misSprintResponse = makeRestCall(buildURIMidSprintUpdated(jirarepo.getPROJECTID(),
+						    sprintId,issueTypes, statusTypes, v.getStartDate(), v.getMidSprintDate()),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+					//SearchResult sprintIssues = (SearchResult) commitResponse;
+					JSONObject miscMidSprintObj = (JSONObject) new JSONParser().parse(misSprintResponse.getBody());
+					issueArray = (JSONArray) miscMidSprintObj.get("issues");
+					Double midPointSum = 0.0;
+					for(int i=0; i < issueArray.size(); i++)
+					{
+					JSONObject issue = (JSONObject) issueArray.get(i);
+					JSONObject fields = (JSONObject) issue.get("fields");
+					Double midPoints = (Double) fields.get(settings.getStoryPointDataFieldName());
+					midPointSum = midPointSum+midPoints;					
+					}
+					
 					v.setMidPointSum(midPointSum);
+					
+					
+					
+					
+					/*SearchResult commitResponse = getSprintVelocityCommitmentUpdated(jirarepo.getPROJECTID(),
+						    sprintId,issueTypes, statusTypes, v.getStartDate(),500,0);*/
+					/*double totalCommited = 0;
+					if(commitResponse.getTotal()>0)
+					{
+						ArrayList<Issue> issuesItr= (ArrayList<Issue>) commitResponse.getIssues();
+					    for(Issue issue: issuesItr)
+						{							
+					    	totalCommited = totalCommited + (double) issue.getFieldByName("Story Points").getValue();							
+						}						
+					}
+					v.setCommitted(totalCommited+"");
+					
+					SearchResult achievementResponse = getSprintVelocityAchievementUpdated(jirarepo.getPROJECTID(),
+						    sprintId,issueTypes, statusTypes, v.getStartDate(),v.getEndDate(),500,0);
+					double totalAchieved = 0;
+					if(achievementResponse.getTotal()>0)
+					{
+						ArrayList<Issue> issuesItr= (ArrayList<Issue>) achievementResponse.getIssues();
+					    for(Issue issue: issuesItr)
+						{							
+					    	totalAchieved = totalAchieved + (double) issue.getFieldByName("Story Points").getValue();							
+						}						
+					}
+					v.setCompleted(totalAchieved+"");*/
+					
+					
+					
+					
 					
 			        lstSprintVelocity.add(v);
 			    }
@@ -848,13 +1329,84 @@ public class DefaultJiraClient implements JiraClient {
 		return lstSprintVelocity;
 	}
 
+	
+
 	@Override
 	public JiraRepo getDefectSlippage(JiraRepo repo) {
-		SearchResult searchResultQA = getEnvironmentDefects(repo.getPROJECTID(),repo.getVERSIONID(), "QA", 500,0);
-		SearchResult searchResultProd = getEnvironmentDefects(repo.getPROJECTID(), repo.getVERSIONID(), "Production", 500,0);
 		
-	    repo.setStageDefects(searchResultQA.getTotal()+"");
-		repo.setProdDefects(searchResultProd.getTotal()+"");
+		String[] minors = settings.getPreviousMinorVersions();
+		String[] preQAs = settings.getPreQA();
+		String[] postQAs = settings.getPostQA();
+		String preQAString = "";
+		if(preQAs.length==1)
+		{
+			preQAString = preQAs[0];
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder = new StringBuilder();
+			for ( int i = 0; i< preQAs.length; i++)
+			{
+				commaSepValueBuilder.append(preQAs[0]);
+				if ( i != preQAs.length-1)
+				{
+			        commaSepValueBuilder.append(", ");
+			    }
+			}
+			preQAString = commaSepValueBuilder.toString();
+		}
+		
+		String postQAString = "";
+		if(postQAs.length==1)
+		{
+			postQAString = postQAs[0];
+		}
+		else
+		{
+			StringBuilder commaSepValueBuilder = new StringBuilder();
+			for ( int i = 0; i< postQAs.length; i++)
+			{
+				commaSepValueBuilder.append(postQAs[0]);
+				if ( i != postQAs.length-1)
+				{
+			        commaSepValueBuilder.append(", ");
+			    }
+			}
+			postQAString = commaSepValueBuilder.toString();
+		}
+		
+		int preQADefCount = 0;
+		int postQADefCount = 0;
+		
+		SearchResult searchResultPreQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersion(), preQAString, 500,0);
+		preQADefCount = preQADefCount + searchResultPreQA.getTotal();
+		SearchResult searchResultPostQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersion(), postQAString, 500,0);
+		postQADefCount = postQADefCount + searchResultPostQA.getTotal();
+		
+		for(int i=0; i < minors.length; i++)
+		{
+			searchResultPreQA = getEnvironmentDefects(repo.getPROJECTID(), minors[i], preQAString, 500,0);
+			preQADefCount = preQADefCount + searchResultPreQA.getTotal();
+			searchResultPostQA = getEnvironmentDefects(repo.getPROJECTID(),minors[i], postQAString, 500,0);
+			postQADefCount = postQADefCount + searchResultPostQA.getTotal();
+		}
+		
+		repo.setPreQADefects(preQADefCount+"");
+		repo.setPostQADefects(postQADefCount+"");
+		
+		if((postQADefCount+postQADefCount)!=0)
+		{
+			double slippage = (postQADefCount/(preQADefCount+postQADefCount))*100;
+			repo.setDefectSlippage(slippage+"");
+		}
+		else
+		{
+			repo.setDefectSlippage(0.0+"");
+		}
+		
+		
+	    /*repo.setStageDefects(searchResultPreQA.getTotal()+"");
+		repo.setProdDefects(searchResultProd.getTotal()+"");*/
 		
 		return repo;
 		

@@ -121,7 +121,7 @@
 
 
 
-    <dependencies>
+   <dependencies>
         <!-- Project Deps -->
         <dependency>
             <groupId>com.capitalone.dashboard</groupId>
@@ -227,6 +227,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-    </dependencies>
+</dependencies>
 
 </project>

@@ -1,5 +1,7 @@
 package com.capitalone.dashboard.service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -11,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.capitalone.dashboard.repository.FunctionalTestResultRepository;
+
+import org.apache.commons.collections.comparators.ComparableComparator;
 import org.bson.types.ObjectId;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -74,9 +78,12 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 		String versionId = (String) item.getOptions().get("versionId");
 		String sprintId = (String) item.getOptions().get("activeSprintId");
 		String projectId = (String) item.getOptions().get("projectId");	
-		String stageDefects = (String) item.getOptions().get("stageDefectsCnt");
-		String prodDefects = (String)item.getOptions().get("prodDefectsCnt");
+		/*String stageDefects = (String) item.getOptions().get("stageDefectsCnt");
+		String prodDefects = (String)item.getOptions().get("prodDefectsCnt");*/
 		
+		String preQADefects = (String) item.getOptions().get("preQADefectCount");
+		String postQADefects = (String) item.getOptions().get("postQADefectCount");
+		String slippage =  (String) item.getOptions().get("defectSlippage");
 
 		LOGGER.info("versionId ===>" + versionId);
 		LOGGER.info("Sprint Id==>" + sprintId);
@@ -216,13 +223,6 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 		}
 			
 		
-			//JSONArray coverageArray = new JSONArray();
-			JSONObject coverageObj = new JSONObject();
-			coverageObj.put("covered",cntStryAccptCriteria);
-			coverageObj.put("notCovered",issues.size()-cntStryAccptCriteria);	
-			coverageObj.put("Total", issues.size());		
-			
-			responseObj.put("acceptance", coverageObj);
 			
 			
 			List<SprintVelocity> pviSprintVel = sprintVelocityRepository
@@ -231,13 +231,21 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			JSONArray velocities = new JSONArray();
 			JSONArray sprintStoryPointsArray= new JSONArray();			
 			JSONArray midStoryPointsArray= new JSONArray();
+			JSONObject acceptObj = new JSONObject();
+			JSONArray acceptanceArray= new JSONArray();
 
 			boolean isfirstRec=true;
 			JSONObject summaryVel = new JSONObject();
+			int acceptanceCoverage=0;
+			int storyCount = 0;
+			
+			pviSprintVel.sort(Comparator.comparing(SprintVelocity::getStartDate));
+			
 			for (SprintVelocity velocity : pviSprintVel) {
 				JSONObject velocityObj = new JSONObject();
 				JSONObject sprintPointsObj = new JSONObject();
 				JSONObject midSprintPointsObj = new JSONObject();
+				
 				// push the first issues projectname and versionname to the summary
 				// object
 				if (isfirstRec){
@@ -247,14 +255,14 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				}
 				velocityObj.put("SprintId", velocity.getSprintId());
 				velocityObj.put("SprintName", velocity.getSprintName());
-				velocityObj.put("SprintStatus", velocity.getSprintStatus());
-				velocityObj.put("Committed", velocity.getAllIssuesSum());
-				if(velocity.getCompletedSum().equals("") || velocity.getCompletedSum()==null || velocity.getCompletedSum().equals("null"))
-					velocity.setCompletedSum("0.0");
-				if(velocity.getOutOfSprintSum().equals("") || velocity.getOutOfSprintSum()==null || velocity.getOutOfSprintSum().equals("null"))
-					velocity.setOutOfSprintSum("0.0");
-				velocityObj.put("Completed", Double.parseDouble(velocity.getCompletedSum())+Double.parseDouble(velocity.getOutOfSprintSum()));
-				velocities.add(velocityObj);	
+				velocityObj.put("SprintStatus", velocity.getSprintStatus());			
+				velocityObj.put("Committed", velocity.getCommitted());
+				velocityObj.put("Completed", velocity.getCompleted());
+				velocities.add(velocityObj);
+				
+				acceptanceCoverage = acceptanceCoverage + velocity.getAcceptanceCriteria();
+				storyCount = storyCount + velocity.getStoryCount();
+				
 				
 				sprintPointsObj.put("SprintName", velocity.getSprintName());
 				sprintPointsObj.put("StoryCount", velocity.getStoryCount());
@@ -264,7 +272,16 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				midSprintPointsObj.put("SprintName", velocity.getSprintName());
 				midSprintPointsObj.put("MidSprintPoints", velocity.getMidPointSum());
 				midStoryPointsArray.add(midSprintPointsObj);				
-			}
+			}		
+			
+			//JSONArray coverageArray = new JSONArray();
+			JSONObject coverageObj = new JSONObject();
+			coverageObj.put("covered",acceptanceCoverage);
+			coverageObj.put("notCovered",storyCount-acceptanceCoverage);	
+			coverageObj.put("Total", storyCount);		
+			
+			responseObj.put("acceptance", coverageObj);
+			
 			
 			List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"),
 					(String) item.getOptions().get("versionId"));
@@ -288,7 +305,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 
 			
 			JSONObject slippageObj = new JSONObject();
-			
+			/*
 			slippageObj.put("QA",stageDefects);
 			slippageObj.put("Production",prodDefects);
 			if(prodDefects != null && stageDefects != null)
@@ -307,10 +324,11 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			else
 			{
 				slippageObj.put("Ratio",0);
-			}
+			}*/
 			
-			
-			
+			slippageObj.put("Pre-QA", preQADefects);
+			slippageObj.put("Post-QA", postQADefects);
+			slippageObj.put("Slippage", slippage);
 			
 
 		//	responseObj.put("version", summary);
@@ -323,7 +341,11 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			
 			responseObj.put("IssueStoryPoints", sprintStoryPointsArray);
 			
-			responseObj.put("MidSprintPoints", midStoryPointsArray);
+			responseObj.put("MidSprintPoints", midStoryPointsArray);		
+			
+			responseObj.put("AcceptanceCoverage", acceptanceArray);
+			
+			
 			
 
 		Collector collector = collectorRepository.findOne(item.getCollectorId());
