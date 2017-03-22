@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -105,88 +106,6 @@ public class DefaultJiraClient implements JiraClient {
 		this.jiraRestClientSupplier = restSupplier;
 	}
 	
-	/*JiraRestClient getJiraRestClient() throws Exception
-	{
-		try
-		{
-			jiraServerURI = new URI(settings.getJiraBaseUrl());
-		}
-		catch(URISyntaxException e)
-		{
-			System.out.println(e);
-		}
-	    return new AsynchronousJiraRestClient(jiraServerURI, getHttpClient());
-	}
-	
-	HttpClientOptions getClientOptions()
-	{
-		HttpClientOptions options = new HttpClientOptions();
-	    options.setSocketTimeout(60, TimeUnit.SECONDS);
-	    return options;
-	}
-	
-	public static Object giveMeAHCFEventPubInstance() throws Exception{
-		AsynchronousHttpClientFactory ahcf = new AsynchronousHttpClientFactory();
-        Class<?> EventPublisher = Class.forName("com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory$NoOpEventPublisher");
-        Constructor<?> constructor = EventPublisher.getDeclaredConstructor(AsynchronousHttpClientFactory.class);
-        constructor.setAccessible(true);
-        return constructor.newInstance(ahcf);
-    }
-	
-	public Object giveMeAHCFAppPropsInnerInstance() throws Exception{
-		AsynchronousHttpClientFactory ahcf = new AsynchronousHttpClientFactory();
-        Class<?> ApplicationProperties = Class.forName("com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory$RestClientApplicationProperties");
-        Constructor<?> constructor = ApplicationProperties.getDeclaredConstructor(AsynchronousHttpClientFactory.class,URI.class);
-        constructor.setAccessible(true);
-        try
-		{
-			jiraServerURI = new URI(settings.getJiraBaseUrl());
-		}
-		catch(URISyntaxException e)
-		{
-			System.out.println(e);
-		}
-        return constructor.newInstance(ahcf,jiraServerURI);
-    }
-	
-	
-	DisposableHttpClient getHttpClient() throws Exception
-	{
-		AsynchronousHttpClientFactory ahcf = new AsynchronousHttpClientFactory();
-	    final DefaultHttpClientFactory defaultHttpClientFactory =
-	        new DefaultHttpClientFactory((EventPublisher)giveMeAHCFEventPubInstance(),
-	        		(ApplicationProperties)giveMeAHCFAppPropsInnerInstance(),
-	        new ThreadLocalContextManager() {
-	            @Override
-	            public Object getThreadLocalContext() {
-	                return null;
-	            }
-
-	            @Override
-	            public void setThreadLocalContext(Object context) {}
-
-	            @Override
-	            public void clearThreadLocalContext() {}
-	        });
-
-	    final com.atlassian.httpclient.api.HttpClient httpClient = defaultHttpClientFactory.create(getClientOptions());
-
-	    return new AtlassianHttpClientDecorator(httpClient, getAuthenticationHandler()) {
-	        @Override
-	        public void destroy() throws Exception {
-	            defaultHttpClientFactory.dispose(httpClient);
-	        }
-	    };
-	}
-	
-	BasicHttpAuthenticationHandler getAuthenticationHandler()
-	{
-		return new BasicHttpAuthenticationHandler(
-	    		"NSangani-consultant@Scholastic.com",
-	    		"Naveen123");
-	}*/
-
-
 	
 	SearchResult getIssuesByVersion(String projectId, String versionId, int maxCount, int index) {
 		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ")";
@@ -211,8 +130,13 @@ public class DefaultJiraClient implements JiraClient {
 		return src.claim();
 	}
 	
-	SearchResult getEnvironmentDefects(String projectId, String versionId, String environment,int maxCount, int index){
-		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND issuetype in (Defect) AND cf[14518] in ("+environment+")";
+	SearchResult getEnvironmentDefects(String projectId, String versionId, String environment, String initialDate, String finalDate, int maxCount, int index){
+		//String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND issuetype in (Defect) AND cf[14518] in ("+environment+")";
+		
+		String jql="project in ("+projectId+") AND issuetype = Defect AND resolution in (Unresolved, Fixed, \"Client Review\", \"Not a Bug\", \"Won't Fix\", Incomplete, \"Cannot Reproduce\", Done, Reopened, \"Not a Defect\", \"Won't Do\", \"Need More Information\", Outdated, \"Works as Designed\") "
+				+ "AND cf[14518] in ("+environment+") AND created > "+initialDate+" AND created <= "+finalDate;
+		
+		
 		LOG.info("defect slippage query string ===>" + jql);
 		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
 		return src.claim();
@@ -1378,23 +1302,46 @@ public class DefaultJiraClient implements JiraClient {
 		}
 		
 		double preQADefCount = 0;
-		double postQADefCount = 0;
+		double postQADefCount = 0;		
 		
-		SearchResult searchResultPreQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersion(), preQAString, 500,0);
-		preQADefCount = preQADefCount + searchResultPreQA.getTotal();
-		SearchResult searchResultPostQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersion(), postQAString, 500,0);
-		postQADefCount = postQADefCount + searchResultPostQA.getTotal();
+		String initialDatePreQA="";
+		String finalDatePreQA="";
+		 
+		ResponseEntity<String> versionResponse = makeRestCall(buildUriVersionDetails(repo.getPROJECTID()),
+				jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+				jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
 		
-		for(int i=0; i < minors.length; i++)
-		{
-			searchResultPreQA = getEnvironmentDefects(repo.getPROJECTID(), minors[i], preQAString, 500,0);
-			preQADefCount = preQADefCount + searchResultPreQA.getTotal();
-			searchResultPostQA = getEnvironmentDefects(repo.getPROJECTID(),minors[i], postQAString, 500,0);
-			postQADefCount = postQADefCount + searchResultPostQA.getTotal();
+		JSONArray respArrayVer = null;
+		try {
+			respArrayVer = (JSONArray) new JSONParser().parse(versionResponse.getBody());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		repo.setPreQADefects(preQADefCount+"");
-		repo.setPostQADefects(postQADefCount+"");
+		for(Object verObj : respArrayVer)
+		{
+			JSONObject versionObj = (JSONObject)verObj;
+			if(versionObj.get("name").equals(settings.getSecondPreviousRelease()))
+			{
+				initialDatePreQA = (String) versionObj.get("releaseDate");
+			}
+			
+			if(versionObj.get("name").equals(settings.getPreviousMinorReleaseVersion()))
+			{
+				finalDatePreQA = (String) versionObj.get("releaseDate");
+			}
+		}
+		
+		SearchResult searchResultPreQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersion(), preQAString,initialDatePreQA,finalDatePreQA, 500,0);
+		preQADefCount = preQADefCount + searchResultPreQA.getTotal();
+		
+		String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+		SearchResult searchResultPostQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersion(), postQAString,finalDatePreQA,currentDate, 500,0);
+		postQADefCount = postQADefCount + searchResultPostQA.getTotal();
+		
+		repo.setPreQADefects((int)preQADefCount+"");
+		repo.setPostQADefects((int)postQADefCount+"");
 		
 		if((postQADefCount+postQADefCount)!=0)
 		{
@@ -1415,6 +1362,13 @@ public class DefaultJiraClient implements JiraClient {
 		
 	}
 
+	private String buildUriVersionDetails(String projId) 
+	{
+		String url = settings.getJiraBaseUrl()+"/rest/api/2/project/"+projId+"/versions";
+		LOG.info(url);
+		return url;
+	}
+
 	@Override
 	public List<DefectInjection> getDefectInjections(List<SprintVelocity> sprintVelocities) {
 		List<DefectInjection> diList = new ArrayList<DefectInjection>();
@@ -1428,6 +1382,7 @@ public class DefaultJiraClient implements JiraClient {
 		dInject.setDefectCount(searchResultDI.getTotal());
 		dInject.setProjectId(velocity.getProjectId());
 		dInject.setVersionId(velocity.getVersionId());
+		dInject.setStartDate(velocity.getStartDate());
 		/*SearchResult searchResultSP = getStoryPoints(velocity.getProjectId(),velocity.getSprintId(), 500,0);*/
 		dInject.setAchievedPoints(Double.parseDouble(velocity.getCompleted()));
 		diList.add(dInject);
