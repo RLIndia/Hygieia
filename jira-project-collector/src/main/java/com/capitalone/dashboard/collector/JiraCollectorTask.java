@@ -182,8 +182,11 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
             
             JiraRepo repoSlippage = jiraclient.getDefectSlippage(repo);
             
-            repo.setStageDefects(repoSlippage.getStageDefects());
-            repo.setProdDefects(repoSlippage.getProdDefects());
+            /*repo.setStageDefects(repoSlippage.getStageDefects());
+            repo.setProdDefects(repoSlippage.getProdDefects());*/
+            repo.setPreQADefects(repoSlippage.getPreQADefects());
+            repo.setPostQADefects(repoSlippage.getPostQADefects());
+            
             
             // geting active sprint 
             Sprint s = jiraclient.getActiveSprint(repo);

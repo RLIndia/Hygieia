@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -212,6 +213,7 @@ public class DefaultJiraClient implements JiraClient {
 	
 	SearchResult getEnvironmentDefects(String projectId, String versionId, String environment,int maxCount, int index){
 		String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND issuetype in (Defect) AND cf[14518] in ("+environment+")";
+		LOG.info("defect slippage query string ===>" + jql);
 		Promise<SearchResult> src = client.getSearchClient().searchJql(jql, maxCount, index, null);
 		return src.claim();
 		
@@ -1347,7 +1349,7 @@ public class DefaultJiraClient implements JiraClient {
 			StringBuilder commaSepValueBuilder = new StringBuilder();
 			for ( int i = 0; i< preQAs.length; i++)
 			{
-				commaSepValueBuilder.append(preQAs[0]);
+				commaSepValueBuilder.append(preQAs[i]);
 				if ( i != preQAs.length-1)
 				{
 			        commaSepValueBuilder.append(", ");
@@ -1366,7 +1368,7 @@ public class DefaultJiraClient implements JiraClient {
 			StringBuilder commaSepValueBuilder = new StringBuilder();
 			for ( int i = 0; i< postQAs.length; i++)
 			{
-				commaSepValueBuilder.append(postQAs[0]);
+				commaSepValueBuilder.append(postQAs[i]);
 				if ( i != postQAs.length-1)
 				{
 			        commaSepValueBuilder.append(", ");
@@ -1375,8 +1377,8 @@ public class DefaultJiraClient implements JiraClient {
 			postQAString = commaSepValueBuilder.toString();
 		}
 		
-		int preQADefCount = 0;
-		int postQADefCount = 0;
+		double preQADefCount = 0;
+		double postQADefCount = 0;
 		
 		SearchResult searchResultPreQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersion(), preQAString, 500,0);
 		preQADefCount = preQADefCount + searchResultPreQA.getTotal();
@@ -1396,8 +1398,9 @@ public class DefaultJiraClient implements JiraClient {
 		
 		if((postQADefCount+postQADefCount)!=0)
 		{
+			DecimalFormat df = new DecimalFormat("#.00"); 
 			double slippage = (postQADefCount/(preQADefCount+postQADefCount))*100;
-			repo.setDefectSlippage(slippage+"");
+			repo.setDefectSlippage(Double.valueOf(df.format(slippage))+"");
 		}
 		else
 		{

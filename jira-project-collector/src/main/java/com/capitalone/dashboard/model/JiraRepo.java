@@ -30,7 +30,6 @@ public class JiraRepo extends CollectorItem{
 	private static String DEFECT_SLIPPAGE = "defectSlippage";
 	
 	
-	
 	public String getPreQADefects() {
 		return  (String) getOptions().get(PRE_QA_DEFECTS);
 	}
@@ -44,7 +43,7 @@ public class JiraRepo extends CollectorItem{
 	}
 
 	public void setPostQADefects(String postQADefectCount) {
-		 getOptions().put(PRE_QA_DEFECTS, postQADefectCount);
+		 getOptions().put(POST_QA_DEFECTS, postQADefectCount);
 	}	
 	
 	public String getDefectSlippage() {
@@ -52,7 +51,7 @@ public class JiraRepo extends CollectorItem{
 	}
 
 	public void setDefectSlippage(String defectSlippage) {
-		 getOptions().put(PRE_QA_DEFECTS, defectSlippage);
+		 getOptions().put(DEFECT_SLIPPAGE, defectSlippage);
 	}	
   
 	public String getStageDefects() {
