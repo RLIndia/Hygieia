@@ -143,7 +143,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         clean(collector);
 
 
-        /*List<JiraRepo> fetchedprojects = jiraclient.getProjects();
+        List<JiraRepo> fetchedprojects = jiraclient.getProjects();
         List<JiraRepo> repoList = new ArrayList<JiraRepo>();
         for(JiraRepo repo : fetchedprojects){
             // LOG.info(jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID()) == null);
@@ -164,7 +164,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                 }
             }
             scannedProjects++;
-        }*/
+        }
 
         LOG.info("New Projects:" + newProjects);
 
