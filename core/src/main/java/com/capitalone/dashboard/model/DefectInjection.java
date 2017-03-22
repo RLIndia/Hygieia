@@ -15,7 +15,8 @@ public class DefectInjection extends BaseModel{
 	private String projectId;
 	private String versionId;
 	
-	private ObjectId collectorItemId; 
+	private ObjectId collectorItemId;
+	private String startDate; 
 	
 	
 	
@@ -64,7 +65,13 @@ public class DefectInjection extends BaseModel{
 	public void setVersionId(String versionId) {
 		this.versionId = versionId;
 	}
-	
+	public void setStartDate(String startDate) {
+		// TODO Auto-generated method stub
+		this.startDate = startDate;
+	}
+	public String getStartDate() {
+		return startDate;
+	}
 	
 
 }

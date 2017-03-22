@@ -286,6 +286,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 			List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(item.getCollectorId(),(String) item.getOptions().get("projectId"),
 					(String) item.getOptions().get("versionId"));
 			
+			diList.sort(Comparator.comparing(DefectInjection::getStartDate));
 			JSONArray defectInjection = new JSONArray();
 			for(DefectInjection di : diList)
 			{
@@ -326,8 +327,9 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				slippageObj.put("Ratio",0);
 			}*/
 			
-			slippageObj.put("Pre-QA", preQADefects);
+			
 			slippageObj.put("Post-QA", postQADefects);
+			slippageObj.put("Pre-QA", preQADefects);
 			slippageObj.put("Slippage", slippage);
 			
 

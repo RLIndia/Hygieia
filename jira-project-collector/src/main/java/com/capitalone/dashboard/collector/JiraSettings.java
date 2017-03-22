@@ -20,6 +20,8 @@ public class JiraSettings {
     private String storyPointDataFieldName;
     private String sprintFieldName;
     private String acceptanceCriteriaFieldName;
+    private String secondPreviousRelease;
+    private String previousMinorReleaseVersion;
     private String[] doneStatuses;
     private String[] todoStatuses;
     private String[] doingStatuses;
@@ -193,5 +195,21 @@ public class JiraSettings {
 
 	public void setPostQA(String[] postQA) {
 		this.postQA = postQA;
+	}
+
+	public String getSecondPreviousRelease() {
+		return secondPreviousRelease;
+	}
+
+	public void setSecondPreviousRelease(String secondPreviousRelease) {
+		this.secondPreviousRelease = secondPreviousRelease;
+	}
+
+	public String getPreviousMinorReleaseVersion() {
+		return previousMinorReleaseVersion;
+	}
+
+	public void setPreviousMinorReleaseVersion(String previousMinorReleaseVersion) {
+		this.previousMinorReleaseVersion = previousMinorReleaseVersion;
 	}
 }
