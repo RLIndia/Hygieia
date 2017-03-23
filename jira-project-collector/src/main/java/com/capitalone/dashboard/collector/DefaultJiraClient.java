@@ -713,7 +713,7 @@ public class DefaultJiraClient implements JiraClient {
 	}
 	
 	private ClientHttpRequestFactory getClientHttpRequestFactory() {
-	    int timeout = 60000;
+	    int timeout = 300000;
 	    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
 	      new HttpComponentsClientHttpRequestFactory();
 	    clientHttpRequestFactory.setConnectTimeout(timeout);
