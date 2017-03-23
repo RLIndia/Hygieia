@@ -327,10 +327,9 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				slippageObj.put("Ratio",0);
 			}*/
 			
-			
-			slippageObj.put("Post-QA", postQADefects);
 			slippageObj.put("Pre-QA", preQADefects);
-			slippageObj.put("Slippage", slippage);
+			slippageObj.put("Post-QA", postQADefects);			
+			slippageObj.put("Slippage %", slippage);
 			
 
 		//	responseObj.put("version", summary);
