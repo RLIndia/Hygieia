@@ -14,11 +14,13 @@
          </div>
          
          <div class="col-md-4 col-lg-4 col-sm-12">
-             <h4 class="text-center">Defect Velocity</h4>
+             <h4 class="text-center">Mid Sprint</h4>
 
-             <chartist class="ct-chart ct-golden-section ream-velocity" style="height:300px" chartist-data="jiraDashboardView.DVelChart.barData" chartist-chart-type="Bar" chartist-chart-options="jiraDashboardView.DVelChart.barOptions" chartist-responsive-options="jiraDashboardView.DVelChart.barResponsiveOptions"></chartist>
-
-         </div>         
+             <!--<chartist class="ct-chart ct-golden-section ream-velocity" style="height:300px" chartist-data="jiraDashboardView.barChart.barData" chartist-chart-type="Bar"  chartist-chart-options="jiraDashboardView.barChart.barOptions" chartist-responsive-options="jiraDashboardView.barChart.barResponsiveOptions"></chartist>-->
+             <chartist id="mid" class="ct-chart ct-golden-section ream-velocity " style="height:300px" chartist-data="jiraDashboardView.SPEChart.data" chartist-chart-type="Line" chartist-chart-options="jiraDashboardView.SPEChart.options" ></chartist>
+         </div>
+         
+               
          
           <div class="col-md-4 col-lg-4 col-sm-12">
 
@@ -57,11 +59,11 @@
          <div class="clearfix margin-deploy" style="padding-top:20px;"></div>
          
          <div class="col-md-4 col-lg-4 col-sm-12">
-             <h4 class="text-center">Mid Sprint</h4>
+             <h4 class="text-center">Defect Velocity</h4>
 
-             <!--<chartist class="ct-chart ct-golden-section ream-velocity" style="height:300px" chartist-data="jiraDashboardView.barChart.barData" chartist-chart-type="Bar"  chartist-chart-options="jiraDashboardView.barChart.barOptions" chartist-responsive-options="jiraDashboardView.barChart.barResponsiveOptions"></chartist>-->
-             <chartist id="mid" class="ct-chart ct-golden-section ream-velocity " style="height:300px" chartist-data="jiraDashboardView.SPEChart.data" chartist-chart-type="Line" chartist-chart-options="jiraDashboardView.SPEChart.options" ></chartist>
-         </div>
+             <chartist class="ct-chart ct-golden-section ream-velocity" style="height:300px" chartist-data="jiraDashboardView.DVelChart.barData" chartist-chart-type="Bar" chartist-chart-options="jiraDashboardView.DVelChart.barOptions" chartist-responsive-options="jiraDashboardView.DVelChart.barResponsiveOptions"></chartist>
+
+         </div>   
 
         <div class="col-md-4 col-lg-4 col-sm-12">
              <h4 class="text-center">Acceptance Coverage</h4>
