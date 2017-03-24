@@ -143,9 +143,9 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
         clean(collector);
 
 
-        List<JiraRepo> fetchedprojects = jiraclient.getProjects();
+       List<JiraRepo> fetchedprojects = jiraclient.getProjects();
         List<JiraRepo> repoList = new ArrayList<JiraRepo>();
-        for(JiraRepo repo : fetchedprojects){
+       for(JiraRepo repo : fetchedprojects){
             // LOG.info(jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID()) == null);
             JiraRepo savedRepo = jiraprojectrepository.findJiraRepo(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
             //LOG.info(collector.getId() + " " + repo.getVERSIONID() + " " + repo.getPROJECTID());
@@ -229,7 +229,6 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 				e.printStackTrace();
 			}      
 
-           Collections.reverse(sprintVelocities);
             List<SprintVelocity> prevVelocities = sprintVelocityRepository
     				.findVelocityReport(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
            
@@ -255,6 +254,10 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                     savedSprintVelocity.setOutOfSprintSum(sv.getOutOfSprintSum());
                     savedSprintVelocity.setAllIssuesSum(sv.getAllIssuesSum());
                     savedSprintVelocity.setPuntedSum(sv.getPuntedSum());
+                    savedSprintVelocity.setDefectCommitment(sv.getDefectCommitment());
+                    savedSprintVelocity.setDefectCompletion(sv.getDefectCompletion());
+                    
+                    
                     sprintVelocityRepository.save(savedSprintVelocity);
                    
                     updatedSprintVelocities++;
@@ -267,7 +270,7 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                 }
             }
 
-            }           
+            }        
             
             List<DefectInjection> defectInjects = jiraclient.getDefectInjections(sprintVelocities);
             List<DefectInjection> diList = defectInjectsRepository.findDefectInjection(collector.getId(),repo.getPROJECTID(),repo.getVERSIONID());

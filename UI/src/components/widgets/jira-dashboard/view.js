@@ -217,6 +217,60 @@
                 ]
             }
         };
+        
+        
+        
+        ctrl.DVelChart={
+        	    barData : {
+                    labels: [],
+                    series: [
+                        { "name": "Committed", "data":[]},
+                        { "name": "Completed", "data":[]}
+                    ]
+               },
+               
+               	targetLine:{
+               		value:50,
+               		class:'ct-target-line'
+               	},
+
+               barOptions : {
+                   chartPadding: {
+                       right: 0,
+                       bottom: 24,
+                       left: 0
+                   },
+                   axisY: {
+                       onlyInteger: true
+                   },
+                   plugins: [
+                       Chartist.plugins.legend(),
+                       Chartist.plugins.tooltip(),
+                       Chartist.plugins.ctAxisTitle({
+                           axisX: {
+                               axisTitle: 'Sprint',
+                               axisClass: 'ct-axis-title',
+                               offset: {
+                                   x: 0,
+                                   y: 50
+                               },
+                               textAnchor: 'middle'
+                           },
+                           axisY: {
+                               axisTitle: 'Defect Points',
+                               axisClass: 'ct-axis-title',
+                               offset: {
+                                   x: 0,
+                                   y: 0
+                               },
+                               textAnchor: 'middle',
+                               flipTitle: false
+                           }
+                       })
+                   ]
+               }
+                };
+        
 
         ctrl.DSPChart={
             data : {
@@ -328,7 +382,7 @@
                 
                 //defectSlippageRate
 
-                ctrl.defectSlippageRate=data.result.defectSlippageRate;
+                ctrl.defectSlippageRate=data.result.DefectSlippageRate;
                 //defectInjectionRate
                 ctrl.DIRChart.data={}
                 ctrl.DIRChart.data ={
@@ -336,7 +390,7 @@
                         series: []
                     };
                 var dataSeries=[];
-                angular.forEach(data.result.defectInjectionRate,function (val) {
+                angular.forEach(data.result.DefectInjectionRate,function (val) {
                     ctrl.DIRChart.data.labels.push(val.SprintName);
                     dataSeries.push(val.InjectionRatio);
 
@@ -350,10 +404,23 @@
                             { "name": "Committed", data:[]},
                             { "name": "Completed", data:[]}]
                         };
-                angular.forEach(data.result.teamVelocity,function (val) {
+                angular.forEach(data.result.TeamVelocity,function (val) {
                     ctrl.barChart.barData.labels.push(val.SprintName);
                     ctrl.barChart.barData.series[0].data.push(val.Committed);
                     ctrl.barChart.barData.series[1].data.push(val.Completed);
+                });
+                
+                
+                ctrl.DVelChart.barData ={
+                        labels: [],
+                        series: [
+                            { "name": "Committed", data:[]},
+                            { "name": "Completed", data:[]}]
+                        };
+                angular.forEach(data.result.DefectVelocities,function (val) {
+                    ctrl.DVelChart.barData.labels.push(val.SprintName);
+                    ctrl.DVelChart.barData.series[0].data.push(val.Committed);
+                    ctrl.DVelChart.barData.series[1].data.push(val.Completed);
                 });
                 
                 
