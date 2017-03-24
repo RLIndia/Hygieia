@@ -20,16 +20,40 @@ public class JiraSettings {
     private String storyPointDataFieldName;
     private String sprintFieldName;
     private String acceptanceCriteriaFieldName;
-    private String secondPreviousRelease;
-    private String previousMinorReleaseVersion;
+    private String secondPreviousReleaseLPI;
+    private String previousMinorReleaseVersionLPI;
+    private String previousMajorVersionLPI;
+    private String secondPreviousReleaseEBB;
+    private String previousMinorReleaseVersionEBB;
+    private String previousMajorVersionEBB;
     private String[] doneStatuses;
     private String[] todoStatuses;
-    private String[] doingStatuses;
-    private String previousMajorVersion;
+    private String[] doingStatuses;    
     private String[] previousMinorVersions;
     private String[] preQA;
     private String[] postQA;
     
+    
+    
+    public String getPreviousMinorReleaseVersionEBB() {
+		return previousMinorReleaseVersionEBB;
+	}
+
+	public void setPreviousMinorReleaseVersionEBB(String previousMinorReleaseVersionEBB) {
+		this.previousMinorReleaseVersionEBB = previousMinorReleaseVersionEBB;
+	}
+
+	public String getPreviousMajorVersionEBB() {
+		return previousMajorVersionEBB;
+	}
+
+	public void setPreviousMajorVersionEBB(String previousMajorVersionEBB) {
+		this.previousMajorVersionEBB = previousMajorVersionEBB;
+	}
+
+	public void setPreviousMajorVersionLPI(String previousMajorVersionLPI) {
+		this.previousMajorVersionLPI = previousMajorVersionLPI;
+	}  
     
     
     public String getCron() {
@@ -165,12 +189,12 @@ public class JiraSettings {
         this.storyPointFieldName = storypoint;
     }
 
-	public String getPreviousMajorVersion() {
-		return previousMajorVersion;
+	public String getPreviousMajorVersionLPI() {
+		return previousMajorVersionLPI;
 	}
 
 	public void setPreviousMajorVersion(String previousMajorVersion) {
-		this.previousMajorVersion = previousMajorVersion;
+		this.previousMajorVersionLPI = previousMajorVersion;
 	}
 
 	public String[] getPreviousMinorVersions() {
@@ -197,19 +221,27 @@ public class JiraSettings {
 		this.postQA = postQA;
 	}
 
-	public String getSecondPreviousRelease() {
-		return secondPreviousRelease;
+	public String getSecondPreviousReleaseLPI() {
+		return secondPreviousReleaseLPI;
 	}
 
-	public void setSecondPreviousRelease(String secondPreviousRelease) {
-		this.secondPreviousRelease = secondPreviousRelease;
+	public void setSecondPreviousReleaseLPI(String secondPreviousRelease) {
+		this.secondPreviousReleaseLPI = secondPreviousRelease;
 	}
 
-	public String getPreviousMinorReleaseVersion() {
-		return previousMinorReleaseVersion;
+	public String getPreviousMinorReleaseVersionLPI() {
+		return previousMinorReleaseVersionLPI;
 	}
 
-	public void setPreviousMinorReleaseVersion(String previousMinorReleaseVersion) {
-		this.previousMinorReleaseVersion = previousMinorReleaseVersion;
+	public void setPreviousMinorReleaseVersionLPI(String previousMinorReleaseVersion) {
+		this.previousMinorReleaseVersionLPI = previousMinorReleaseVersion;
+	}
+
+	public String getSecondPreviousReleaseEBB() {
+		return secondPreviousReleaseEBB;
+	}
+
+	public void setSecondPreviousReleaseEBB(String secondPreviousReleaseEBB) {
+		this.secondPreviousReleaseEBB = secondPreviousReleaseEBB;
 	}
 }
