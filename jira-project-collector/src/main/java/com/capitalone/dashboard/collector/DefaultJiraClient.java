@@ -134,7 +134,7 @@ public class DefaultJiraClient implements JiraClient {
 		//String jql = "project in (" + projectId + ") AND fixVersion in (" + versionId + ") AND issuetype in (Defect) AND cf[14518] in ("+environment+")";
 		
 		String jql="project in ("+projectId+") AND issuetype = Defect AND resolution in (Unresolved, Fixed, \"Client Review\", \"Not a Bug\", \"Won't Fix\", Incomplete, \"Cannot Reproduce\", Done, Reopened, \"Not a Defect\", \"Won't Do\", \"Need More Information\", Outdated, \"Works as Designed\") "
-				+ "AND cf[14518] in ("+environment+") AND created > "+initialDate+" AND created <= "+finalDate;
+				+ "AND cf[14518] in ("+environment+") AND created > "+initialDate+" AND created <= "+finalDate+" AND priority in (Blocker, Critical, Major)";
 		
 		
 		LOG.info("defect slippage query string ===>" + jql);
@@ -1089,16 +1089,16 @@ public class DefaultJiraClient implements JiraClient {
 							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
 					JSONObject miscRespObj = (JSONObject) new JSONParser().parse(miscResponse.getBody());
 					
-					JSONObject sprintContents = (JSONObject) miscRespObj.get("contents");
+					/*JSONObject sprintContents = (JSONObject) miscRespObj.get("contents");
 			        
-			        /*JSONObject completedObj=(JSONObject)velocityObj.get("completed");
+			        JSONObject completedObj=(JSONObject)velocityObj.get("completed");
 			        String completed=(String)completedObj.get("text");
 			        
 			        
 			       // SearchResult resQAComplete = getQACompleteByVersionAndSprint(jirarepo.getPROJECTID(), jirarepo.getVERSIONNAME(), sprintId, 500, 0);
 			        
 			        v.setCompleted(completed);
-			        v.setCommitted(estimated);*/
+			        v.setCommitted(estimated);
 			        
 			        JSONObject completedIssuesEstimateSumObj = (JSONObject) sprintContents.get("completedIssuesEstimateSum");
 			        v.setCompletedSum((String)completedIssuesEstimateSumObj.get("text"));
@@ -1109,7 +1109,7 @@ public class DefaultJiraClient implements JiraClient {
 					JSONObject issuesCompletedInAnotherSprintEstimateSumObj = (JSONObject) sprintContents.get("issuesCompletedInAnotherSprintEstimateSum");
 					v.setOutOfSprintSum((String) issuesCompletedInAnotherSprintEstimateSumObj.get("text"));
 					JSONObject puntedIssuesEstimateSumObj = (JSONObject) sprintContents.get("puntedIssuesEstimateSum");
-					v.setPuntedSum((String) puntedIssuesEstimateSumObj.get("text"));
+					v.setPuntedSum((String) puntedIssuesEstimateSumObj.get("text"));*/
 					
 					JSONObject sprintInfo = (JSONObject) miscRespObj.get("sprint");
 					String startDate = (String) sprintInfo.get("startDate");
@@ -1163,7 +1163,11 @@ public class DefaultJiraClient implements JiraClient {
 					JSONObject issue = (JSONObject) issueArray.get(i);
 					JSONObject fields = (JSONObject) issue.get("fields");
 					Double commitPoints = (Double) fields.get(settings.getStoryPointDataFieldName());
+					if(commitPoints != null)
+					{
 					commitPointSum = commitPointSum+commitPoints;
+					}
+					
 					if(fields.get(settings.getAcceptanceCriteriaFieldName())!=null)
 					{
 						acceptance++;
@@ -1187,10 +1191,14 @@ public class DefaultJiraClient implements JiraClient {
 					JSONObject issue = (JSONObject) issueArray.get(i);
 					JSONObject fields = (JSONObject) issue.get("fields");
 					Double achievePoints = (Double) fields.get(settings.getStoryPointDataFieldName());
-					achievePointSum = achievePointSum+achievePoints;					
+					if(achievePoints != null)
+					{
+					achievePointSum = achievePointSum+achievePoints;	
+					}
 					}
 					
-					v.setCompleted(achievePointSum+"");
+					v.setCompleted(achievePointSum+"");				
+					
 					
 					LOG.info("Fetching MidSprint Achievement");
 					ResponseEntity<String> misSprintResponse = makeRestCall(buildURIMidSprintUpdated(jirarepo.getPROJECTID(),
@@ -1206,17 +1214,18 @@ public class DefaultJiraClient implements JiraClient {
 					JSONObject issue = (JSONObject) issueArray.get(i);
 					JSONObject fields = (JSONObject) issue.get("fields");
 					Double midPoints = (Double) fields.get(settings.getStoryPointDataFieldName());
-					midPointSum = midPointSum+midPoints;					
+					if(midPoints != null)
+					{
+					midPointSum = midPointSum+midPoints;		
+					}
 					}
 					
-					v.setMidPointSum(midPointSum);
-					
-					
+					v.setMidPointSum(midPointSum);				
 					
 					
 					/*SearchResult commitResponse = getSprintVelocityCommitmentUpdated(jirarepo.getPROJECTID(),
-						    sprintId,issueTypes, statusTypes, v.getStartDate(),500,0);*/
-					/*double totalCommited = 0;
+						    sprintId,issueTypes, statusTypes, v.getStartDate(),500,0);
+					double totalCommited = 0;
 					if(commitResponse.getTotal()>0)
 					{
 						ArrayList<Issue> issuesItr= (ArrayList<Issue>) commitResponse.getIssues();
@@ -1240,8 +1249,49 @@ public class DefaultJiraClient implements JiraClient {
 					}
 					v.setCompleted(totalAchieved+"");*/
 					
+					issueTypes.clear();
+					issueTypes.add("Defect");
+					LOG.info("Fetching Defect Commitment");
+					ResponseEntity<String> comDefResponse = makeRestCall(buildURICommitmentUpdated(jirarepo.getPROJECTID(),
+						    sprintId,issueTypes, statusTypes, v.getStartDate()),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+					//SearchResult sprintIssues = (SearchResult) commitResponse;
+					JSONObject miscDefObj = (JSONObject) new JSONParser().parse(comDefResponse.getBody());
+					issueArray = (JSONArray) miscDefObj.get("issues");
+					Double defPtSum = 0.0;
+					for(int i=0; i < issueArray.size(); i++)
+					{
+					JSONObject issue = (JSONObject) issueArray.get(i);
+					JSONObject fields = (JSONObject) issue.get("fields");
+					Double comPoints = (Double) fields.get(settings.getStoryPointDataFieldName());
+					if(comPoints != null)
+					{
+					defPtSum = defPtSum+comPoints;
+					}
+					}
+					v.setDefectCommitment(defPtSum+"");
 					
-					
+					LOG.info("Fetching Defect Completed");
+					ResponseEntity<String> achieveDefResponse = makeRestCall(buildURIAchievementUpdated(jirarepo.getPROJECTID(),
+						    sprintId,issueTypes, statusTypes, v.getStartDate(), v.getEndDate()),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("username"),
+							jiraRestClientSupplier.decodeCredentials(settings.getJiraCredentials()).get("password"));
+					//SearchResult sprintIssues = (SearchResult) commitResponse;
+					JSONObject miscDefAchieveObj = (JSONObject) new JSONParser().parse(achieveDefResponse.getBody());
+					issueArray = (JSONArray) miscDefAchieveObj.get("issues");
+					Double defPtAchieveSum = 0.0;
+					for(int i=0; i < issueArray.size(); i++)
+					{
+					JSONObject issue = (JSONObject) issueArray.get(i);
+					JSONObject fields = (JSONObject) issue.get("fields");
+					Double achievePoints = (Double) fields.get(settings.getStoryPointDataFieldName());
+					if(achievePoints != null)
+					{
+					defPtAchieveSum = defPtAchieveSum+achievePoints;	
+					}
+					}
+					v.setDefectCompletion(defPtAchieveSum+"");
 					
 					
 			        lstSprintVelocity.add(v);
@@ -1318,26 +1368,27 @@ public class DefaultJiraClient implements JiraClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		if(repo.getPROJECTNAME().equals("Literacy Pro Intl"))
+		{
 		for(Object verObj : respArrayVer)
 		{
 			JSONObject versionObj = (JSONObject)verObj;
-			if(versionObj.get("name").equals(settings.getSecondPreviousRelease()))
+			if(versionObj.get("name").equals(settings.getSecondPreviousReleaseLPI()))
 			{
 				initialDatePreQA = (String) versionObj.get("releaseDate");
 			}
 			
-			if(versionObj.get("name").equals(settings.getPreviousMinorReleaseVersion()))
+			if(versionObj.get("name").equals(settings.getPreviousMinorReleaseVersionLPI()))
 			{
 				finalDatePreQA = (String) versionObj.get("releaseDate");
 			}
 		}
 		
-		SearchResult searchResultPreQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersion(), preQAString,initialDatePreQA,finalDatePreQA, 500,0);
+		SearchResult searchResultPreQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersionLPI(), preQAString,initialDatePreQA,finalDatePreQA, 500,0);
 		preQADefCount = preQADefCount + searchResultPreQA.getTotal();
 		
 		String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-		SearchResult searchResultPostQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersion(), postQAString,finalDatePreQA,currentDate, 500,0);
+		SearchResult searchResultPostQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersionLPI(), postQAString,finalDatePreQA,currentDate, 500,0);
 		postQADefCount = postQADefCount + searchResultPostQA.getTotal();
 		
 		repo.setPreQADefects((int)preQADefCount+"");
@@ -1353,7 +1404,45 @@ public class DefaultJiraClient implements JiraClient {
 		{
 			repo.setDefectSlippage(0.0+"");
 		}
+		}
 		
+		else
+		{
+			for(Object verObj : respArrayVer)
+			{
+				JSONObject versionObj = (JSONObject)verObj;
+				if(versionObj.get("name").equals(settings.getSecondPreviousReleaseEBB()))
+				{
+					initialDatePreQA = (String) versionObj.get("releaseDate");
+				}
+				
+				if(versionObj.get("name").equals(settings.getPreviousMinorReleaseVersionEBB()))
+				{
+					finalDatePreQA = (String) versionObj.get("releaseDate");
+				}
+			}
+			
+			SearchResult searchResultPreQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersionEBB(), preQAString,initialDatePreQA,finalDatePreQA, 500,0);
+			preQADefCount = preQADefCount + searchResultPreQA.getTotal();
+			
+			String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+			SearchResult searchResultPostQA = getEnvironmentDefects(repo.getPROJECTID(),settings.getPreviousMajorVersionEBB(), postQAString,finalDatePreQA,currentDate, 500,0);
+			postQADefCount = postQADefCount + searchResultPostQA.getTotal();
+			
+			repo.setPreQADefects((int)preQADefCount+"");
+			repo.setPostQADefects((int)postQADefCount+"");
+			
+			if((postQADefCount+postQADefCount)!=0)
+			{
+				DecimalFormat df = new DecimalFormat("#.00"); 
+				double slippage = (postQADefCount/(preQADefCount+postQADefCount))*100;
+				repo.setDefectSlippage(Double.valueOf(df.format(slippage))+"");
+			}
+			else
+			{
+				repo.setDefectSlippage(0.0+"");
+			}	
+		}
 		
 	    /*repo.setStageDefects(searchResultPreQA.getTotal()+"");
 		repo.setProdDefects(searchResultProd.getTotal()+"");*/
@@ -1384,7 +1473,7 @@ public class DefaultJiraClient implements JiraClient {
 		dInject.setVersionId(velocity.getVersionId());
 		dInject.setStartDate(velocity.getStartDate());
 		/*SearchResult searchResultSP = getStoryPoints(velocity.getProjectId(),velocity.getSprintId(), 500,0);*/
-		dInject.setAchievedPoints(Double.parseDouble(velocity.getCompleted()));
+		dInject.setAchievedPoints(Double.parseDouble(velocity.getCompleted()));		
 		diList.add(dInject);
 		}
 		

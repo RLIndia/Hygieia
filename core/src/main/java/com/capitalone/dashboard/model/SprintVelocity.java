@@ -29,7 +29,9 @@ public class SprintVelocity extends BaseModel {
 	private String endDate;
 	private String midSprintDate;
 	private double midPointSum;
-	private int acceptanceCriteria;    
+	private int acceptanceCriteria;
+	private String defectCommitment;
+	private String defectCompletion;
 
     public int getAcceptanceCriteria() {
 		return acceptanceCriteria;
@@ -180,6 +182,22 @@ public class SprintVelocity extends BaseModel {
 
 	public double getMidPointSum() {
 		return midPointSum;
+	}
+
+	public String getDefectCommitment() {
+		return defectCommitment;
+	}
+
+	public void setDefectCommitment(String defectCommitment) {
+		this.defectCommitment = defectCommitment;
+	}
+
+	public String getDefectCompletion() {
+		return defectCompletion;
+	}
+
+	public void setDefectCompletion(String defectCompletion) {
+		this.defectCompletion = defectCompletion;
 	}
 
 	

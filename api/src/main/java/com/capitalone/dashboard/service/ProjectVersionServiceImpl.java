@@ -229,6 +229,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 					.findVelocityReport(item.getCollectorId(), versionId,projectId);
 			
 			JSONArray velocities = new JSONArray();
+			JSONArray defectVelocities = new JSONArray();
 			JSONArray sprintStoryPointsArray= new JSONArray();			
 			JSONArray midStoryPointsArray= new JSONArray();
 			JSONObject acceptObj = new JSONObject();
@@ -245,6 +246,7 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				JSONObject velocityObj = new JSONObject();
 				JSONObject sprintPointsObj = new JSONObject();
 				JSONObject midSprintPointsObj = new JSONObject();
+				JSONObject defectVelocityObj = new JSONObject();
 				
 				// push the first issues projectname and versionname to the summary
 				// object
@@ -259,6 +261,12 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 				velocityObj.put("Committed", velocity.getCommitted());
 				velocityObj.put("Completed", velocity.getCompleted());
 				velocities.add(velocityObj);
+				
+				//defectVelocityObj.put("SprintId", velocity.getSprintId());
+				defectVelocityObj.put("SprintName", velocity.getSprintName());							
+				defectVelocityObj.put("Committed", velocity.getDefectCommitment());
+				defectVelocityObj.put("Completed", velocity.getDefectCompletion());
+				defectVelocities.add(defectVelocityObj);
 				
 				acceptanceCoverage = acceptanceCoverage + velocity.getAcceptanceCriteria();
 				storyCount = storyCount + velocity.getStoryCount();
@@ -334,17 +342,19 @@ public class ProjectVersionServiceImpl implements ProjectVersionService {
 
 		//	responseObj.put("version", summary);
 
-			responseObj.put("teamVelocity", velocities);
+			responseObj.put("TeamVelocity", velocities);
 			
-			responseObj.put("defectSlippageRate",slippageObj);			
+			responseObj.put("DefectSlippageRate",slippageObj);			
 			
-			responseObj.put("defectInjectionRate",defectInjection);
+			responseObj.put("DefectInjectionRate",defectInjection);
 			
 			responseObj.put("IssueStoryPoints", sprintStoryPointsArray);
 			
 			responseObj.put("MidSprintPoints", midStoryPointsArray);		
 			
 			responseObj.put("AcceptanceCoverage", acceptanceArray);
+			
+			responseObj.put("DefectVelocities", defectVelocities);
 			
 			
 			
