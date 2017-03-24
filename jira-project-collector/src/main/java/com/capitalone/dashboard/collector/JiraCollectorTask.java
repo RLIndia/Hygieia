@@ -221,9 +221,6 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
                 }
             }
 
-            
-
-            
             List<SprintVelocity> sprintVelocities = null;
 			try {
 				sprintVelocities = jiraclient.getVelocityReportByProject(repo);
@@ -232,7 +229,6 @@ public class JiraCollectorTask extends CollectorTask<Collector> {
 				e.printStackTrace();
 			}      
 
-            //Collections.reverse(sprintVelocities);
             List<SprintVelocity> prevVelocities = sprintVelocityRepository
     				.findVelocityReport(collector.getId(),repo.getVERSIONID(),repo.getPROJECTID());
            
