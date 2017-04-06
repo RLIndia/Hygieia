@@ -7,13 +7,19 @@ import com.capitalone.dashboard.model.Environment;
 import com.capitalone.dashboard.model.OctopusApplication;
 
 public interface OctopusClient {
-	
-	
+
+
     List<OctopusApplication> getApplications();
 
-    
+
     List<Environment> getEnvironments();
-    
+
     List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application);
+
+    List<ApplicationDeploymentHistoryItem> getApplicationDeploymentHistory(OctopusApplication application,String environments);
+
+    void setContext(int sc);
+    int getContext();
+
 
 }

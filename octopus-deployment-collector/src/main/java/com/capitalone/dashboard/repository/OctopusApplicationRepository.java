@@ -11,12 +11,15 @@ import com.capitalone.dashboard.model.OctopusApplication;
 
 public interface OctopusApplicationRepository extends BaseCollectorItemRepository<OctopusApplication>{
 
-    
+
     @Query(value="{ 'collectorId' : ?0, options.instanceUrl : ?1, options.applicationId : ?2}")
     OctopusApplication findUDeployApplication(ObjectId collectorId, String instanceUrl, String applicationId);
 
-   
+
     @Query(value="{ 'collectorId' : ?0, options.instanceUrl : ?1, enabled: true}")
     List<OctopusApplication> findEnabledApplications(ObjectId collectorId, String instanceUrl);
+
+    @Query(value="{ 'collectorId' : ?0}")
+    List<OctopusApplication> findApplications(ObjectId collectorId);
 
 }

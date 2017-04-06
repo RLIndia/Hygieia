@@ -36,13 +36,13 @@ import com.capitalone.dashboard.repository.OctopusApplicationRepository;
 import com.capitalone.dashboard.repository.OctopusCollectorRepository;
 
 
-
-
 @Component
 public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 	private static final Logger LOGGER = LoggerFactory.getLogger(OctopusCollectorTask.class);
 	private final OctopusCollectorRepository octopusCollectorRepository;
 	private final OctopusSettings octopusSettings;
+
+	private int contextOctopusIndex = 0;
 
 	private final OctopusApplicationRepository octopusApplicationRepository;
 	private final OctopusClient octopusClient;
@@ -53,14 +53,18 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 	private final ComponentRepository dbComponentRepository;
 
 
+
+	private int contextOserver;
+
+
 	@Autowired
 	public OctopusCollectorTask(TaskScheduler taskScheduler,OctopusCollectorRepository octopusCollectorRepository
 			,OctopusSettings octopusSettings,
-			OctopusApplicationRepository octopusApplicationRepository,
-			EnvironmentComponentRepository envComponentRepository,
-			EnvironmentStatusRepository environmentStatusRepository,
-			OctopusClient octopusClient,
-			ComponentRepository dbComponentRepository) {
+								OctopusApplicationRepository octopusApplicationRepository,
+								EnvironmentComponentRepository envComponentRepository,
+								EnvironmentStatusRepository environmentStatusRepository,
+								OctopusClient octopusClient,
+								ComponentRepository dbComponentRepository) {
 		super(taskScheduler, "Octopus");
 
 		this.octopusCollectorRepository = octopusCollectorRepository;
@@ -69,10 +73,13 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 
 		this.envComponentRepository = envComponentRepository;
 		this.environmentStatusRepository = environmentStatusRepository;
+
+
+
 		this.octopusClient = octopusClient;
 
 		this.dbComponentRepository = dbComponentRepository;
-
+		this.contextOserver = 0;
 
 	}
 
@@ -94,28 +101,35 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 	@Override
 	public void collect(OctopusCollector collector) {
 
-		
+
 
 		long start = System.currentTimeMillis();
 
 		clean(collector);
 
-		addNewApplications(octopusClient.getApplications(),
-				collector);
-		
-		List<OctopusApplication> applications = enabledApplications(collector, octopusSettings.getUrl());
-		LOGGER.info("Enabled Applications ==>"+applications.size());
-		updateData(applications);
+		String[] os = octopusSettings.getUrl();
+		LOGGER.info("Only errors would be displayed..wait for finshed message");
+		for(int co = 0; co < os.length; co++) {
 
+			this.contextOserver=co;
+			octopusClient.setContext(co);
+			LOGGER.info("Octopus Server " + (octopusClient.getContext() + 1) + " " + octopusSettings.getUrl()[this.contextOserver]);
+			addNewApplications(octopusClient.getApplications(),
+					collector);
+
+			List<OctopusApplication> applications = enabledApplications(collector, octopusSettings.getUrl()[this.contextOserver]);
+			LOGGER.info("Enabled Applications ==>" + applications.size());
+			updateData(applications);
+
+
+
+		}
 		log("Finished", start);
+		LOGGER.info("Finished -------------------------------------");
 
 	}
 
-	/**
-	 * Clean up unused deployment collector items
-	 *
-	 * @param collector the {@link UDeployCollector}
-	 */
+
 	@SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
 	private void clean(OctopusCollector collector) {
 		deleteUnwantedJobs(collector);
@@ -160,11 +174,11 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 	}
 
 	private void addNewApplications(List<OctopusApplication> applications,
-			OctopusCollector collector) {
+									OctopusCollector collector) {
 		long start = System.currentTimeMillis();
 		int count = 0;
 
-		log("All apps", start, applications.size());
+		//log("All apps", start, applications.size());
 		for (OctopusApplication application : applications) {
 
 			if (isNewApplication(collector, application)) {
@@ -174,20 +188,20 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 				try {
 					octopusApplicationRepository.save(application);
 				} catch (org.springframework.dao.DuplicateKeyException ce) {
-					log("Duplicates items not allowed", 0);
+					//	log("Duplicates items not allowed", 0);
 
 				}
 				count++;
 			}
 
 		}
-		log("New apps", start, count);
+		//log("New apps", start, count);
 	}
 
 	private boolean isNewApplication(OctopusCollector collector,
-			OctopusApplication application) {
+									 OctopusApplication application) {
 		return octopusApplicationRepository.findUDeployApplication(
-				collector.getId(), octopusSettings.getUrl(),
+				collector.getId(), octopusSettings.getUrl()[this.contextOserver],
 				application.getApplicationId()) == null;
 	}
 
@@ -196,76 +210,81 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 		return octopusApplicationRepository.findEnabledApplications(
 				collector.getId(), instanceUrl);
 	}
-	
-    private List<EnvironmentComponent> getEnvironmentComponent(List<ApplicationDeploymentHistoryItem> dataList) {
-        List<EnvironmentComponent> returnList = new ArrayList<>();
-        for (ApplicationDeploymentHistoryItem data : dataList) {
-            EnvironmentComponent component = new EnvironmentComponent();
-            
-            component.setComponentName(data.getApplicationName());
-            component.setComponentID(data.getApplicationId());
-            component.setCollectorItemId(data.getCollectorItemId());
-            
-            component.setEnvironmentID(data.getEnvironmentId());
-            
-            
-            //component.setEnvironmentUrl(octopusSettings.getUrl()+"/app#/environments/"+data.getEnvironmentId());
-            component.setEnvironmentUrl(octopusSettings.getUrl()+data.getDeployedWebUrl());
-			//ex. http://testoctopus2.starbucks.net/app#/deployments/deployments-45583
-            component.setComponentVersion(data.getVersion());
-            
-            
-            
-            component.setDeployed(data.isDeployed());
-           
-            component.setEnvironmentName(data
-                    .getEnvironmentName());
-            component.setDeployTime(data.getAsOfDate());
-            
-            
-            component.setAsOfDate(data.getAsOfDate());
-            
-            returnList.add(component);
-        }
-        return returnList;
-    }
-    
-    private List<EnvironmentStatus> getEnvironmentStatus(List<ApplicationDeploymentHistoryItem> dataList) {
-        List<EnvironmentStatus> returnList = new ArrayList<>();
-        Map<String,List<String>> tempStorage = new HashMap<String,List<String>>();
-        
-        
-        
-        for (ApplicationDeploymentHistoryItem data : dataList) {
-        	
-        	List<String> machineIds = null;
-        	
-        	if(!tempStorage.containsKey(data.getApplicationId())) {
-        		machineIds = new ArrayList<>();
-        		tempStorage.put(data.getApplicationId(), machineIds);
-        	} else {
-        		machineIds = tempStorage.get(data.getApplicationId());
-        	}
-            
-        	for(Machine machine:data.getMachines()) {
-        	
-        		if(!machineIds.contains(machine.getMachineId())) {
-        			EnvironmentStatus status = new EnvironmentStatus();
-                    status.setCollectorItemId(data.getCollectorItemId());
-                    status.setComponentID(data.getApplicationId());
-                    status.setComponentName(data.getApplicationName());
-                    status.setEnvironmentName(data.getEnvironmentName());
-                    status.setOnline(machine.isStatus()); // for testing
-                    status.setResourceName(machine.getMachineName()); // for testing
-                    status.setHostname(machine.getHostName());
-                    returnList.add(status);
-                    machineIds.add(machine.getMachineId());
-        		}
-           }
-        }
-        return returnList;
-    }
 
+	private List<OctopusApplication> allApplications(
+			OctopusCollector collector, String instanceUrl) {
+		return octopusApplicationRepository.findApplications(
+				collector.getId());
+	}
+
+	private List<EnvironmentComponent> getEnvironmentComponent(List<ApplicationDeploymentHistoryItem> dataList) {
+		List<EnvironmentComponent> returnList = new ArrayList<>();
+		for (ApplicationDeploymentHistoryItem data : dataList) {
+			EnvironmentComponent component = new EnvironmentComponent();
+
+			component.setComponentName(data.getApplicationName());
+			component.setComponentID(data.getApplicationId());
+			component.setCollectorItemId(data.getCollectorItemId());
+
+			component.setEnvironmentID(data.getEnvironmentId());
+
+
+			//component.setEnvironmentUrl(octopusSettings.getUrl()+"/app#/environments/"+data.getEnvironmentId());
+			component.setEnvironmentUrl(octopusSettings.getUrl()[this.contextOserver]+data.getDeployedWebUrl());
+			//ex. http://testoctopus2.starbucks.net/app#/deployments/deployments-45583
+			component.setComponentVersion(data.getVersion());
+
+
+
+			component.setDeployed(data.isDeployed());
+
+			component.setEnvironmentName(data
+					.getEnvironmentName());
+			component.setDeployTime(data.getAsOfDate());
+
+
+			component.setAsOfDate(data.getAsOfDate());
+
+			returnList.add(component);
+		}
+		return returnList;
+	}
+
+	private List<EnvironmentStatus> getEnvironmentStatus(List<ApplicationDeploymentHistoryItem> dataList) {
+		List<EnvironmentStatus> returnList = new ArrayList<>();
+		Map<String,List<String>> tempStorage = new HashMap<String,List<String>>();
+
+
+
+		for (ApplicationDeploymentHistoryItem data : dataList) {
+
+			List<String> machineIds = null;
+
+			if(!tempStorage.containsKey(data.getApplicationId())) {
+				machineIds = new ArrayList<>();
+				tempStorage.put(data.getApplicationId(), machineIds);
+			} else {
+				machineIds = tempStorage.get(data.getApplicationId());
+			}
+
+			for(Machine machine:data.getMachines()) {
+
+				if(!machineIds.contains(machine.getMachineId())) {
+					EnvironmentStatus status = new EnvironmentStatus();
+					status.setCollectorItemId(data.getCollectorItemId());
+					status.setComponentID(data.getApplicationId());
+					status.setComponentName(data.getApplicationName());
+					status.setEnvironmentName(data.getEnvironmentName());
+					status.setOnline(machine.isStatus()); // for testing
+					status.setResourceName(machine.getMachineName()); // for testing
+					status.setHostname(machine.getHostName());
+					returnList.add(status);
+					machineIds.add(machine.getMachineId());
+				}
+			}
+		}
+		return returnList;
+	}
 
 	private void updateData(List<OctopusApplication> octopusApplications) {
 		for (OctopusApplication application : octopusApplications) {
@@ -274,19 +293,19 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 			long startApp = System.currentTimeMillis();
 
 			List<ApplicationDeploymentHistoryItem> applicationDeploymentHistoryItems = octopusClient.getApplicationDeploymentHistory(application);
-		    
-			LOGGER.info("history ==>"+applicationDeploymentHistoryItems.size()); 
-			
+
+			//	LOGGER.info("history ==>"+applicationDeploymentHistoryItems.size());
+
 			compList.addAll(getEnvironmentComponent(applicationDeploymentHistoryItems));
-			
+
 			statusList.addAll(getEnvironmentStatus(applicationDeploymentHistoryItems));
-			
-			
-			
-			LOGGER.info("compList ==>"+compList.size()); 
-			
-			LOGGER.info("statusList ==>"+statusList.size()); 
-			
+
+
+
+			//	LOGGER.info("compList ==>"+compList.size());
+
+			//	LOGGER.info("statusList ==>"+statusList.size());
+
 			if (!compList.isEmpty()) {
 				List<EnvironmentComponent> existingComponents = envComponentRepository
 						.findByCollectorItemId(application.getId());
@@ -300,7 +319,7 @@ public class OctopusCollectorTask extends CollectorTask<OctopusCollector>{
 				environmentStatusRepository.save(statusList);
 			}
 
-			log(" " + application.getApplicationName(), startApp);
+			//	log(" " + application.getApplicationName(), startApp);
 		}
 	}
 

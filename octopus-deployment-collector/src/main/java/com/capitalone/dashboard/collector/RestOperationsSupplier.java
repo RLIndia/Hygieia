@@ -9,7 +9,7 @@ import com.capitalone.dashboard.util.Supplier;
 
 @Component
 public class RestOperationsSupplier implements Supplier<RestOperations>{
-	@Override
+    @Override
     public RestOperations get() {
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setConnectTimeout(120000);
