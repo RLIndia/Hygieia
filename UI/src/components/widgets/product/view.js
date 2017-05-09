@@ -5,8 +5,8 @@
         .module(HygieiaConfig.module)
         .controller('productViewController', productViewController);
 
-    productViewController.$inject = ['$scope', '$document', '$modal', '$location', '$q', '$routeParams', '$timeout', 'buildData', 'codeAnalysisData', 'collectorData', 'dashboardData', 'pipelineData', 'testSuiteData', 'productBuildData', 'productCodeAnalysisData', 'productCommitData', 'productSecurityAnalysisData', 'productTestSuiteData'];
-    function productViewController($scope, $document, $modal, $location, $q, $routeParams, $timeout, buildData, codeAnalysisData, collectorData, dashboardData, pipelineData, testSuiteData, productBuildData, productCodeAnalysisData, productCommitData, productSecurityAnalysisData, productTestSuiteData) {
+    productViewController.$inject = ['$scope', '$document', '$modal', '$location', '$q', '$routeParams', '$timeout', 'buildData','deployData', 'codeAnalysisData', 'collectorData', 'dashboardData', 'pipelineData', 'testSuiteData', 'productBuildData', 'productCodeAnalysisData', 'productCommitData', 'productSecurityAnalysisData', 'productTestSuiteData'];
+    function productViewController($scope, $document, $modal, $location, $q, $routeParams, $timeout, buildData,deployData, codeAnalysisData, collectorData, dashboardData, pipelineData, testSuiteData, productBuildData, productCodeAnalysisData, productCommitData, productSecurityAnalysisData, productTestSuiteData) {
         /*jshint validthis:true */
         var ctrl = this;
 
@@ -26,9 +26,11 @@
             codeAnalysis: '++id,timestamp,[componentId+timestamp]',
             securityAnalysis: '++id,timestamp,[componentId+timestamp]',
             buildData: '++id,timestamp,[componentId+timestamp]',
+            deployData: '++id,timestamp,[componentId+timestamp]',
             prodCommit: '++id,timestamp,[collectorItemId+timestamp]'
         });
 
+        console.log()
         // create classes
         var LastRequest = db.lastRequest.defineClass({
             id: String,
@@ -135,7 +137,9 @@
             else if(isReload === false) {
                 isReload = true;
             }
-            
+
+            console.log(">>>>>>>>>>>>>>>>>>Pipeline<<<<<<<<<<<<<<<<");
+            console.log(deployData.details());
             collectTeamStageData(widgetOptions.teams, [].concat(ctrl.stages));
 
             var requestedData = getTeamDashboardDetails(widgetOptions.teams);
@@ -332,6 +336,8 @@
         }
 
         function getTeamDashboardDetails(teams) {
+            console.log('*************** in teams ***********************');
+            console.log(teams);
             var update = false;
             _(teams).forEach(function(team) {
                 if(!teamDashboardDetails[team.collectorItemId]) {
@@ -344,12 +350,17 @@
                 return false;
             }
 
+            console.log('*************** in teams 1***********************');
+
             // let's grab our products and update all the board info
             collectorData.itemsByType('product').then(function(response) {
+                console.log(response);
                 _(teams).forEach(function(team) {
+                    console.log(team);
                     _(response).forEach(function(board) {
                         if (team.collectorItemId == board.id) {
                             dashboardData.detail(board.options.dashboardId).then(function(result) {
+                            console.log('*************** in teams 2***********************');
                                 teamDashboardDetails[team.collectorItemId] = result;
 
                                 getTeamComponentData(team.collectorItemId);
@@ -417,10 +428,12 @@
             productSecurityAnalysisData.process(angular.extend(processDependencyObject, { codeAnalysisData: codeAnalysisData, getCaMetric: getCaMetric }));
             productCodeAnalysisData.process(angular.extend(processDependencyObject, { codeAnalysisData: codeAnalysisData, getCaMetric: getCaMetric }));
             productTestSuiteData.process(angular.extend(processDependencyObject, { testSuiteData: testSuiteData }));
-        }
+        }``
 
         function collectTeamStageData(teams, ctrlStages) {
             // no need to go further if teams aren't configured
+            console.log('*************** Printing teams ****************');
+            console.log(teams);
             if(!teams || !teams.length) {
                 return;
             }
