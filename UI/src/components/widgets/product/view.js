@@ -68,7 +68,9 @@
             isReload = null;
 
         // public properties
-        ctrl.stages = ['Commit', 'Build', 'Dev', 'QA', 'Int', 'Perf', 'Prod'];
+       // ctrl.stages = ['Commit', 'Build', 'Dev', 'QA', 'Int', 'Perf', 'Prod'];
+        ctrl.stages = ['Commit', 'Build'];
+        ctrl.deployStages = ['Dev', 'QA', 'Int', 'Perf'];
         ctrl.sortableOptions = {
             additionalPlaceholderClass: 'product-table-tr',
             placeholder: function(el) {
@@ -139,8 +141,9 @@
             }
 
             console.log(">>>>>>>>>>>>>>>>>>Pipeline<<<<<<<<<<<<<<<<");
-            console.log(deployData.details());
-            collectTeamStageData(widgetOptions.teams, [].concat(ctrl.stages));
+            //console.log();
+            //Commented below line on 10-May-2017 to display deploy data from deploy widget. Leiu code is processDeployment : Vinod
+            //collectTeamStageData(widgetOptions.teams, [].concat(ctrl.stages));
 
             var requestedData = getTeamDashboardDetails(widgetOptions.teams);
             console.log('*************** in load product requested data view ****************');
@@ -361,7 +364,24 @@
                         if (team.collectorItemId == board.id) {
                             dashboardData.detail(board.options.dashboardId).then(function(result) {
                             console.log('*************** in teams 2***********************');
+                            console.log(result);
                                 teamDashboardDetails[team.collectorItemId] = result;
+                                //try fetching deploy details here
+                                var mappings = [];
+                                _(result.widgets).filter({name:'pipeline'}).forEach(function(pipeline){
+                                    mappings = pipeline.options.mappings;
+
+                                });
+
+                                _(result.widgets).filter({name:'deploy'}).forEach(function(widget){
+                                  //  var componentId = widget.componentId;
+                                    deployData.details(widget.componentId).then(function(deploys){
+                                       console.log('Got a deployment');
+                                       processDeployment(mappings,deploys,team);
+                                    });
+                                });
+
+
 
                                 getTeamComponentData(team.collectorItemId);
                             });
@@ -372,6 +392,45 @@
 
             return true;
         }
+
+        function processDeployment(mappings,deploys,team){
+
+              // team.stages[stage].summary
+              var summary = {};
+              console.log(mappings);
+              console.log(deploys);
+              console.log(team);
+            //  to get
+         //     summary.average.days, summary.deviation.number , lastUpdated.shortDisplay,  version.number
+
+            //iterate over deploy stages
+                // find the stage in mappings
+
+
+//                console.log('*************** Printing teams ****************');
+//                           console.log(teams);
+//                           if(!teams || !teams.length) {
+//                               return;
+//                           }
+//
+//                           var nowTimestamp = moment().valueOf();
+//                           // loop through each team and request pipeline data
+//                           _(teams).forEach(function(configuredTeam) {
+//                               var commitDependencyObject = {
+//                                   db: db,
+//                                   configuredTeam: configuredTeam,
+//                                   nowTimestamp: nowTimestamp,
+//                                   setTeamData: setTeamData,
+//                                   cleanseData: cleanseData,
+//                                   pipelineData: pipelineData,
+//                                   $q: $q,
+//                                   ctrlStages: ctrlStages
+//                               };
+//
+//                               productCommitData.process(commitDependencyObject);
+//                           });
+        }
+
 
         function updateWidgetOptions(options) {
             // get a list of collector ids
