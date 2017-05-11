@@ -34,6 +34,7 @@
 
 
         function processResponse(data) {
+            console.log(data);
             ctrl.environments = _(data.result).map(function (env) {
                 return {
                     name: env.name,

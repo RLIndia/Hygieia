@@ -1,4 +1,5 @@
 cd UI
+rm -rf dist/*
 mvn clean install -DskipTests
 cp -r dist/* /usr/share/nginx/html/
 cat ../nginx.default > /etc/nginx/sites-enabled/default

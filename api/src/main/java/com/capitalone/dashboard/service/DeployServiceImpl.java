@@ -11,6 +11,8 @@ import com.capitalone.dashboard.model.EnvironmentStatus;
 import com.capitalone.dashboard.model.deploy.DeployableUnit;
 import com.capitalone.dashboard.model.deploy.Environment;
 import com.capitalone.dashboard.model.deploy.Server;
+import com.capitalone.dashboard.model.ChefNode;
+import com.capitalone.dashboard.repository.ChefNodeRepository;
 import com.capitalone.dashboard.repository.CollectorItemRepository;
 import com.capitalone.dashboard.repository.CollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
@@ -32,6 +34,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class DeployServiceImpl implements DeployService {
@@ -43,40 +47,68 @@ public class DeployServiceImpl implements DeployService {
     private final CollectorItemRepository collectorItemRepository;
     private final CollectorService collectorService;
 
+    private final ChefNodeRepository chefNodeRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeployServiceImpl.class);
+
     @Autowired
     public DeployServiceImpl(ComponentRepository componentRepository,
                              EnvironmentComponentRepository environmentComponentRepository,
                              EnvironmentStatusRepository environmentStatusRepository,
-                             CollectorRepository collectorRepository, CollectorItemRepository collectorItemRepository, CollectorService collectorService) {
+                             CollectorRepository collectorRepository, CollectorItemRepository collectorItemRepository, CollectorService collectorService, ChefNodeRepository chefNodeRepository) {
         this.componentRepository = componentRepository;
         this.environmentComponentRepository = environmentComponentRepository;
         this.environmentStatusRepository = environmentStatusRepository;
         this.collectorRepository = collectorRepository;
         this.collectorItemRepository = collectorItemRepository;
         this.collectorService = collectorService;
+
+        this.chefNodeRepository = chefNodeRepository;
     }
 
     @Override
     public DataResponse<List<Environment>> getDeployStatus(ObjectId componentId) {
         Component component = componentRepository.findOne(componentId);
-        CollectorItem item = component.getCollectorItems()
-                .get(CollectorType.Deployment).get(0);
-        ObjectId collectorItemId = item.getId();
+        LOGGER.info(component.getCollectorItems().toString());
 
-        List<EnvironmentComponent> components = environmentComponentRepository
-                .findByCollectorItemId(collectorItemId);
-        List<EnvironmentStatus> statuses = environmentStatusRepository
-                .findByCollectorItemId(collectorItemId);
-
+        CollectorItem item = null;
         List<Environment> environments = new ArrayList<>();
-        for (Map.Entry<Environment, List<EnvironmentComponent>> entry : groupByEnvironment(
-                components).entrySet()) {
-            Environment env = entry.getKey();
-            environments.add(env);
-            for (EnvironmentComponent envComponent : entry.getValue()) {
-                env.getUnits().add(
-                        new DeployableUnit(envComponent, servers(envComponent,
-                                statuses)));
+        //*********************************************************
+        //Below Condition to be removed once the Chef collector uses the environment component.
+        //This is stop gap fix - Vinod
+        //***********************************************************
+        if(component.getCollectorItems().containsKey(CollectorType.Chef)){
+            item = component.getCollectorItems()
+                    .get(CollectorType.Chef).get(0);
+            item = collectorItemRepository.findOne(item.getId());
+            List<ChefNode> chefNodes = chefNodeRepository.findByCollectorItemId(item.getId());
+
+            for(ChefNode cn : chefNodes){
+                Environment env = new Environment(cn.getEnvName(),cn.getIpAddress());
+                environments.add(env);
+            }
+        }
+        else {
+            item = component.getCollectorItems()
+                    .get(CollectorType.Deployment).get(0);
+
+
+            ObjectId collectorItemId = item.getId();
+            LOGGER.info(collectorItemId.toString());
+            List<EnvironmentComponent> components = environmentComponentRepository
+                    .findByCollectorItemId(collectorItemId);
+            List<EnvironmentStatus> statuses = environmentStatusRepository
+                    .findByCollectorItemId(collectorItemId);
+
+
+            for (Map.Entry<Environment, List<EnvironmentComponent>> entry : groupByEnvironment(
+                    components).entrySet()) {
+                Environment env = entry.getKey();
+                environments.add(env);
+                for (EnvironmentComponent envComponent : entry.getValue()) {
+                    env.getUnits().add(
+                            new DeployableUnit(envComponent, servers(envComponent,
+                                    statuses)));
+                }
             }
         }
 

@@ -51,7 +51,7 @@ wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5"  --header="x-
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
+#nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Octopus Environment collector"
 cd ../../octopus-deployment-all-collector/
@@ -60,7 +60,7 @@ wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5"  --header="x-
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar octopus-deployment-all-collector-2.0.2-SNAPSHOT.jar &
+#nohup java -jar octopus-deployment-all-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Jenkins collector"
 cd ../../jenkins-build-collector/
@@ -69,7 +69,7 @@ wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5" --header="x-c
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
+#nohup java -jar jenkins-build-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Bitbucket collector"
 cd ../../bitbucket-scm-collector/
@@ -120,7 +120,7 @@ cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 echo "chef.pemFilePath="$(pwd)/target/chef.pem >> target/application.properties
 cd target
-#nohup java -jar chef-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar chef-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Sonar collector"
 cd ../../sonar-codequality-collector/
@@ -136,11 +136,13 @@ cd target
 
 
 echo "Starting UI"
+rm -rf dist/*
 cd ../../UI
 cp -r dist/* /usr/share/nginx/html/
 cat ../nginx.default > /etc/nginx/sites-enabled/default
-service nginx stop
-service nginx start
+#service nginx stop
+#service nginx start
 #nohup node/node node_modules/gulp/bin/gulp.js serve &
+systemctl restart nginx
 echo "Done..."
 
