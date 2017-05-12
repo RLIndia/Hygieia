@@ -9,7 +9,7 @@
     function pipelineViewController($scope, deployData, WidgetState, $q) {
         /*jshint validthis:true */
         var ctrl = this;
-
+        console.log("Whatever*************************");
         // placeholder for environments that are not deployed or have a server down
         var currentDownEnvironments = [];
 
@@ -18,6 +18,7 @@
 
         ctrl.load = function() {
             // verify that a valid mapping exists
+            console.log('in load');
             var configLength = (function(map) {
                 var length = 0;
                 for(var key in map) {
@@ -29,12 +30,14 @@
             })($scope.widgetConfig.options.mappings);
 
             // if no valid mapping exists go back to configuration state
+            console.log($scope.dashboard.application.components[0]);
             if(configLength === 0) {
                 $scope.widgetConfig.options.mappings = {};
                 $scope.setState(WidgetState.CONFIGURE);
             } else {
                 var deferred = $q.defer();
                 deployData.details($scope.dashboard.application.components[0].id).then(function(data) {
+                    console.log(data.result);
                     processResponse(data.result);
                     deferred.resolve(data.lastUpdated);
                 });
@@ -76,7 +79,7 @@
                     return mappings[envKey] && mappings[envKey].toLowerCase() == env.name.toLowerCase();
                 })
                     .forEach(function (env) {
-
+                        console.log(env);
                         // look at each unit and add data for the current environment key
                         _(env.units).forEach(function (unit) {
                             var unitValue = unit.name.toLowerCase();

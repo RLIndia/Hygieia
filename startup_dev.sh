@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm -rf UI/dist/*
+
 if [ "$6" == "nobuild" ]
 then
     echo "No Build request found ... proceeding to restart of collectors"
@@ -11,6 +13,7 @@ echo $1
 echo $2
 echo $4
 echo $5
+
 
 #echo "Installing Nginx"
 #apt-get install nginx -y
@@ -136,13 +139,15 @@ cd target
 
 
 echo "Starting UI"
-rm -rf dist/*
+#rm -rf dist/*
 cd ../../UI
 cp -r dist/* /usr/share/nginx/html/
 cat ../nginx.default > /etc/nginx/sites-enabled/default
 #service nginx stop
 #service nginx start
+sudo systemctl stop nginx
+sudo systemctl start nginx
 #nohup node/node node_modules/gulp/bin/gulp.js serve &
-systemctl restart nginx
+#systemctl restart nginx
 echo "Done..."
 
