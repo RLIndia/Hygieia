@@ -54,7 +54,7 @@ wget --header="Accept-Charset: UTF-8" --header="dashboard-host:$5"  --header="x-
 cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 cd target
-#nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
+nohup java -jar octopus-deployment-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Octopus Environment collector"
 cd ../../octopus-deployment-all-collector/
@@ -123,7 +123,7 @@ cat target/temp.properties >> target/application.properties
 echo "dbhost="$2 >> target/application.properties
 echo "chef.pemFilePath="$(pwd)/target/chef.pem >> target/application.properties
 cd target
-nohup java -jar chef-collector-2.0.2-SNAPSHOT.jar &
+#nohup java -jar chef-collector-2.0.2-SNAPSHOT.jar &
 
 echo "Configuring Sonar collector"
 cd ../../sonar-codequality-collector/

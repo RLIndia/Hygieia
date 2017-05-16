@@ -70,7 +70,7 @@
         // public properties
        // ctrl.stages = ['Commit', 'Build', 'Dev', 'QA', 'Int', 'Perf', 'Prod'];
         ctrl.stages = ['Commit', 'Build'];
-        ctrl.deployStages = ['Dev', 'QA', 'Int', 'Perf'];
+        ctrl.deployStages = ['dev', 'qa', 'int', 'perf'];
         ctrl.sortableOptions = {
             additionalPlaceholderClass: 'product-table-tr',
             placeholder: function(el) {
@@ -363,6 +363,7 @@
                     _(response).forEach(function(board) {
                         if (team.collectorItemId == board.id) {
                             dashboardData.detail(board.options.dashboardId).then(function(result) {
+                            //Section introduced by Vinod to support Octopus Deploy
                             console.log('*************** in teams 2***********************');
                             console.log(result);
                                 teamDashboardDetails[team.collectorItemId] = result;
@@ -377,6 +378,12 @@
                                   //  var componentId = widget.componentId;
                                     deployData.details(widget.componentId).then(function(deploys){
                                        console.log('Got a deployment');
+                                       //team.stages = ctrl.deployStages;
+                                       team.stages = [];
+                                       for(var s =0;s < ctrl.deployStages.length;s++){
+                                        team.stages[ctrl.deployStages[s]] = {
+                                        };
+                                       }
                                        processDeployment(mappings,deploys,team);
                                     });
                                 });
@@ -393,10 +400,41 @@
             return true;
         }
 
+//        Object.prototype.getKey = function(value){
+//          for(var key in this){
+//           // console.log(this[key] + ' ' + value);
+//            if(this[key].toLowerCase() == value.toLowerCase()){
+//                console.log(key);
+//              return key;
+//            }
+//          }
+//          return null;
+//        };
+
+        function findInArray(list,value){
+           for (var key in list) {
+             if (list.hasOwnProperty(key)) {
+               console.log(key + " -> " + list[key]);
+               if(list[key].toLowerCase() == value.toLowerCase())
+                {
+                    console.log("found returning " + key);
+                    return(key);
+                }
+             }
+           }
+//            for(var li in list){
+//                if(list[li].toLowerCase() == value.toLowerCase()){
+//
+//                    return(keys[li]);
+//                }
+//            }
+            return null;
+        }
+
         function processDeployment(mappings,deploys,team){
 
               // team.stages[stage].summary
-              var summary = {};
+             // var summary = {};
               console.log(mappings);
               console.log(deploys);
               console.log(team);
@@ -407,28 +445,51 @@
                 // find the stage in mappings
 
 
-//                console.log('*************** Printing teams ****************');
-//                           console.log(teams);
-//                           if(!teams || !teams.length) {
-//                               return;
-//                           }
+                   console.log('*************** Printing teams ****************');
+                   console.log(team);
+                   if(!team) {
+                       return;
+                   }
+
+                   var nowTimestamp = moment().valueOf();
+                   // loop through each team and request pipeline data
+                   //_(team).forEach(function(configuredTeam) {
+                   //expected : team.stages[stage].summary
+
+                        _(deploys.result).forEach(function(deploy){
+                            var summary = {};
+                            //get the stage name from mappings
+                            if(deploy.units.length > 0)
+                            {
+                            summary.version = deploy.units[0].version;
+                            if(deploy.units[0].servers.length > 0) {
+                                summary.server = deploy.units[0].servers[0];
+                               // summary.server.online = deploy.units[0].servers[0].online;
+                            }
+                            summary.deployed =  deploy.units[0].deployed;
+                            summary.lastUpdated = deploy.units[0].lastUpdated;
+                            }
+                            console.log(summary);
+                            console.log(team.stages);
+                            console.log(deploy.name);
+                            //console.log(findInArray(mappings,deploy.name));
+                            team.stages[findInArray(mappings,deploy.name)].summary = summary;
+                        });
+
+
+//                       var commitDependencyObject = {
+//                           db: db,
+//                           configuredTeam: configuredTeam,
+//                           nowTimestamp: nowTimestamp,
+//                           setTeamData: setTeamData,
+//                           cleanseData: cleanseData,
+//                           pipelineData: pipelineData,
+//                           $q: $q,
+//                           ctrlStages: ctrlStages
+//                       };
 //
-//                           var nowTimestamp = moment().valueOf();
-//                           // loop through each team and request pipeline data
-//                           _(teams).forEach(function(configuredTeam) {
-//                               var commitDependencyObject = {
-//                                   db: db,
-//                                   configuredTeam: configuredTeam,
-//                                   nowTimestamp: nowTimestamp,
-//                                   setTeamData: setTeamData,
-//                                   cleanseData: cleanseData,
-//                                   pipelineData: pipelineData,
-//                                   $q: $q,
-//                                   ctrlStages: ctrlStages
-//                               };
-//
-//                               productCommitData.process(commitDependencyObject);
-//                           });
+//                       productCommitData.process(commitDependencyObject);
+
         }
 
 

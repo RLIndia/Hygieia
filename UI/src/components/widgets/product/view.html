@@ -26,6 +26,7 @@
         <div class="product-table-tr">
             <div class="product-table-th"></div>
             <div class="product-table-th" ng-repeat="stage in ctrl.stages">{{stage}}</div>
+            <div class="product-table-th" ng-repeat="stage in ctrl.deployStages">{{stage | uppercase}}</div>
         </div>
         <div class="product-table-tbody" as-sortable="ctrl.sortableOptions" ng-model="ctrl.configuredTeams">
             <div class="product-table-tr"
@@ -164,7 +165,26 @@
                      ng-class="{'team-stage-needs-configured': team.stages[stage].needsConfiguration}"
                      ng-repeat="stage in ctrl.deployStages"
                 >
-                    {{stage}}
+                    {{teamDeployData = team.stages[stage].summary;""}}
+                    <div ng-show="teamDeployData.version">
+
+                    <div class="clearfix team-data-cell-average-days">{{teamDeployData.lastUpdated.shortDisplay}}</div>
+
+                    <div class="team-data-cell-body">Deployed: {{teamDeployData.lastUpdated | date : 'short'}}
+                    <!--<div class="" title="{{teamStageData.lastUpdated.longDisplay}}" ng-if="teamStageData.lastUpdated">-->
+                        <!--Updated: <span class="">{{teamDeployData.lastUpdated.shortDisplay}}</span>-->
+                    <!--</div>-->
+                    </div>
+                    <div>
+                        Version :<b>{{teamDeployData.version}}</b>
+                    </div>
+                    <div class="team-data-cell-last-build" ng-if="teamDeployData.deployed">
+                        Latest Deployment: <span class="fa fa-thumbs-up" style="color:green"></span>
+                    </div>
+                        <div class="team-data-cell-last-build" ng-if="!teamDeployData.deployed">
+                            Latest Deployment: <span class="fa fa-thumbs-down" style="color:red"></span>
+                        </div>
+                    </div>
                 </div>
                 <!--<div class="product-table-td team-prod-cell"-->
                      <!--ng-class="{'team-stage-needs-configured': team.stages['Prod'].needsConfiguration}"-->
