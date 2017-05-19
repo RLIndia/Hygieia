@@ -170,14 +170,20 @@
 
                     <div class="clearfix team-data-cell-average-days">{{teamDeployData.lastUpdated.shortDisplay}}</div>
 
-                    <div class="team-data-cell-body">Deployed: {{teamDeployData.lastUpdated | date : 'short'}}
+                    <div class="clearfix team-data-cell-average-days">Deployed: {{teamDeployData.lastUpdated | fromNow}}
                     <!--<div class="" title="{{teamStageData.lastUpdated.longDisplay}}" ng-if="teamStageData.lastUpdated">-->
                         <!--Updated: <span class="">{{teamDeployData.lastUpdated.shortDisplay}}</span>-->
                     <!--</div>-->
                     </div>
-                    <div>
+                    <div class="team-data-cell-body"  style="border-bottom:1px solid dimgray">
                         Version :<b>{{teamDeployData.version}}</b>
+
                     </div>
+                        <div class="clearfix"></div>
+                        <div  ng-repeat="unit in teamDeployData.units" title="Deployed to {{unit.servers.length}} servers.">
+                            <div style="color:green" ng-show="unit.deployed"><i class="fa fa-square" aria-hidden="true"></i></div>
+                            <div style="color:red" ng-show="!unit.deployed"><i class="fa fa-square" aria-hidden="true"></i></div>
+                        </div>
                     <div class="team-data-cell-last-build" ng-if="teamDeployData.deployed">
                         Latest Deployment: <span class="fa fa-thumbs-up" style="color:green"></span>
                     </div>

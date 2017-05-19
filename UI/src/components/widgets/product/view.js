@@ -70,7 +70,7 @@
         // public properties
        // ctrl.stages = ['Commit', 'Build', 'Dev', 'QA', 'Int', 'Perf', 'Prod'];
         ctrl.stages = ['Commit', 'Build'];
-        ctrl.deployStages = ['dev', 'qa', 'int', 'perf'];
+        ctrl.deployStages = ['dev', 'qa', 'int'];
         ctrl.sortableOptions = {
             additionalPlaceholderClass: 'product-table-tr',
             placeholder: function(el) {
@@ -468,6 +468,7 @@
                             }
                             summary.deployed =  deploy.units[0].deployed;
                             summary.lastUpdated = deploy.units[0].lastUpdated;
+                            summary.units = deploy.units;
                             }
                             console.log(summary);
                             console.log(team.stages);
